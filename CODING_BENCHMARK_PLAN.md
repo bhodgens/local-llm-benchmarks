@@ -33,7 +33,7 @@
 - **Framework:** lm-evaluation-harness (EleutherAI) with `humaneval` task
 - **Problems:** 164 (HumanEval) or use EvalPlus (HumanEval+ with more tests)
 - **Settings:** pass@1, temperature=0.0, n_gen=1, max_tokens=1024
-- **Gate:** If decode speed <24 tok/s during HumanEval, skip LiveCodeBench for this model
+- **Gate:** If decode speed <24 tok/s during HumanEval, skip LiveCodeBench and Aider Polyglot for this model
 - **Duration:** 5 min (LFM) to 26 min (MoE) per model
 
 ### 2. LiveCodeBench (ALL models passing gate)
@@ -265,8 +265,6 @@ With the >24 tok/s throughput gate, all 8 models qualify (slowest is MoE at 26 t
 ---
 
 ## Notes
-
-- SWE-bench Verified was mentioned as a throughput gate. It requires complex Docker-based infrastructure (per-instance containers, test suite execution). I recommend using HumanEval as the throughput gate instead (same purpose, 100x simpler to set up). If SWE-bench is required, add ~5-10 hours for setup and execution on the top 3 models only.
 
 - All benchmarks run against the OpenAI-compatible API at localhost:18099. Each model uses the same endpoint, just swapped sequentially.
 
