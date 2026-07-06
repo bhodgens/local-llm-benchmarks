@@ -1,0 +1,201 @@
+{
+  "Qwopus3.6-27B-Coder-MTP-Q5_K_S.gguf [no-spec]": {
+    "prompt_eval_tps": 555.3,
+    "prompt_tokens": 417,
+    "decode_tps_1": 30.6,
+    "decode_tps_2": 30.5,
+    "decode_tps_avg": 30.6,
+    "decode_tokens_avg": 256
+  },
+  "Qwopus3.6-27B-Coder-MTP-Q5_K_S.gguf [MTP-n3]": {
+    "prompt_eval_tps": 490.6,
+    "prompt_tokens": 417,
+    "decode_tps_1": 33.7,
+    "decode_tps_2": 40.1,
+    "decode_tps_avg": 36.9,
+    "decode_tokens_avg": 256,
+    "mtp_log": {
+      "lines": [
+        "1.00.398.949 I slot print_timing: id  0 | task 0 | draft acceptance = 0.83333 (    5 accepted /     6 generated), mean len =  3.50",
+        "1.02.803.783 I slot print_timing: id  0 | task 4 | draft acceptance = 0.60000 (    9 accepted /    15 generated), mean len =  2.80",
+        "1.10.958.692 I slot print_timing: id  0 | task 13 | draft acceptance = 0.52703 (  156 accepted /   296 generated), mean len =  2.58",
+        "1.17.934.436 I slot print_timing: id  0 | task 115 | draft acceptance = 0.69919 (  172 accepted /   246 generated), mean len =  3.10"
+      ]
+    }
+  },
+  "Qwopus3.6-27B-Coder-MTP-Q5_K_S.gguf [MTP-n5]": {
+    "prompt_eval_tps": 484.4,
+    "prompt_tokens": 417,
+    "decode_tps_1": 35.5,
+    "decode_tps_2": 33.2,
+    "decode_tps_avg": 34.4,
+    "decode_tokens_avg": 256,
+    "mtp_log": {
+      "lines": [
+        "0.12.031.382 I slot print_timing: id  0 | task 0 | draft acceptance = 0.20000 (    3 accepted /    15 generated), mean len =  1.75",
+        "0.14.452.287 I slot print_timing: id  0 | task 6 | draft acceptance = 0.50000 (   10 accepted /    20 generated), mean len =  3.50",
+        "0.22.212.241 I slot print_timing: id  0 | task 14 | draft acceptance = 0.49863 (  182 accepted /   365 generated), mean len =  3.49",
+        "0.30.453.483 I slot print_timing: id  0 | task 90 | draft acceptance = 0.44784 (  176 accepted /   393 generated), mean len =  3.23"
+      ]
+    }
+  },
+  "Qwopus3.5-27B-v3-Q4_K_M.gguf [no-spec]": {
+    "prompt_eval_tps": 489.9,
+    "prompt_tokens": 417,
+    "decode_tps_1": 31.2,
+    "decode_tps_2": 31.2,
+    "decode_tps_avg": 31.2,
+    "decode_tokens_avg": 256
+  },
+  "Qwen3.6-35B-A3B-Abliterated-Heretic-Q4_K_M.gguf [no-spec]": {
+    "prompt_eval_tps": 110.2,
+    "prompt_tokens": 417,
+    "decode_tps_1": 25.3,
+    "decode_tps_2": 25.4,
+    "decode_tps_avg": 25.4,
+    "decode_tokens_avg": 256
+  },
+  "unsloth-qwen3.6-35B-A3B-UD-Q4_K_M.gguf [no-spec]": {
+    "prompt_eval_tps": 109.6,
+    "prompt_tokens": 417,
+    "decode_tps_1": 24.1,
+    "decode_tps_2": 24.0,
+    "decode_tps_avg": 24.1,
+    "decode_tokens_avg": 256
+  },
+  "Qwopus3.6-27B-v2-MTP-Q4_K_M.gguf [no-spec]": {
+    "prompt_eval_tps": 479.8,
+    "prompt_tokens": 417,
+    "decode_tps_1": 31.1,
+    "decode_tps_2": 31.3,
+    "decode_tps_avg": 31.2,
+    "decode_tokens_avg": 256
+  },
+  "Qwopus3.6-27B-v2-MTP-Q4_K_M.gguf [MTP-n3]": {
+    "prompt_eval_tps": 466.6,
+    "prompt_tokens": 417,
+    "decode_tps_1": 33.6,
+    "decode_tps_2": 40.2,
+    "decode_tps_avg": 36.9,
+    "decode_tokens_avg": 256,
+    "mtp_log": {
+      "lines": [
+        "0.09.256.498 I slot print_timing: id  0 | task 0 | draft acceptance = 0.83333 (    5 accepted /     6 generated), mean len =  3.50",
+        "0.11.674.267 I slot print_timing: id  0 | task 4 | draft acceptance = 0.60000 (    9 accepted /    15 generated), mean len =  2.80",
+        "0.19.842.637 I slot print_timing: id  0 | task 13 | draft acceptance = 0.46250 (  148 accepted /   320 generated), mean len =  2.38",
+        "0.26.720.366 I slot print_timing: id  0 | task 123 | draft acceptance = 0.62879 (  166 accepted /   264 generated), mean len =  2.89"
+      ]
+    }
+  },
+  "Qwopus3.6-27B-v2-MTP-Q4_K_M.gguf [MTP-n5]": {
+    "prompt_eval_tps": 464.3,
+    "prompt_tokens": 417,
+    "decode_tps_1": 28.7,
+    "decode_tps_2": 33.9,
+    "decode_tps_avg": 31.3,
+    "decode_tokens_avg": 256,
+    "mtp_log": {
+      "lines": [
+        "0.09.359.799 I slot print_timing: id  0 | task 0 | draft acceptance = 0.50000 (    4 accepted /     8 generated), mean len =  3.00",
+        "0.11.807.132 I slot print_timing: id  0 | task 5 | draft acceptance = 0.50000 (   10 accepted /    20 generated), mean len =  3.50",
+        "0.21.264.686 I slot print_timing: id  0 | task 13 | draft acceptance = 0.33755 (  160 accepted /   474 generated), mean len =  2.68",
+        "0.29.339.351 I slot print_timing: id  0 | task 111 | draft acceptance = 0.44304 (  175 accepted /   395 generated), mean len =  3.22"
+      ]
+    }
+  },
+  "Qwopus3.6-27B-Coder-Compat-MTP-Q4_K_M.gguf [no-spec]": {
+    "prompt_eval_tps": 527.2,
+    "prompt_tokens": 417,
+    "decode_tps_1": 31.2,
+    "decode_tps_2": 31.3,
+    "decode_tps_avg": 31.2,
+    "decode_tokens_avg": 256
+  },
+  "Qwopus3.6-27B-Coder-Compat-MTP-Q4_K_M.gguf [MTP-n3]": {
+    "prompt_eval_tps": 466.9,
+    "prompt_tokens": 417,
+    "decode_tps_1": 36.7,
+    "decode_tps_2": 43.9,
+    "decode_tps_avg": 40.3,
+    "decode_tokens_avg": 256,
+    "mtp_log": {
+      "lines": [
+        "0.11.225.228 I slot print_timing: id  0 | task 0 | draft acceptance = 0.83333 (    5 accepted /     6 generated), mean len =  3.50",
+        "0.13.642.691 I slot print_timing: id  0 | task 4 | draft acceptance = 0.60000 (    9 accepted /    15 generated), mean len =  2.80",
+        "0.21.158.231 I slot print_timing: id  0 | task 13 | draft acceptance = 0.54296 (  158 accepted /   291 generated), mean len =  2.63",
+        "0.27.512.773 I slot print_timing: id  0 | task 113 | draft acceptance = 0.72917 (  175 accepted /   240 generated), mean len =  3.19"
+      ]
+    }
+  },
+  "Qwopus3.6-27B-Coder-Compat-MTP-Q4_K_M.gguf [MTP-n5]": {
+    "prompt_eval_tps": 464.7,
+    "prompt_tokens": 417,
+    "decode_tps_1": 42.8,
+    "decode_tps_2": 37.8,
+    "decode_tps_avg": 40.3,
+    "decode_tokens_avg": 256,
+    "mtp_log": {
+      "lines": [
+        "0.09.221.067 I slot print_timing: id  0 | task 0 | draft acceptance = 0.62500 (    5 accepted /     8 generated), mean len =  3.50",
+        "0.11.666.941 I slot print_timing: id  0 | task 4 | draft acceptance = 0.50000 (   10 accepted /    20 generated), mean len =  3.50",
+        "0.18.191.356 I slot print_timing: id  0 | task 12 | draft acceptance = 0.62866 (  193 accepted /   307 generated), mean len =  4.11",
+        "0.25.470.914 I slot print_timing: id  0 | task 77 | draft acceptance = 0.52571 (  184 accepted /   350 generated), mean len =  3.59"
+      ]
+    }
+  },
+  "Qwopus3.6-35B-A3B-Coder-MTP-Q4_K_M.gguf [no-spec]": {
+    "prompt_eval_tps": 88.1,
+    "prompt_tokens": 417,
+    "decode_tps_1": 25.4,
+    "decode_tps_2": 25.7,
+    "decode_tps_avg": 25.5,
+    "decode_tokens_avg": 256
+  },
+  "Qwopus3.6-35B-A3B-Coder-MTP-Q4_K_M.gguf [MTP-n3]": {
+    "prompt_eval_tps": 110.2,
+    "prompt_tokens": 417,
+    "decode_tps_1": 17.3,
+    "decode_tps_2": 16.4,
+    "decode_tps_avg": 16.9,
+    "decode_tokens_avg": 256,
+    "mtp_log": {
+      "lines": [
+        "0.06.715.463 I slot print_timing: id  0 | task 0 | draft acceptance = 0.30000 (    3 accepted /    10 generated), mean len =  1.75",
+        "0.12.788.759 I slot print_timing: id  0 | task 6 | draft acceptance = 0.42105 (    8 accepted /    19 generated), mean len =  2.14",
+        "0.28.695.465 I slot print_timing: id  0 | task 17 | draft acceptance = 0.74786 (  175 accepted /   234 generated), mean len =  3.22",
+        "0.45.203.199 I slot print_timing: id  0 | task 100 | draft acceptance = 0.68675 (  171 accepted /   249 generated), mean len =  3.06"
+      ]
+    }
+  },
+  "Qwopus3.6-35B-A3B-Coder-MTP-Q4_K_M.gguf [MTP-n5]": {
+    "prompt_eval_tps": 110.5,
+    "prompt_tokens": 417,
+    "decode_tps_1": 8.5,
+    "decode_tps_2": 15.5,
+    "decode_tps_avg": 12.0,
+    "decode_tokens_avg": 256,
+    "mtp_log": {
+      "lines": [
+        "0.07.001.490 I slot print_timing: id  0 | task 0 | draft acceptance = 0.21429 (    3 accepted /    14 generated), mean len =  1.75",
+        "0.13.406.191 I slot print_timing: id  0 | task 6 | draft acceptance = 0.31034 (    9 accepted /    29 generated), mean len =  2.50",
+        "0.44.630.318 I slot print_timing: id  0 | task 16 | draft acceptance = 0.25581 (  143 accepted /   559 generated), mean len =  2.28",
+        "1.02.074.738 I slot print_timing: id  0 | task 131 | draft acceptance = 0.63279 (  193 accepted /   305 generated), mean len =  4.16"
+      ]
+    }
+  },
+  "RavenX-OpenFable-Qwopus-Coder-Holo3-Qwen3.6-35B-A3B-MTP-Q4_K_M.gguf [no-spec]": {
+    "prompt_eval_tps": 113.6,
+    "prompt_tokens": 417,
+    "decode_tps_1": 25.7,
+    "decode_tps_2": 25.7,
+    "decode_tps_avg": 25.7,
+    "decode_tokens_avg": 187,
+    "note": "Used code-continuation prompts to avoid early EOS with raw completion API"
+  },
+  "RavenX-OpenFable-Qwopus-Coder-Holo3-Qwen3.6-35B-A3B-MTP-Q4_K_M.gguf [MTP-n3]": {
+    "error": "server failed"
+  },
+  "RavenX-OpenFable-Qwopus-Coder-Holo3-Qwen3.6-35B-A3B-MTP-Q4_K_M.gguf [MTP-n5]": {
+    "error": "server failed"
+  }
+}
