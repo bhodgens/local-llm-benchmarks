@@ -197,5 +197,33 @@
   },
   "RavenX-OpenFable-Qwopus-Coder-Holo3-Qwen3.6-35B-A3B-MTP-Q4_K_M.gguf [MTP-n5]": {
     "error": "server failed"
+  },
+  "Qwopus3.6-35B-A3B-Coder-MTP-Q4_K_M.gguf [MTP-n1]": {
+    "prompt_eval_tps": 92.1,
+    "prompt_tokens": 417,
+    "decode_tps_1": 19.2,
+    "decode_tps_2": 18.2,
+    "decode_tps_avg": 18.7,
+    "decode_tokens_avg": 256,
+    "mtp_log": {
+      "lines": [
+        "draft acceptance = 0.92424 (122 accepted / 132 generated), mean len = 1.92",
+        "draft acceptance = 0.82143 (115 accepted / 140 generated), mean len = 1.82"
+      ]
+    }
+  },
+  "Qwopus3.6-35B-A3B-Coder-MTP-Q4_K_M.gguf [MTP-n2]": {
+    "prompt_eval_tps": 111.3,
+    "prompt_tokens": 417,
+    "decode_tps_1": 19.0,
+    "decode_tps_2": 18.6,
+    "decode_tps_avg": 18.8,
+    "decode_tokens_avg": 256,
+    "mtp_log": {
+      "lines": [
+        "draft acceptance = 0.88043 (162 accepted / 184 generated), mean len = 2.76",
+        "draft acceptance = 0.85106 (160 accepted / 188 generated), mean len = 2.70"
+      ]
+    }
   }
 }

@@ -1,0 +1,56 @@
+{
+  "cpu-moe ngl=99 ubatch=256 thr=4": {
+    "prompt_eval_tps": 110.1,
+    "decode_tps_avg": 25.6,
+    "decode_tps_1": 25.7,
+    "decode_tps_2": 25.6
+  },
+  "cpu-moe ngl=99 ubatch=512 thr=4": {
+    "prompt_eval_tps": 183.6,
+    "decode_tps_avg": 25.8,
+    "decode_tps_1": 25.8,
+    "decode_tps_2": 25.7
+  },
+  "cpu-moe ngl=99 ubatch=128 thr=4": {
+    "prompt_eval_tps": 79.7,
+    "decode_tps_avg": 25.8,
+    "decode_tps_1": 25.7,
+    "decode_tps_2": 25.8
+  },
+  "cpu-moe ngl=99 ubatch=256 thr=6": {
+    "prompt_eval_tps": 116.8,
+    "decode_tps_avg": 26.6,
+    "decode_tps_1": 26.6,
+    "decode_tps_2": 26.5
+  },
+  "cpu-moe ngl=99 ubatch=256 thr=2": {
+    "prompt_eval_tps": 114.0,
+    "decode_tps_avg": 19.6,
+    "decode_tps_1": 19.6,
+    "decode_tps_2": 19.5
+  },
+  "no-cpu-moe ngl=15 ubatch=256 thr=4": {
+    "prompt_eval_tps": 140.4,
+    "decode_tps_avg": 13.6,
+    "decode_tps_1": 13.5,
+    "decode_tps_2": 13.6
+  },
+  "no-cpu-moe ngl=10 ubatch=256 thr=4": {
+    "prompt_eval_tps": 122.4,
+    "decode_tps_avg": 11.8,
+    "decode_tps_1": 11.8,
+    "decode_tps_2": 11.8
+  },
+  "LFM2.5-8B-A1B-Clean-RealWorld-v2 Q4_K_M": {
+    "prompt_eval_tps": 2212.8,
+    "decode_tps_avg": 180.6,
+    "decode_tps_1": 179.6,
+    "decode_tps_2": 181.6
+  },
+  "LFM2.5-8B-A1B base Q4_K_M (existing)": {
+    "prompt_eval_tps": 1509.9,
+    "decode_tps_avg": 181.2,
+    "decode_tps_1": 181.4,
+    "decode_tps_2": 181.1
+  }
+}
