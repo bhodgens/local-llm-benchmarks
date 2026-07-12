@@ -1,0 +1,212 @@
+[
+  {
+    "name": "LFM2.5-8B-A1B-Clean-RealWorld-v2 Q4_K_M",
+    "category": "8B",
+    "human_eval": 0.0,
+    "livecodebench": 0.4533333333333333,
+    "tau2": 0.5333,
+    "tau2_time_min": 32,
+    "decode_tps": 105.7,
+    "failures": []
+  },
+  {
+    "name": "gemma4-coding Q4_K_M",
+    "category": "Other",
+    "human_eval": null,
+    "livecodebench": 0.5466666666666666,
+    "tau2": 0.5,
+    "tau2_time_min": 621,
+    "decode_tps": null,
+    "failures": []
+  },
+  {
+    "name": "DeepSeek-Coder-V2-Lite IQ4_XS",
+    "category": "Other",
+    "human_eval": null,
+    "livecodebench": 0.4666666666666667,
+    "tau2": 0.5,
+    "tau2_time_min": 58,
+    "decode_tps": null,
+    "failures": []
+  },
+  {
+    "name": "LFM2.5-8B-A1B base Q4_K_M",
+    "category": "8B",
+    "human_eval": 0.0,
+    "livecodebench": 0.4533333333333333,
+    "tau2": 0.4615,
+    "tau2_time_min": 325,
+    "decode_tps": 213.2,
+    "failures": []
+  },
+  {
+    "name": "LFM2.5-8B-A1B Q6_K",
+    "category": "8B",
+    "human_eval": 0.0,
+    "livecodebench": 0.4533333333333333,
+    "tau2": 0.4615,
+    "tau2_time_min": 326,
+    "decode_tps": 168.4,
+    "failures": []
+  },
+  {
+    "name": "Qwopus3.6-35B-A3B-Coder-MTP Q4_K_M",
+    "category": "MoE 35B",
+    "human_eval": 0.0,
+    "livecodebench": 0.8,
+    "tau2": 0.4,
+    "tau2_time_min": 760,
+    "decode_tps": 27.2,
+    "failures": []
+  },
+  {
+    "name": "RavenX-OpenFable-Holo3 Q4_K_M",
+    "category": "Other",
+    "human_eval": 0.0,
+    "livecodebench": 0.8533333333333334,
+    "tau2": 0.3846,
+    "tau2_time_min": 99,
+    "decode_tps": 26.8,
+    "failures": []
+  },
+  {
+    "name": "DeepSeek-R1-0528-Qwen3-8B Q4_K_M",
+    "category": "8B",
+    "human_eval": null,
+    "livecodebench": 0.17333333333333334,
+    "tau2": 0.2857,
+    "tau2_time_min": 174,
+    "decode_tps": null,
+    "failures": []
+  },
+  {
+    "name": "RavenX-OpenFable-Coderagent gemma4 Q4_K_M",
+    "category": "Other",
+    "human_eval": null,
+    "livecodebench": 0.5466666666666666,
+    "tau2": 0.1538,
+    "tau2_time_min": 653,
+    "decode_tps": null,
+    "failures": []
+  },
+  {
+    "name": "DeepSeek-R1-0528-Qwen3-8B Q8_0",
+    "category": "8B",
+    "human_eval": null,
+    "livecodebench": 0.17333333333333334,
+    "tau2": 0.1429,
+    "tau2_time_min": 78,
+    "decode_tps": null,
+    "failures": []
+  },
+  {
+    "name": "qwen2.5-coder-14b-instruct Q4_K_M",
+    "category": "12-14B",
+    "human_eval": 0.8536585365853658,
+    "livecodebench": 0.8,
+    "tau2": 0.1333,
+    "tau2_time_min": 29,
+    "decode_tps": 34.6,
+    "failures": []
+  },
+  {
+    "name": "gemma4-v2 Q4_K_M",
+    "category": "Other",
+    "human_eval": null,
+    "livecodebench": 0.5866666666666667,
+    "tau2": 0.1333,
+    "tau2_time_min": 88,
+    "decode_tps": null,
+    "failures": []
+  },
+  {
+    "name": "Qwen3.6-35B-A3B-Abliterated-Heretic Q4_K_M",
+    "category": "MoE 35B",
+    "human_eval": 0.0,
+    "livecodebench": 0.14666666666666667,
+    "tau2": 0.0909,
+    "tau2_time_min": 396,
+    "decode_tps": 27.8,
+    "failures": []
+  },
+  {
+    "name": "gemma-4-12B-it-QAT Q4_0",
+    "category": "12-14B",
+    "human_eval": null,
+    "livecodebench": 0.9066666666666666,
+    "tau2": 0.0833,
+    "tau2_time_min": 200,
+    "decode_tps": null,
+    "failures": []
+  },
+  {
+    "name": "Qwen3.6-35B-A3B IQ3_K_R4",
+    "category": "MoE 35B",
+    "human_eval": null,
+    "livecodebench": 0.14666666666666667,
+    "tau2": null,
+    "tau2_time_min": null,
+    "decode_tps": null,
+    "failures": [
+      {
+        "benchmark": "tau2",
+        "attempt": 1,
+        "error": "Server died",
+        "settings": {
+          "ctx": "current",
+          "steps": 30
+        },
+        "timestamp": "2026-07-11T19:49:45.300187+00:00"
+      },
+      {
+        "benchmark": "tau2",
+        "attempt": 2,
+        "error": "Server died",
+        "settings": {
+          "ctx": "current",
+          "steps": 15
+        },
+        "timestamp": "2026-07-11T19:49:47.304552+00:00"
+      },
+      {
+        "benchmark": "tau2",
+        "attempt": 3,
+        "error": "Server died",
+        "settings": {
+          "ctx": "current",
+          "steps": 10
+        },
+        "timestamp": "2026-07-11T19:49:49.308736+00:00"
+      },
+      {
+        "benchmark": "all",
+        "attempt": "final",
+        "error": "Unsupported quantization format: ggml type 138 (IQ3_K_R4) not in [0, 42). Requires newer llama.cpp build or different quant.",
+        "settings": "N/A",
+        "timestamp": "2026-07-11T00:00:00Z"
+      },
+      {
+        "benchmark": "livecodebench",
+        "error": "Server died: del '/home/files/llms/Qwen3.6-35B-A3B-IQ3_K_R4.gguf'\n0.00.461.325 E srv    load_model: failed to load model, '/home/files/llms/Qwen3.6-35B-A3B-IQ3_K_R4.gguf'\n0.00.461.327 I srv    operator(): operator(): cleaning up before exit...\n0.00.462.405 E srv  llama_server: exiting due to model loading error\n",
+        "settings": [
+          "--gpu-layers",
+          "99",
+          "--cpu-moe",
+          "--ctx-size",
+          "262144",
+          "--ubatch-size",
+          "512",
+          "--threads",
+          "6",
+          "--threads-batch",
+          "6",
+          "--cache-type-k",
+          "q8_0",
+          "--cache-type-v",
+          "q8_0"
+        ],
+        "timestamp": "2026-07-12T18:21:09.495230+00:00"
+      }
+    ]
+  }
+]
