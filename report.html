@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LLM Benchmark Results - 3060 (RTX 3060 12GB)</title>
+<title>LLM Benchmark Results</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0d1117; color: #c9d1d9; padding: 20px; }
@@ -11,13 +11,16 @@ h1 { color: #58a6ff; margin-bottom: 5px; font-size: 1.8em; }
 h2 { color: #8b949e; margin: 25px 0 10px; font-size: 1.3em; border-bottom: 1px solid #30363d; padding-bottom: 5px; }
 .subtitle { color: #8b949e; margin-bottom: 20px; font-size: 0.9em; }
 table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-th { background: #161b22; color: #58a6ff; padding: 10px 8px; text-align: left; font-size: 0.85em; text-transform: uppercase; border-bottom: 2px solid #30363d; }
+th { background: #161b22; color: #58a6ff; padding: 10px 8px; text-align: left; font-size: 0.85em; text-transform: uppercase; border-bottom: 2px solid #30363d; cursor: pointer; user-select: none; position: relative; }
+th:hover { background: #1c2331; color: #79c0ff; }
+th.sorted-asc::after { content: " \25B2"; color: #3fb950; }
+th.sorted-desc::after { content: " \25BC"; color: #3fb950; }
 td { padding: 8px; border-bottom: 1px solid #21262d; font-size: 0.9em; }
 tr:hover { background: #161b22; }
 .center { text-align: center; }
 .na { color: #484f58; }
 .bar-container { position: relative; height: 22px; background: #21262d; border-radius: 3px; overflow: hidden; min-width: 80px; }
-.bar-fill { position: absolute; height: 100%; opacity: 0.3; border-radius: 3px; }
+.bar-fill { position: absolute; height: 100%; opacity: 0.25; border-radius: 3px; }
 .bar-label { position: relative; z-index: 1; line-height: 22px; padding-left: 8px; font-size: 0.85em; font-weight: 600; }
 .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 0.75em; font-weight: 600; }
 .badge-moe { background: #1f6feb22; color: #58a6ff; border: 1px solid #1f6feb44; }
@@ -25,190 +28,217 @@ tr:hover { background: #161b22; }
 .badge-12b { background: #d2992222; color: #d29922; border: 1px solid #d2992244; }
 .badge-27b { background: #f8514922; color: #f85149; border: 1px solid #f8514944; }
 .badge-other { background: #8b949e22; color: #8b949e; border: 1px solid #8b949e44; }
-.cat-cell { white-space: nowrap; }
 .note { background: #161b22; border-left: 3px solid #58a6ff; padding: 10px 15px; margin: 15px 0; font-size: 0.85em; color: #8b949e; }
 .failed { color: #f85149; }
 .summary-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 15px; margin: 10px 0; }
 .summary-card h3 { color: #58a6ff; margin-bottom: 8px; }
+.summary-card ul { margin: 10px 0 0 20px; color: #8b949e; font-size: 0.9em; }
+.summary-card li { margin: 4px 0; }
 </style>
 </head>
 <body>
 
 <h1>LLM Benchmark Results</h1>
 <div class="subtitle">
-  Hardware: RTX 3060 12GB + Tesla V100 32GB (user sim) | 
-  Benchmark date: 2026-07-12 |
-  15 models tested
+  Hardware: RTX 3060 12GB (agent) + Tesla V100 32GB (user sim) |
+  Date: 2026-07-12 |
+  15 models tested |
+  Click column headers to sort
 </div>
 
 <div class="note">
-  <strong>Benchmarks:</strong> HumanEval (code completion, 164 problems) |
-  LiveCodeBench (competitive programming, 75 problems, pass@1, thinking disabled) |
-  tau2-bench (agentic tool use, airline domain, 15 tasks)
+  <strong>Benchmarks:</strong> LiveCodeBench (competitive programming, 75 problems, pass@1, thinking disabled) |
+  tau2-bench (agentic tool use, airline domain, 15 tasks) |
+  HumanEval (code completion, only Qwen2.5-Coder completed in raw mode -- rerun needed for chat mode)<br>
+  <strong>tok/s:</strong> Decode throughput on 3060 at 8K context, flash attention on. MoE models use cpu-moe.
 </div>
 
-<h2>Full Results Table</h2>
-<table>
+<h2>Full Results (click headers to sort)</h2>
+<table id="resultsTable">
+<thead>
 <tr>
-  <th>#</th>
-  <th>Model</th>
-  <th>Type</th>
-  <th>HumanEval</th>
-  <th>LiveCodeBench</th>
-  <th>tau2-bench</th>
-  <th>tau2 Time</th>
+  <th data-type="number" data-key="idx">#</th>
+  <th data-type="string" data-key="name">Model</th>
+  <th data-type="string" data-key="category">Type</th>
+  <th data-type="number" data-key="tps">tok/s</th>
+  <th data-type="number" data-key="he">HumanEval</th>
+  <th data-type="number" data-key="lcb">LiveCodeBench</th>
+  <th data-type="number" data-key="tau2">tau2-bench</th>
+  <th data-type="number" data-key="tau2_time">tau2 Time (min)</th>
 </tr>
+</thead>
+<tbody>
 <tr>
   <td class="center">1</td>
-  <td>LFM2.5-8B-A1B-Clean-RealWorld-v2 Q4_K_M</td>
-  <td class="cat-cell"><span class="badge badge-8b">8B</span></td>
-  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:0%;background:#238636"></div><span class="bar-label">0.0%</span></div></td>
+  <td data-sort="lfm2.5-8b-a1b-clean-realworld-v2 q4_k_m">LFM2.5-8B-A1B-Clean-RealWorld-v2 Q4_K_M</td>
+  <td class="center"><span class="badge badge-8b">8B</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:50%;background:#bc8cff"></div><span class="bar-label">106</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:50%;background:#1f6feb"></div><span class="bar-label">45.3%</span></div></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:100%;background:#d29922"></div><span class="bar-label">0.5333</span></div></td>
-  <td class="center">32 min</td>
+  <td class="center">32</td>
 </tr><tr>
   <td class="center">2</td>
-  <td>gemma4-coding Q4_K_M</td>
-  <td class="cat-cell"><span class="badge badge-other">Other</span></td>
-  <td class="center">N/A</td>
+  <td data-sort="gemma4-coding q4_k_m">gemma4-coding Q4_K_M</td>
+  <td class="center"><span class="badge badge-other">Other</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:17%;background:#bc8cff"></div><span class="bar-label">37</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:60%;background:#1f6feb"></div><span class="bar-label">54.7%</span></div></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:94%;background:#d29922"></div><span class="bar-label">0.5000</span></div></td>
-  <td class="center">621 min</td>
+  <td class="center">621</td>
 </tr><tr>
   <td class="center">3</td>
-  <td>DeepSeek-Coder-V2-Lite IQ4_XS</td>
-  <td class="cat-cell"><span class="badge badge-other">Other</span></td>
-  <td class="center">N/A</td>
+  <td data-sort="deepseek-coder-v2-lite iq4_xs">DeepSeek-Coder-V2-Lite IQ4_XS</td>
+  <td class="center"><span class="badge badge-other">Other</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:43%;background:#bc8cff"></div><span class="bar-label">92</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:51%;background:#1f6feb"></div><span class="bar-label">46.7%</span></div></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:94%;background:#d29922"></div><span class="bar-label">0.5000</span></div></td>
-  <td class="center">58 min</td>
+  <td class="center">58</td>
 </tr><tr>
   <td class="center">4</td>
-  <td>LFM2.5-8B-A1B base Q4_K_M</td>
-  <td class="cat-cell"><span class="badge badge-8b">8B</span></td>
-  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:0%;background:#238636"></div><span class="bar-label">0.0%</span></div></td>
+  <td data-sort="lfm2.5-8b-a1b base q4_k_m">LFM2.5-8B-A1B base Q4_K_M</td>
+  <td class="center"><span class="badge badge-8b">8B</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:100%;background:#bc8cff"></div><span class="bar-label">213</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:50%;background:#1f6feb"></div><span class="bar-label">45.3%</span></div></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:87%;background:#d29922"></div><span class="bar-label">0.4615</span></div></td>
-  <td class="center">325 min</td>
+  <td class="center">325</td>
 </tr><tr>
   <td class="center">5</td>
-  <td>LFM2.5-8B-A1B Q6_K</td>
-  <td class="cat-cell"><span class="badge badge-8b">8B</span></td>
-  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:0%;background:#238636"></div><span class="bar-label">0.0%</span></div></td>
+  <td data-sort="lfm2.5-8b-a1b q6_k">LFM2.5-8B-A1B Q6_K</td>
+  <td class="center"><span class="badge badge-8b">8B</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:79%;background:#bc8cff"></div><span class="bar-label">168</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:50%;background:#1f6feb"></div><span class="bar-label">45.3%</span></div></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:87%;background:#d29922"></div><span class="bar-label">0.4615</span></div></td>
-  <td class="center">326 min</td>
+  <td class="center">326</td>
 </tr><tr>
   <td class="center">6</td>
-  <td>Qwopus3.6-35B-A3B-Coder-MTP Q4_K_M</td>
-  <td class="cat-cell"><span class="badge badge-moe">MoE 35B</span></td>
-  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:0%;background:#238636"></div><span class="bar-label">0.0%</span></div></td>
+  <td data-sort="qwopus3.6-35b-a3b-coder-mtp q4_k_m">Qwopus3.6-35B-A3B-Coder-MTP Q4_K_M</td>
+  <td class="center"><span class="badge badge-moe">MoE 35B</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:13%;background:#bc8cff"></div><span class="bar-label">27</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:88%;background:#1f6feb"></div><span class="bar-label">80.0%</span></div></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:75%;background:#d29922"></div><span class="bar-label">0.4000</span></div></td>
-  <td class="center">760 min</td>
+  <td class="center">760</td>
 </tr><tr>
   <td class="center">7</td>
-  <td>RavenX-OpenFable-Holo3 Q4_K_M</td>
-  <td class="cat-cell"><span class="badge badge-other">Other</span></td>
-  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:0%;background:#238636"></div><span class="bar-label">0.0%</span></div></td>
+  <td data-sort="ravenx-openfable-holo3 q4_k_m">RavenX-OpenFable-Holo3 Q4_K_M</td>
+  <td class="center"><span class="badge badge-other">Other</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:13%;background:#bc8cff"></div><span class="bar-label">27</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:94%;background:#1f6feb"></div><span class="bar-label">85.3%</span></div></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:72%;background:#d29922"></div><span class="bar-label">0.3846</span></div></td>
-  <td class="center">99 min</td>
+  <td class="center">99</td>
 </tr><tr>
   <td class="center">8</td>
-  <td>DeepSeek-R1-0528-Qwen3-8B Q4_K_M</td>
-  <td class="cat-cell"><span class="badge badge-8b">8B</span></td>
-  <td class="center">N/A</td>
+  <td data-sort="deepseek-r1-0528-qwen3-8b q4_k_m">DeepSeek-R1-0528-Qwen3-8B Q4_K_M</td>
+  <td class="center"><span class="badge badge-8b">8B</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:28%;background:#bc8cff"></div><span class="bar-label">60</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:19%;background:#1f6feb"></div><span class="bar-label">17.3%</span></div></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:54%;background:#d29922"></div><span class="bar-label">0.2857</span></div></td>
-  <td class="center">174 min</td>
+  <td class="center">174</td>
 </tr><tr>
   <td class="center">9</td>
-  <td>RavenX-OpenFable-Coderagent gemma4 Q4_K_M</td>
-  <td class="cat-cell"><span class="badge badge-other">Other</span></td>
-  <td class="center">N/A</td>
+  <td data-sort="ravenx-openfable-coderagent gemma4 q4_k_m">RavenX-OpenFable-Coderagent gemma4 Q4_K_M</td>
+  <td class="center"><span class="badge badge-other">Other</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:17%;background:#bc8cff"></div><span class="bar-label">36</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:60%;background:#1f6feb"></div><span class="bar-label">54.7%</span></div></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:29%;background:#d29922"></div><span class="bar-label">0.1538</span></div></td>
-  <td class="center">653 min</td>
+  <td class="center">653</td>
 </tr><tr>
   <td class="center">10</td>
-  <td>DeepSeek-R1-0528-Qwen3-8B Q8_0</td>
-  <td class="cat-cell"><span class="badge badge-8b">8B</span></td>
-  <td class="center">N/A</td>
+  <td data-sort="deepseek-r1-0528-qwen3-8b q8_0">DeepSeek-R1-0528-Qwen3-8B Q8_0</td>
+  <td class="center"><span class="badge badge-8b">8B</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:18%;background:#bc8cff"></div><span class="bar-label">39</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:19%;background:#1f6feb"></div><span class="bar-label">17.3%</span></div></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:27%;background:#d29922"></div><span class="bar-label">0.1429</span></div></td>
-  <td class="center">78 min</td>
+  <td class="center">78</td>
 </tr><tr>
   <td class="center">11</td>
-  <td>qwen2.5-coder-14b-instruct Q4_K_M</td>
-  <td class="cat-cell"><span class="badge badge-12b">12-14B</span></td>
+  <td data-sort="qwen2.5-coder-14b-instruct q4_k_m">qwen2.5-coder-14b-instruct Q4_K_M</td>
+  <td class="center"><span class="badge badge-12b">12-14B</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:16%;background:#bc8cff"></div><span class="bar-label">35</span></div></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:85%;background:#238636"></div><span class="bar-label">85.4%</span></div></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:88%;background:#1f6feb"></div><span class="bar-label">80.0%</span></div></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:25%;background:#d29922"></div><span class="bar-label">0.1333</span></div></td>
-  <td class="center">29 min</td>
+  <td class="center">29</td>
 </tr><tr>
   <td class="center">12</td>
-  <td>gemma4-v2 Q4_K_M</td>
-  <td class="cat-cell"><span class="badge badge-other">Other</span></td>
-  <td class="center">N/A</td>
+  <td data-sort="gemma4-v2 q4_k_m">gemma4-v2 Q4_K_M</td>
+  <td class="center"><span class="badge badge-other">Other</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:17%;background:#bc8cff"></div><span class="bar-label">37</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:65%;background:#1f6feb"></div><span class="bar-label">58.7%</span></div></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:25%;background:#d29922"></div><span class="bar-label">0.1333</span></div></td>
-  <td class="center">88 min</td>
+  <td class="center">88</td>
 </tr><tr>
   <td class="center">13</td>
-  <td>Qwen3.6-35B-A3B-Abliterated-Heretic Q4_K_M</td>
-  <td class="cat-cell"><span class="badge badge-moe">MoE 35B</span></td>
-  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:0%;background:#238636"></div><span class="bar-label">0.0%</span></div></td>
+  <td data-sort="qwen3.6-35b-a3b-abliterated-heretic q4_k_m">Qwen3.6-35B-A3B-Abliterated-Heretic Q4_K_M</td>
+  <td class="center"><span class="badge badge-moe">MoE 35B</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:13%;background:#bc8cff"></div><span class="bar-label">28</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:16%;background:#1f6feb"></div><span class="bar-label">14.7%</span></div></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:17%;background:#d29922"></div><span class="bar-label">0.0909</span></div></td>
-  <td class="center">396 min</td>
+  <td class="center">396</td>
 </tr><tr>
   <td class="center">14</td>
-  <td>gemma-4-12B-it-QAT Q4_0</td>
-  <td class="cat-cell"><span class="badge badge-12b">12-14B</span></td>
-  <td class="center">N/A</td>
+  <td data-sort="gemma-4-12b-it-qat q4_0">gemma-4-12B-it-QAT Q4_0</td>
+  <td class="center"><span class="badge badge-12b">12-14B</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:19%;background:#bc8cff"></div><span class="bar-label">40</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:100%;background:#1f6feb"></div><span class="bar-label">90.7%</span></div></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:16%;background:#d29922"></div><span class="bar-label">0.0833</span></div></td>
-  <td class="center">200 min</td>
+  <td class="center">200</td>
 </tr><tr>
   <td class="center">15</td>
-  <td>Qwen3.6-35B-A3B IQ3_K_R4 <span class="failed">(failed)</span></td>
-  <td class="cat-cell"><span class="badge badge-moe">MoE 35B</span></td>
-  <td class="center">N/A</td>
+  <td data-sort="qwen3.6-35b-a3b iq3_k_r4">Qwen3.6-35B-A3B IQ3_K_R4 <span class="failed">(!)</span></td>
+  <td class="center"><span class="badge badge-moe">MoE 35B</span></td>
+  <td class="center"><span class="na">N/A</span></td>
+  <td class="center"><span class="na">N/A</span></td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:16%;background:#1f6feb"></div><span class="bar-label">14.7%</span></div></td>
-  <td class="center">N/A</td>
+  <td class="center"><span class="na">N/A</span></td>
   <td class="center"><span class="na">-</span></td>
-</tr></table>
+</tr></tbody>
+</table>
 
 <h2>Key Findings</h2>
 
 <div class="summary-card">
   <h3>Code Generation vs Agentic Tool Use</h3>
-  <p>The most striking finding is the divergence between code generation and agentic capability:</p>
-  <ul style="margin: 10px 0 0 20px; color: #8b949e; font-size: 0.9em;">
-    <li><strong style="color:#3fb950">gemma-4-12B-it-QAT</strong>: LCB #1 (90.7%) but tau2 dead last (0.08) - exceptional at writing code, terrible at tool use</li>
-    <li><strong style="color:#3fb950">LFM2.5-8B-A1B-Coder-v2</strong>: LCB mediocre (45.3%) but tau2 #1 (0.53) - best agent, average coder</li>
-    <li><strong style="color:#3fb950">Qwen2.5-Coder-14B</strong>: LCB #3 (80.0%) but tau2 near bottom (0.13) - same pattern</li>
+  <ul>
+    <li><strong style="color:#3fb950">gemma-4-12B-it-QAT</strong>: LCB #1 (90.7%) but tau2 dead last (0.08) -- exceptional at writing code, terrible at tool use</li>
+    <li><strong style="color:#3fb950">LFM2.5-8B-A1B-Coder-v2</strong>: LCB mediocre (45.3%) but tau2 #1 (0.53) -- best agent, average coder</li>
+    <li><strong style="color:#3fb950">Qwen2.5-Coder-14B</strong>: LCB #3 (80.0%) but tau2 near bottom (0.13) -- same pattern</li>
     <li>Models that excel at standalone code generation often struggle with conversational tool use, and vice versa</li>
   </ul>
 </div>
 
 <div class="summary-card">
-  <h3>Benchmark Rankings</h3>
-  <table style="margin-top: 10px;">
-    <tr><th>Benchmark</th><th>Winner</th><th>Score</th></tr><tr><td>HumanEval</td><td>qwen2.5-coder-14b-instruct Q4_K_M</td><td>85.4%</td></tr><tr><td>LiveCodeBench</td><td>gemma-4-12B-it-QAT Q4_0</td><td>90.7%</td></tr><tr><td>tau2-bench</td><td>LFM2.5-8B-A1B-Clean-RealWorld-v2 Q4_K_M</td><td>0.5333</td></tr>  </table>
+  <h3>Speed vs Quality Tradeoffs</h3>
+  <ul>
+    <li><strong style="color:#bc8cff">LFM2.5-8B base</strong> is the fastest at 213 tok/s -- 6x faster than MoE models -- with decent tau2 (0.46)</li>
+    <li><strong style="color:#bc8cff">DeepSeek-Coder-V2-Lite</strong> hits 92.5 tok/s (MoE with only 2.4B active params) and matches gemma4-coding on tau2 (0.50)</li>
+    <li><strong style="color:#bc8cff">MoE 35B models</strong> at 26-28 tok/s are the slowest but competitive on LCB (80-85%)</li>
+    <li><strong style="color:#bc8cff">Gemma-4 12B models</strong> at 35-40 tok/s offer the best LCB quality per tok/s (90.7% at 39.5 tok/s)</li>
+  </ul>
 </div>
 
 <div class="summary-card">
   <h3>Model-Specific Notes</h3>
-  <ul style="margin: 10px 0 0 20px; color: #8b949e; font-size: 0.9em;">
+  <ul>
     <li><strong>Gemma-4 family</strong> dominates code generation: 4 of top 5 LCB scores</li>
     <li><strong>LFM2.5-8B</strong> is the best small agentic model (tau2 0.53 at only 31 min)</li>
     <li><strong>Qwopus3.6-35B MoE</strong> is the most balanced: LCB 80% + tau2 0.40</li>
     <li><strong>RavenX-OpenFable-Holo3</strong> is the best MoE on LCB (85.3%)</li>
-    <li><strong>DeepSeek-R1</strong> scored poorly on LCB (17.3%) due to thinking tokens not being fully suppressible</li>
+    <li><strong>DeepSeek-R1</strong> scored poorly on LCB (17.3%) -- thinking tokens not fully suppressible</li>
     <li><strong>Qwen3.6-Abliterated-Heretic</strong> is consistently the weakest across all benchmarks</li>
     <li><strong>DeepSeek-Coder-V2-Lite</strong> is surprisingly strong on tau2 (0.50) despite being a coding model</li>
+    <li><strong>IQ3_K_R4</strong> permanently failed (unsupported ggml type 138 quantization in llama.cpp v9836)</li>
   </ul>
 </div>
 
@@ -220,14 +250,77 @@ tr:hover { background: #161b22; }
 
 <div class="note">
   <strong>Methodology Notes:</strong><br>
-  - HumanEval: Only Qwen2.5-Coder completed successfully (code completion format). Other models need chat-mode rerun.<br>
-  - LiveCodeBench: 75 problems from latest release, pass@1, temperature=0.0, thinking disabled via enable_thinking=false<br>
-  - tau2-bench: Airline domain, 15 tasks, max 30 steps per task, 300s timeout, agent on 3060, user sim on V100<br>
-  - Thinking-on 32K LCB run failed (timeouts at 27 tok/s for MoE models)<br>
-  - DeepSeek-R1 models ran with reduced context (16-32K) to fit VRAM<br>
-  - IQ3_K_R4 model permanently failed (unsupported ggml type 138 quantization format)<br>
-  - Speed benchmarks at 8K context, flash attention on, q8_0 KV cache
+  - HumanEval: Only Qwen2.5-Coder completed successfully (raw code completion mode). Other models need chat-mode rerun. N/A = not run, not failed.<br>
+  - LiveCodeBench: 75 problems from latest release, pass@1, temperature=0.0, thinking disabled via enable_thinking=false where supported<br>
+  - tau2-bench: Airline domain, 15 tasks, max 30 steps (15 for small-context models), 300s timeout, agent on 3060, user sim on V100<br>
+  - DeepSeek-R1 models ran tau2 with reduced context (16-32K) to fit VRAM; LCB with 32K context<br>
+  - tok/s measured at 8K context with 256-token decode, flash attention on; production config (cpu-moe, q8_0 KV for MoE; q4_0 KV for dense)<br>
+  - DeepSeek-Coder-V2-Lite tok/s measured at 4K context due to VRAM constraints<br>
+  - Speed benchmarks are raw decode throughput; actual benchmark throughput varies with prompt processing overhead
 </div>
+
+<script>
+// Sortable table
+document.addEventListener('DOMContentLoaded', function() {
+  const table = document.getElementById('resultsTable');
+  const tbody = table.querySelector('tbody');
+  const headers = table.querySelectorAll('th');
+  let sortDir = 'desc';
+  let sortKey = 'tau2';
+
+  function getCellValue(row, key) {
+    const cells = row.querySelectorAll('td');
+    switch(key) {
+      case 'idx': return parseInt(cells[0].textContent);
+      case 'name': return cells[1].getAttribute('data-sort') || cells[1].textContent.toLowerCase();
+      case 'category': return cells[2].textContent.trim();
+      case 'tps': return parseFloat(cells[3].textContent.replace(/[^0-9.]/g, '')) || -1;
+      case 'he': return parseFloat(cells[4].textContent.replace(/[^0-9.]/g, '')) || -1;
+      case 'lcb': return parseFloat(cells[5].textContent.replace(/[^0-9.]/g, '')) || -1;
+      case 'tau2': return parseFloat(cells[6].textContent.replace(/[^0-9.]/g, '')) || -1;
+      case 'tau2_time': return parseFloat(cells[7].textContent.replace(/[^0-9.]/g, '')) || 99999;
+      default: return 0;
+    }
+  }
+
+  function sortTable(key, dir) {
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    rows.sort((a, b) => {
+      const av = getCellValue(a, key);
+      const bv = getCellValue(b, key);
+      if (typeof av === 'string') {
+        return dir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
+      }
+      return dir === 'asc' ? av - bv : bv - av;
+    });
+    rows.forEach((row, i) => {
+      tbody.appendChild(row);
+      row.querySelector('td').textContent = i + 1;
+    });
+  }
+
+  headers.forEach((th, i) => {
+    th.addEventListener('click', function() {
+      const key = th.getAttribute('data-key');
+      if (sortKey === key) {
+        sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortKey = key;
+        sortDir = key === 'name' || key === 'category' ? 'asc' : 'desc';
+      }
+
+      headers.forEach(h => h.classList.remove('sorted-asc', 'sorted-desc'));
+      th.classList.add(sortDir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+
+      sortTable(key, sortDir);
+    });
+  });
+
+  // Default sort indicator
+  const tau2Header = table.querySelector('th[data-key="tau2"]');
+  if (tau2Header) tau2Header.classList.add('sorted-desc');
+});
+</script>
 
 </body>
 </html>
