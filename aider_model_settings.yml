@@ -1,0 +1,35 @@
+- name: openai/Qwopus3.6-35B-A3B-Coder-MTP Q4_K_M
+  edit_format: diff
+  weak_model_name: openai/Qwopus3.6-35B-A3B-Coder-MTP Q4_K_M
+  use_repo_map: false
+  use_temperature: false
+- name: openai/RavenX-OpenFable-Holo3 Q4_K_M
+  edit_format: diff
+  weak_model_name: openai/RavenX-OpenFable-Holo3 Q4_K_M
+  use_repo_map: false
+  use_temperature: false
+- name: openai/gemma-4-12B-it-QAT Q4_0
+  edit_format: diff
+  weak_model_name: openai/gemma-4-12B-it-QAT Q4_0
+  use_repo_map: false
+  use_temperature: false
+- name: openai/qwen2.5-coder-14b-instruct Q4_K_M
+  edit_format: diff
+  weak_model_name: openai/qwen2.5-coder-14b-instruct Q4_K_M
+  use_repo_map: false
+  use_temperature: false
+- name: openai/gemma4-v2 Q4_K_M
+  edit_format: diff
+  weak_model_name: openai/gemma4-v2 Q4_K_M
+  use_repo_map: false
+  use_temperature: false
+- name: openai/LFM2.5-8B-A1B-Clean-RealWorld-v2 Q4_K_M
+  edit_format: diff
+  weak_model_name: openai/LFM2.5-8B-A1B-Clean-RealWorld-v2 Q4_K_M
+  use_repo_map: false
+  use_temperature: false
+- name: openai/LFM2.5-8B-A1B Q6_K
+  edit_format: diff
+  weak_model_name: openai/LFM2.5-8B-A1B Q6_K
+  use_repo_map: false
+  use_temperature: false

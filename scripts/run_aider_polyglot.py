@@ -114,8 +114,8 @@ def kill_model(proc, logf):
 def run_aider_in_docker(model_name):
     """Run Aider benchmark inside Docker container"""
     safe = model_name.replace(" ", "_")
-    run_name = f"aider_{safe}"
-    logpath = os.path.join(LOGS, f"{safe}_aider.log")
+    run_name = f"aider_diff_{safe}"
+    logpath = os.path.join(LOGS, f"{safe}_aider_diff.log")
 
     # Docker command - mount aider dir, set env vars, connect to host server
     cmd = [
@@ -127,6 +127,7 @@ def run_aider_in_docker(model_name):
         "-e", "HOME=/tmp",
         "-v", f"{AIDER_DIR}:/aider",
         "-v", f"{AIDER_DIR}/tmp.benchmarks:/aider/tmp.benchmarks",
+        "-v", f"/home/caimlas/llm-benchmarks/aider_model_settings.yml:/aider/aider_model_settings.yml",
         "-w", "/aider",
         "aider-benchmark",
         "bash", "-c",
@@ -135,9 +136,10 @@ def run_aider_in_docker(model_name):
         f"pip install -e '.[dev]' -q 2>/dev/null && "
         f"python3 benchmark/benchmark.py {run_name} "
         f"--model 'openai/{model_name}' "
-        f"--edit-format whole "
+        f"--edit-format diff "
         f"--threads 1 "
         f"--num-tests {NUM_TESTS} "
+        f"--read-model-settings /aider/aider_model_settings.yml "
         f"--exercises-dir polyglot-benchmark"
     ]
 
@@ -190,9 +192,9 @@ def main():
     # Check for existing aider results
     done = set()
     for m in progress["models"]:
-        if "aider" in m and m["aider"].get("pass_rate") is not None:
+        if "aider_diff" in m and m["aider_diff"].get("pass_rate") is not None:
             done.add(m["name"])
-            print(f"SKIP: {m['name']} (Aider already done)")
+            print(f"SKIP: {m['name']} (Aider diff already done)")
 
     for model in MODELS:
         if model["name"] in done:
@@ -220,12 +222,12 @@ def main():
 
         try:
             result = run_aider_in_docker(model["name"])
-            mr["aider"] = result
-            print(f"  Aider pass_rate: {result.get('pass_rate')}")
+            mr["aider_diff"] = result
+            print(f"  Aider diff pass_rate: {result.get('pass_rate')}")
             print(f"  Wall time: {result.get('wall_time_s',0)/60:.0f} min")
             print(f"  Completion tokens: {result.get('completion_tokens', 0)}")
         except Exception as e:
-            mr["aider_error"] = str(e)
+            mr["aider_diff_error"] = str(e)
             print(f"  ERROR: {e}")
         finally:
             kill_model(proc, logf)
