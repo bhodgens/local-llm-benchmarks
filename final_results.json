@@ -7,7 +7,8 @@
     "tau2": 0.5333,
     "tau2_time_min": 32,
     "decode_tps": 105.7,
-    "failures": []
+    "failures": [],
+    "gpu": "3060"
   },
   {
     "name": "gemma4-coding Q4_K_M",
@@ -17,7 +18,8 @@
     "tau2": 0.5,
     "tau2_time_min": 621,
     "decode_tps": null,
-    "failures": []
+    "failures": [],
+    "gpu": "3060"
   },
   {
     "name": "DeepSeek-Coder-V2-Lite IQ4_XS",
@@ -27,7 +29,8 @@
     "tau2": 0.5,
     "tau2_time_min": 58,
     "decode_tps": null,
-    "failures": []
+    "failures": [],
+    "gpu": "3060"
   },
   {
     "name": "LFM2.5-8B-A1B base Q4_K_M",
@@ -37,7 +40,8 @@
     "tau2": 0.4615,
     "tau2_time_min": 325,
     "decode_tps": 213.2,
-    "failures": []
+    "failures": [],
+    "gpu": "3060"
   },
   {
     "name": "LFM2.5-8B-A1B Q6_K",
@@ -47,7 +51,8 @@
     "tau2": 0.4615,
     "tau2_time_min": 326,
     "decode_tps": 168.4,
-    "failures": []
+    "failures": [],
+    "gpu": "3060"
   },
   {
     "name": "Qwopus3.6-35B-A3B-Coder-MTP Q4_K_M",
@@ -57,7 +62,8 @@
     "tau2": 0.4,
     "tau2_time_min": 760,
     "decode_tps": 27.2,
-    "failures": []
+    "failures": [],
+    "gpu": "3060"
   },
   {
     "name": "RavenX-OpenFable-Holo3 Q4_K_M",
@@ -67,7 +73,8 @@
     "tau2": 0.3846,
     "tau2_time_min": 99,
     "decode_tps": 26.8,
-    "failures": []
+    "failures": [],
+    "gpu": "3060"
   },
   {
     "name": "DeepSeek-R1-0528-Qwen3-8B Q4_K_M",
@@ -77,7 +84,8 @@
     "tau2": 0.2857,
     "tau2_time_min": 174,
     "decode_tps": null,
-    "failures": []
+    "failures": [],
+    "gpu": "3060"
   },
   {
     "name": "RavenX-OpenFable-Coderagent gemma4 Q4_K_M",
@@ -87,7 +95,8 @@
     "tau2": 0.1538,
     "tau2_time_min": 653,
     "decode_tps": null,
-    "failures": []
+    "failures": [],
+    "gpu": "3060"
   },
   {
     "name": "DeepSeek-R1-0528-Qwen3-8B Q8_0",
@@ -97,7 +106,8 @@
     "tau2": 0.1429,
     "tau2_time_min": 78,
     "decode_tps": null,
-    "failures": []
+    "failures": [],
+    "gpu": "3060"
   },
   {
     "name": "qwen2.5-coder-14b-instruct Q4_K_M",
@@ -107,7 +117,8 @@
     "tau2": 0.1333,
     "tau2_time_min": 29,
     "decode_tps": 34.6,
-    "failures": []
+    "failures": [],
+    "gpu": "3060"
   },
   {
     "name": "gemma4-v2 Q4_K_M",
@@ -117,7 +128,8 @@
     "tau2": 0.1333,
     "tau2_time_min": 88,
     "decode_tps": null,
-    "failures": []
+    "failures": [],
+    "gpu": "3060"
   },
   {
     "name": "Qwen3.6-35B-A3B-Abliterated-Heretic Q4_K_M",
@@ -127,17 +139,8 @@
     "tau2": 0.0909,
     "tau2_time_min": 396,
     "decode_tps": 27.8,
-    "failures": []
-  },
-  {
-    "name": "gemma-4-12B-it-QAT Q4_0",
-    "category": "12-14B",
-    "human_eval": null,
-    "livecodebench": 0.9066666666666666,
-    "tau2": 0.0833,
-    "tau2_time_min": 200,
-    "decode_tps": null,
-    "failures": []
+    "failures": [],
+    "gpu": "3060"
   },
   {
     "name": "Qwen3.6-35B-A3B IQ3_K_R4",
@@ -207,6 +210,117 @@
         ],
         "timestamp": "2026-07-12T18:21:09.495230+00:00"
       }
-    ]
+    ],
+    "gpu": "3060"
+  },
+  {
+    "name": "Qwen3.5-9B-DeepSeek-V4-Flash Q4_K_M",
+    "category": "9B",
+    "human_eval": null,
+    "livecodebench": 0.18666666666666668,
+    "tau2": 0.4667,
+    "tau2_time_min": 24,
+    "decode_tps": 80.7,
+    "failures": [],
+    "gpu": "V100"
+  },
+  {
+    "name": "gemma-4-12B-it-QAT Q4_0",
+    "category": "Other",
+    "human_eval": null,
+    "livecodebench": 0.8666666666666667,
+    "tau2": 0.4667,
+    "tau2_time_min": 17,
+    "decode_tps": 56.3,
+    "failures": [],
+    "gpu": "V100"
+  },
+  {
+    "name": "gemma-4-26B-A4B-it-QAT Q4_0",
+    "category": "26B MoE",
+    "human_eval": null,
+    "livecodebench": 0.8933333333333333,
+    "tau2": 0.4,
+    "tau2_time_min": 23,
+    "decode_tps": 83.3,
+    "failures": [],
+    "gpu": "V100"
+  },
+  {
+    "name": "Ternary-Bonsai-27B Q2_0 (dspark)",
+    "category": "27B Ternary",
+    "human_eval": null,
+    "livecodebench": 0.6266666666666667,
+    "tau2": 0.8,
+    "tau2_time_min": 63,
+    "decode_tps": 36.3,
+    "failures": [],
+    "gpu": "V100"
+  },
+  {
+    "name": "Qwen3.6-27B-MTP Q4_K_M",
+    "category": "27B Dense",
+    "human_eval": null,
+    "livecodebench": 0.5333333333333333,
+    "tau2": 0.4,
+    "tau2_time_min": 37,
+    "decode_tps": 30.1,
+    "failures": [],
+    "gpu": "V100"
+  },
+  {
+    "name": "Ternary-Bonsai-27B Q2_0 (3060+dspark)",
+    "category": "27B Ternary",
+    "human_eval": null,
+    "livecodebench": 0.64,
+    "tau2": 0.4545,
+    "tau2_time_min": 97,
+    "decode_tps": 25.0,
+    "failures": [],
+    "gpu": "3060"
+  },
+  {
+    "name": "Ternary-Bonsai-27B Q2_0 (3060, no dspark)",
+    "category": "27B Ternary",
+    "human_eval": null,
+    "livecodebench": null,
+    "tau2": null,
+    "tau2_time_min": null,
+    "decode_tps": 26.6,
+    "failures": [],
+    "gpu": "3060"
+  },
+  {
+    "name": "gemma-4-12B-it-QAT Q4_0 (3060 128K)",
+    "category": "12-14B",
+    "gpu": "3060",
+    "human_eval": null,
+    "livecodebench": 0.9066666666666666,
+    "tau2": 0.4286,
+    "tau2_time_min": 50,
+    "decode_tps": 38.2,
+    "failures": []
+  },
+  {
+    "name": "gemma4-v2-agentic Q3_K_M (3060+MTP)",
+    "category": "12-14B",
+    "gpu": "3060",
+    "human_eval": null,
+    "livecodebench": 0.5066666666666667,
+    "tau2": 0.0667,
+    "tau2_time_min": 15,
+    "decode_tps": 34.5,
+    "failures": []
+  },
+  {
+    "name": "gemma4-v2-agentic Q4_K_M (3060+MTP)",
+    "category": "12-14B",
+    "gpu": "3060",
+    "human_eval": null,
+    "livecodebench": 0.5066666666666667,
+    "tau2": 0.0667,
+    "tau2_time_min": 19,
+    "decode_tps": 38.0,
+    "failures": []
   }
 ]

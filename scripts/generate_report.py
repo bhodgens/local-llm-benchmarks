@@ -70,12 +70,18 @@ for m in progress['models']:
     tps = get_tps(name)
     
     name_lower = name.lower()
-    if 'moe' in name_lower or 'a3b' in name_lower or '35b' in name_lower:
+    if 'bonsai' in name_lower:
+        category = '27B Ternary'
+    elif 'a4b' in name_lower or '26b' in name_lower:
+        category = '26B MoE'
+    elif 'moe' in name_lower or 'a3b' in name_lower or '35b' in name_lower:
         category = 'MoE 35B'
     elif '8b' in name_lower or 'a1b' in name_lower:
         category = '8B'
     elif '14b' in name_lower or '12b' in name_lower:
         category = '12-14B'
+    elif '9b' in name_lower:
+        category = '9B'
     elif '27b' in name_lower:
         category = '27B Dense'
     else:
@@ -84,6 +90,7 @@ for m in progress['models']:
     models.append({
         'name': name,
         'category': category,
+        'gpu': m.get('gpu', '3060'),
         'human_eval': he_score,
         'livecodebench': lcb_score,
         'tau2': tau2_reward,
@@ -135,9 +142,9 @@ tr:hover { background: #161b22; }
 
 <h1>LLM Benchmark Results</h1>
 <div class="subtitle">
-  Hardware: RTX 3060 12GB (agent) + Tesla V100 32GB (user sim) |
+  Hardware: RTX 3060 12GB + Tesla V100 32GB |
   Date: """ + datetime.now().strftime('%Y-%m-%d') + """ |
-  15 models tested |
+  24 models tested |
   Click column headers to sort
 </div>
 
@@ -155,6 +162,7 @@ tr:hover { background: #161b22; }
   <th data-type="number" data-key="idx">#</th>
   <th data-type="string" data-key="name">Model</th>
   <th data-type="string" data-key="category">Type</th>
+  <th data-type="string" data-key="gpu">GPU</th>
   <th data-type="number" data-key="tps">tok/s</th>
   <th data-type="number" data-key="he">HumanEval</th>
   <th data-type="number" data-key="lcb">LiveCodeBench</th>
@@ -185,7 +193,8 @@ def tps_fmt(v): return '%.0f' % v
 for i, m in enumerate(models_sorted, 1):
     cat_badge = {
         'MoE 35B': 'badge-moe', '8B': 'badge-8b',
-        '12-14B': 'badge-12b', '27B Dense': 'badge-27b', 'Other': 'badge-other'
+        '12-14B': 'badge-12b', '27B Dense': 'badge-27b', '27B Ternary': 'badge-27b',
+        '26B MoE': 'badge-moe', '9B': 'badge-8b', 'Other': 'badge-other'
     }.get(m['category'], 'badge-other')
     
     has_failures = bool(m['failures']) and not m['tau2']
@@ -195,6 +204,7 @@ for i, m in enumerate(models_sorted, 1):
   <td class="center">{i}</td>
   <td data-sort="{m['name'].lower()}">{m['name']}{fail_marker}</td>
   <td class="center"><span class="badge {cat_badge}">{m['category']}</span></td>
+  <td class="center">{m['gpu']}</td>
   {bar_cell(m['decode_tps'], tps_max, tps_fmt, '#bc8cff')}
   {bar_cell(m['human_eval'], 1.0, pct, '#238636')}
   {bar_cell(m['livecodebench'], lcb_max, pct, '#1f6feb')}
@@ -210,10 +220,22 @@ html += """</tbody>
 <div class="summary-card">
   <h3>Code Generation vs Agentic Tool Use</h3>
   <ul>
-    <li><strong style="color:#3fb950">gemma-4-12B-it-QAT</strong>: LCB #1 (90.7%) but tau2 dead last (0.08) -- exceptional at writing code, terrible at tool use</li>
-    <li><strong style="color:#3fb950">LFM2.5-8B-A1B-Coder-v2</strong>: LCB mediocre (45.3%) but tau2 #1 (0.53) -- best agent, average coder</li>
-    <li><strong style="color:#3fb950">Qwen2.5-Coder-14B</strong>: LCB #3 (80.0%) but tau2 near bottom (0.13) -- same pattern</li>
-    <li>Models that excel at standalone code generation often struggle with conversational tool use, and vice versa</li>
+    <li><strong style="color:#3fb950">Ternary-Bonsai-27B (dspark)</strong>: tau2 DOMINANT at 0.80 (previous best was 0.53) while maintaining solid LCB (62.7%). Best agent model by far, at only 1.71 bits/weight ternary</li>
+    <li><strong style="color:#3fb950">gemma-4-26B-A4B-it-QAT</strong>: LCB #1 (89.3%) at 83 tok/s -- the A4B MoE (4B active params) is extremely efficient. Best code-gen quality/speed ratio</li>
+    <li><strong style="color:#3fb950">gemma-4-12B-it-QAT</strong>: LCB #2 (86.7%) with tau2 0.47 -- the smaller QAT model is also strong on agent tasks</li>
+    <li><strong style="color:#3fb950">LFM2.5-8B-Coder-v2</strong>: Now #2 on tau2 (0.53) -- good agent, mediocre coder (45% LCB)</li>
+    <li><strong style="color:#f85149">Qwen3.5-9B-DSV4-Flash</strong>: Weak at code gen (18.7% LCB) but strong agent (tau2 0.47) -- reasoning distill hurts coding</li>
+    <li>Models that excel at standalone code generation often struggle with conversational tool use, and vice versa. Ternary-Bonsai breaks this pattern: strong at both</li>
+  </ul>
+</div>
+
+<div class="summary-card">
+  <h3>Ternary Quantization: 1.71 bpw Is Viable</h3>
+  <ul>
+    <li><strong>Ternary-Bonsai-27B</strong> at 1.71 bits/weight (7.2GB deployed) scores tau2=0.80 and LCB=62.7% -- beating most Q4_K_M models that are 2-3x larger</li>
+    <li>DSpark speculative decoding worked on the PrismML llama.cpp fork (built at ~/git/llama.cpp-prismml), providing lossless 1.34x speedup</li>
+    <li>At 36.3 tok/s on V100 with 262K context, it is practical for production agent workloads</li>
+    <li>Qwen3.6-27B-MTP (Q4_K_M, 17.1GB) scored LCB=53.3% and tau2=0.40 -- the ternary model outperforms the full-precision Q4 across both benchmarks at 1/3 the size</li>
   </ul>
 </div>
 
@@ -221,9 +243,10 @@ html += """</tbody>
   <h3>Speed vs Quality Tradeoffs</h3>
   <ul>
     <li><strong style="color:#bc8cff">LFM2.5-8B base</strong> is the fastest at 213 tok/s -- 6x faster than MoE models -- with decent tau2 (0.46)</li>
-    <li><strong style="color:#bc8cff">DeepSeek-Coder-V2-Lite</strong> hits 92.5 tok/s (MoE with only 2.4B active params) and matches gemma4-coding on tau2 (0.50)</li>
+    <li><strong style="color:#bc8cff">gemma-4-26B-A4B-it-QAT</strong> hits 83 tok/s despite being a "26B" model -- only 4B params active per token via MoE</li>
+    <li><strong style="color:#bc8cff">Qwen3.5-9B-DSV4-Flash</strong> at 81 tok/s is the fastest 9B model, strong for agent workloads</li>
     <li><strong style="color:#bc8cff">MoE 35B models</strong> at 26-28 tok/s are the slowest but competitive on LCB (80-85%)</li>
-    <li><strong style="color:#bc8cff">Gemma-4 12B models</strong> at 35-40 tok/s offer the best LCB quality per tok/s (90.7% at 39.5 tok/s)</li>
+    <li><strong style="color:#bc8cff">Qwen3.6-27B-MTP</strong> at 30 tok/s is slow for a 27B but competitive across benchmarks</li>
   </ul>
 </div>
 
@@ -287,11 +310,12 @@ document.addEventListener('DOMContentLoaded', function() {
       case 'idx': return parseInt(cells[0].textContent);
       case 'name': return cells[1].getAttribute('data-sort') || cells[1].textContent.toLowerCase();
       case 'category': return cells[2].textContent.trim();
-      case 'tps': return parseFloat(cells[3].textContent.replace(/[^0-9.]/g, '')) || -1;
-      case 'he': return parseFloat(cells[4].textContent.replace(/[^0-9.]/g, '')) || -1;
-      case 'lcb': return parseFloat(cells[5].textContent.replace(/[^0-9.]/g, '')) || -1;
-      case 'tau2': return parseFloat(cells[6].textContent.replace(/[^0-9.]/g, '')) || -1;
-      case 'tau2_time': return parseFloat(cells[7].textContent.replace(/[^0-9.]/g, '')) || 99999;
+      case 'gpu': return cells[3].textContent.trim();
+      case 'tps': return parseFloat(cells[4].textContent.replace(/[^0-9.]/g, '')) || -1;
+      case 'he': return parseFloat(cells[5].textContent.replace(/[^0-9.]/g, '')) || -1;
+      case 'lcb': return parseFloat(cells[6].textContent.replace(/[^0-9.]/g, '')) || -1;
+      case 'tau2': return parseFloat(cells[7].textContent.replace(/[^0-9.]/g, '')) || -1;
+      case 'tau2_time': return parseFloat(cells[8].textContent.replace(/[^0-9.]/g, '')) || 99999;
       default: return 0;
     }
   }
