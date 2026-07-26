@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """
 Generate sortable HTML report with all benchmark results including tok/s.
+Model names are clickable to show a detail modal with settings, VRAM,
+wall times, failures, and errors.
 """
-import json, glob, os, re
+import json, glob, os, re, html
 from datetime import datetime
 
 PROGRESS_FILE = '/tmp/coding-bench/progress.json'
@@ -13,8 +15,11 @@ REPORT_OUT = '/home/caimlas/llm-benchmarks/report.html'
 with open(PROGRESS_FILE) as f:
     progress = json.load(f)
 
-with open(TPS_PROBES) as f:
-    tps_probes = json.load(f)
+try:
+    with open(TPS_PROBES) as f:
+        tps_probes = json.load(f)
+except (FileNotFoundError, json.JSONDecodeError):
+    tps_probes = {}
 
 # Original models' tok/s from progress.json (measured during LCB)
 orig_tps = {}
@@ -50,25 +55,148 @@ def get_tps(name):
         return tps_probes[name]
     return None
 
+
+def build_detail(m):
+    """Extract all available detail fields for a model entry."""
+    detail = {}
+
+    # Settings
+    settings = {}
+    if m.get('binary'): settings['Binary'] = m['binary']
+    if m.get('thinking') is not None: settings['Thinking model'] = str(m['thinking'])
+    if m.get('dspark') is not None: settings['DSpark'] = str(m['dspark'])
+    if m.get('mtp_enabled') is not None: settings['MTP'] = str(m['mtp_enabled'])
+    if m.get('quant'): settings['Quant'] = m['quant']
+    if m.get('bpw'): settings['Bits/weight'] = m['bpw']
+    if m.get('file'): settings['File'] = m['file']
+    if settings: detail['settings'] = settings
+
+    # VRAM / context
+    vram = {}
+    for k, label in [('vram_262k_mb','262K ctx'), ('vram_200k_mb','200K ctx'),
+                      ('vram_131k_mb','131K ctx'), ('vram_100k_mb','100K ctx')]:
+        if m.get(k): vram[label] = f"{m[k]} MiB ({m[k]/1024:.1f} GB)"
+    if m.get('max_ctx_3060'): vram['Max ctx (3060)'] = str(m['max_ctx_3060'])
+    if m.get('max_ctx_3060_nodraft'): vram['Max ctx no-draft'] = str(m['max_ctx_3060_nodraft'])
+    if m.get('max_ctx_3060_dspark'): vram['Max ctx dspark'] = str(m['max_ctx_3060_dspark'])
+    if vram: detail['vram'] = vram
+
+    # Benchmark details with wall times
+    benchmarks = {}
+    for bench_key, bench_label in [
+        ('livecodebench', 'LiveCodeBench'),
+        ('livecodebench_3060', 'LCB (3060)'),
+        ('livecodebench_3060_dspark', 'LCB (3060+dspark)'),
+        ('tau2', 'tau2-bench'),
+        ('tau2_3060', 'tau2 (3060)'),
+        ('tau2_3060_dspark', 'tau2 (3060+dspark)'),
+        ('humaneval', 'HumanEval'),
+        ('humaneval_chat', 'HumanEval (chat)'),
+        ('aider_diff', 'Aider (diff)'),
+    ]:
+        if bench_key in m and isinstance(m[bench_key], dict):
+            b = {}
+            for sub_k, sub_v in m[bench_key].items():
+                if sub_k == 'wall_time_s' and sub_v:
+                    b['Wall time'] = f"{sub_v:.0f}s ({sub_v/60:.0f} min)"
+                elif sub_k == 'pass_at_1' and sub_v is not None:
+                    b['pass@1'] = f"{sub_v*100:.1f}%"
+                elif sub_k == 'pass_rate' and sub_v is not None:
+                    b['pass rate'] = f"{sub_v*100:.0f}%"
+                elif sub_k == 'reward' and sub_v is not None:
+                    b['reward'] = f"{sub_v:.4f}"
+                elif sub_k == 'task_pass_rate' and sub_v is not None:
+                    b['task pass'] = f"{sub_v:.1%}"
+                elif sub_k == 'passed' and sub_v is not None:
+                    b['passed'] = sub_v
+                elif sub_k == 'total' and sub_v is not None:
+                    b['total'] = sub_v
+                elif sub_k == 'exit_code' and sub_v is not None and sub_v != 0:
+                    b['exit code'] = sub_v
+                elif sub_k == 'error':
+                    b['error'] = sub_v
+            if b: benchmarks[bench_label] = b
+    if benchmarks: detail['benchmarks'] = benchmarks
+
+    # Throughput
+    throughput = {}
+    if m.get('decode_tps'): throughput['Decode tok/s'] = m['decode_tps']
+    if m.get('decode_tps_3060'): throughput['Decode tok/s (3060)'] = m['decode_tps_3060']
+    if m.get('decode_tps_3060_dspark'): throughput['Decode tok/s (3060+dspark)'] = m['decode_tps_3060_dspark']
+    if m.get('prompt_tps'): throughput['Prompt tok/s'] = m['prompt_tps']
+    if throughput: detail['throughput'] = throughput
+
+    # Errors
+    if m.get('error'): detail['hard_error'] = str(m['error'])[:500]
+    if m.get('lcb_error'): detail['lcb_error'] = str(m['lcb_error'])[:500]
+    if m.get('tau2_error'): detail['tau2_error'] = str(m['tau2_error'])[:500]
+
+    # Failures / adaptive retry
+    if m.get('failures'):
+        detail['failures'] = []
+        for f in m['failures']:
+            entry = {
+                'benchmark': f.get('benchmark', ''),
+                'attempt': str(f.get('attempt', '')),
+                'error': str(f.get('error', ''))[:400],
+                'timestamp': f.get('timestamp', '')[:19],
+            }
+            s = f.get('settings', '')
+            if isinstance(s, list):
+                entry['settings'] = ' '.join(str(x) for x in s)
+            elif s:
+                entry['settings'] = str(s)
+            detail['failures'].append(entry)
+
+    # Timing
+    timing = {}
+    if m.get('start_time'): timing['Started'] = m['start_time'][:19]
+    if m.get('end_time'): timing['Finished'] = m['end_time'][:19]
+    if m.get('start_time') and m.get('end_time'):
+        try:
+            s = datetime.fromisoformat(m['start_time'])
+            e = datetime.fromisoformat(m['end_time'])
+            dur = (e - s).total_seconds()
+            timing['Duration'] = f"{dur/60:.0f} min" if dur > 60 else f"{dur:.0f}s"
+        except:
+            pass
+    if timing: detail['timing'] = timing
+
+    if m.get('status'): detail['status'] = m['status']
+
+    return detail
+
+
 # Build model data
 models = []
 for m in progress['models']:
     name = m['name']
-    
+
     lcb_score = None
     if 'livecodebench' in m and m['livecodebench'].get('pass_at_1') is not None:
         lcb_score = m['livecodebench']['pass_at_1']
     else:
         lcb_score = find_lcb_score(name)
-    
+    # Also check 3060-specific LCB
+    if lcb_score is None and 'livecodebench_3060' in m:
+        lcb_score = m['livecodebench_3060'].get('pass_at_1')
+
     he_score = m.get('humaneval', {}).get('pass_at_1')
     if he_score is not None and he_score == 0.0:
-        he_score = None  # 0.0 means broken, not real score
-    
+        he_score = None
+
     tau2_reward = m.get('tau2', {}).get('reward')
     tau2_time = m.get('tau2', {}).get('wall_time_s', 0)
+    if tau2_reward is None and 'tau2_3060' in m:
+        tau2_reward = m['tau2_3060'].get('reward')
+        tau2_time = m['tau2_3060'].get('wall_time_s', 0)
+
     tps = get_tps(name)
-    
+    if tps is None:
+        tps = m.get('decode_tps_3060')
+    if tps is None:
+        tps = m.get('decode_tps_3060_dspark')
+
     name_lower = name.lower()
     if 'bonsai' in name_lower:
         category = '27B Ternary'
@@ -86,7 +214,12 @@ for m in progress['models']:
         category = '27B Dense'
     else:
         category = 'Other'
-    
+
+    detail = build_detail(m)
+    detail['name'] = name
+    detail['category'] = category
+    detail['gpu'] = m.get('gpu', '3060')
+
     models.append({
         'name': name,
         'category': category,
@@ -97,10 +230,17 @@ for m in progress['models']:
         'tau2_time_min': round(tau2_time / 60) if tau2_time else None,
         'decode_tps': tps,
         'failures': m.get('failures', []),
+        'detail': detail,
     })
 
-# Generate HTML with sortable table
-html = """<!DOCTYPE html>
+# Check which models have extra detail data
+has_detail = sum(1 for m in models if len(m['detail']) > 4)  # >4 means more than name/cat/gpu/failures
+
+# Embed full detail as JSON
+detail_json = json.dumps([m['detail'] for m in models], ensure_ascii=False)
+
+# Generate HTML
+html_doc = """<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -136,6 +276,43 @@ tr:hover { background: #161b22; }
 .summary-card h3 { color: #58a6ff; margin-bottom: 8px; }
 .summary-card ul { margin: 10px 0 0 20px; color: #8b949e; font-size: 0.9em; }
 .summary-card li { margin: 4px 0; }
+
+/* Model name click + info icon */
+.model-name { cursor: pointer; color: #c9d1d9; text-decoration: none; }
+.model-name:hover { color: #58a6ff; }
+.info-icon { display: inline-block; width: 16px; height: 16px; line-height: 16px; text-align: center;
+  border-radius: 50%; background: #21262d; color: #8b949e; font-size: 0.7em; margin-left: 6px;
+  cursor: pointer; vertical-align: middle; transition: all 0.15s; }
+.info-icon:hover { background: #1f6feb; color: #fff; }
+.has-detail .info-icon { color: #58a6ff; }
+
+/* Modal */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: flex-start; padding-top: 40px; }
+.modal-overlay.active { display: flex; }
+.modal { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 0;
+  max-width: 700px; width: 90%; max-height: 85vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+.modal-header { padding: 18px 20px 12px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; }
+.modal-header h3 { color: #58a6ff; font-size: 1.1em; }
+.modal-close { background: none; border: none; color: #8b949e; font-size: 1.4em; cursor: pointer; padding: 0 5px; line-height: 1; }
+.modal-close:hover { color: #f85149; }
+.modal-body { padding: 16px 20px; }
+.modal-section { margin-bottom: 16px; }
+.modal-section-title { color: #8b949e; font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.modal-kv { display: grid; grid-template-columns: 1fr 2fr; gap: 4px 12px; font-size: 0.88em; }
+.modal-kv .k { color: #8b949e; }
+.modal-kv .v { color: #c9d1d9; word-break: break-word; }
+.modal-kv .v.mono { font-family: 'SF Mono', 'Cascadia Code', Consolas, monospace; font-size: 0.82em; }
+.modal-error { background: #f8514911; border: 1px solid #f8514933; border-radius: 6px; padding: 8px 12px;
+  font-size: 0.82em; color: #f85149; margin: 4px 0; font-family: monospace; white-space: pre-wrap; word-break: break-word; }
+.modal-fail-entry { background: #161b22; border-left: 3px solid #f85149; padding: 8px 12px; margin: 6px 0; font-size: 0.82em; }
+.modal-fail-entry .fail-header { color: #f85149; font-weight: 600; margin-bottom: 4px; }
+.modal-fail-entry .fail-settings { color: #8b949e; font-family: monospace; font-size: 0.9em; margin-top: 4px; }
+.modal-bench { background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 8px 12px; margin: 6px 0; }
+.modal-bench .bench-name { color: #58a6ff; font-weight: 600; font-size: 0.85em; margin-bottom: 4px; }
+.modal-bench .bench-kv { display: grid; grid-template-columns: 1fr 2fr; gap: 2px 12px; font-size: 0.82em; }
+.modal-bench .bench-kv .k { color: #8b949e; }
+.modal-bench .bench-kv .v { color: #c9d1d9; }
 </style>
 </head>
 <body>
@@ -144,18 +321,20 @@ tr:hover { background: #161b22; }
 <div class="subtitle">
   Hardware: RTX 3060 12GB + Tesla V100 32GB |
   Date: """ + datetime.now().strftime('%Y-%m-%d') + """ |
-  24 models tested |
-  Click column headers to sort
+  """ + str(len(models)) + """ models tested |
+  Click column headers to sort |
+  Click model name or (i) icon for details
 </div>
 
 <div class="note">
   <strong>Benchmarks:</strong> LiveCodeBench (competitive programming, 75 problems, pass@1, thinking disabled) |
   tau2-bench (agentic tool use, airline domain, 15 tasks) |
   HumanEval (code completion, only Qwen2.5-Coder completed in raw mode -- rerun needed for chat mode)<br>
-  <strong>tok/s:</strong> Decode throughput on 3060 at 8K context, flash attention on. MoE models use cpu-moe.
+  <strong>tok/s:</strong> Decode throughput on 3060 at 8K context, flash attention on. MoE models use cpu-moe.<br>
+  <strong>Detail view:</strong> Click any model name to see settings, VRAM usage, wall times, errors, and retry history.
 </div>
 
-<h2>Full Results (click headers to sort)</h2>
+<h2>Full Results (click headers to sort, click model name for details)</h2>
 <table id="resultsTable">
 <thead>
 <tr>
@@ -196,13 +375,21 @@ for i, m in enumerate(models_sorted, 1):
         '12-14B': 'badge-12b', '27B Dense': 'badge-27b', '27B Ternary': 'badge-27b',
         '26B MoE': 'badge-moe', '9B': 'badge-8b', 'Other': 'badge-other'
     }.get(m['category'], 'badge-other')
-    
+
     has_failures = bool(m['failures']) and not m['tau2']
     fail_marker = ' <span class="failed">(!)</span>' if has_failures else ''
-    
-    html += f"""<tr>
+
+    detail_count = len(m['detail']) - 3  # subtract name, category, gpu
+    detail_class = 'has-detail' if detail_count > 1 else ''
+    escaped_name = html.escape(m['name'], quote=True)
+    js_name = json.dumps(m['name'])
+
+    html_doc += f"""<tr>
   <td class="center">{i}</td>
-  <td data-sort="{m['name'].lower()}">{m['name']}{fail_marker}</td>
+  <td data-sort="{m['name'].lower()}" class="{detail_class}">
+    <span class="model-name" onclick='showDetail({js_name})'>{escaped_name}{fail_marker}</span>
+    <span class="info-icon" onclick='showDetail({js_name})'>i</span>
+  </td>
   <td class="center"><span class="badge {cat_badge}">{m['category']}</span></td>
   <td class="center">{m['gpu']}</td>
   {bar_cell(m['decode_tps'], tps_max, tps_fmt, '#bc8cff')}
@@ -212,7 +399,7 @@ for i, m in enumerate(models_sorted, 1):
   <td class="center">{str(m['tau2_time_min']) if m['tau2_time_min'] else '<span class="na">-</span>'}</td>
 </tr>"""
 
-html += """</tbody>
+html_doc += """</tbody>
 </table>
 
 <h2>Key Findings</h2>
@@ -236,6 +423,15 @@ html += """</tbody>
     <li>DSpark speculative decoding worked on the PrismML llama.cpp fork (built at ~/git/llama.cpp-prismml), providing lossless 1.34x speedup</li>
     <li>At 36.3 tok/s on V100 with 262K context, it is practical for production agent workloads</li>
     <li>Qwen3.6-27B-MTP (Q4_K_M, 17.1GB) scored LCB=53.3% and tau2=0.40 -- the ternary model outperforms the full-precision Q4 across both benchmarks at 1/3 the size</li>
+  </ul>
+</div>
+
+<div class="summary-card">
+  <h3>Quantization Degradation: Q1_0 vs Q2_0 (Bonsai-27B)</h3>
+  <ul>
+    <li><strong>Bonsai-27B Q1_0 (1.13 bpw, 3.8GB)</strong>: LCB drops from 62.7% to 46.7% (-16pp), tau2 collapses from 0.45 to 0.14 (-0.31) vs Q2_0</li>
+    <li>262K context now fits on 3060 (9.7GB vs 12.8GB for Q2_0 which OOM'd), throughput +6% (28.3 vs 26.6 tok/s)</li>
+    <li>Agentic tool-use is far more sensitive to weight precision than code generation (retains 75% LCB quality but only 31% tau2 quality)</li>
   </ul>
 </div>
 
@@ -275,14 +471,14 @@ for m in models:
         all_failures.append((m['name'], f))
 
 if not all_failures:
-    html += '<tr><td colspan="3" class="center na">No failures recorded</td></tr>'
+    html_doc += '<tr><td colspan="3" class="center na">No failures recorded</td></tr>'
 else:
     for name, f in all_failures:
         bench = f.get('benchmark', '?')
-        err = f.get('error', '?')[:120]
-        html += f'<tr><td>{name}</td><td>{bench}</td><td class="failed">{err}</td></tr>'
+        err = str(f.get('error', '?'))[:120]
+        html_doc += f'<tr><td>{html.escape(name)}</td><td>{html.escape(bench)}</td><td class="failed">{html.escape(err)}</td></tr>'
 
-html += """</table>
+html_doc += """</table>
 
 <div class="note">
   <strong>Methodology Notes:</strong><br>
@@ -292,10 +488,151 @@ html += """</table>
   - DeepSeek-R1 models ran tau2 with reduced context (16-32K) to fit VRAM; LCB with 32K context<br>
   - tok/s measured at 8K context with 256-token decode, flash attention on; production config (cpu-moe, q8_0 KV for MoE; q4_0 KV for dense)<br>
   - DeepSeek-Coder-V2-Lite tok/s measured at 4K context due to VRAM constraints<br>
-  - Speed benchmarks are raw decode throughput; actual benchmark throughput varies with prompt processing overhead
+  - Speed benchmarks are raw decode throughput; actual benchmark throughput varies with prompt processing overhead<br>
+  - tau2 user sim varies by GPU: Bonsai Q2_0 (27B, V100) when agent on 3060; Gemma QAT (12B, 3060) when agent on V100. Cross-GPU tau2 comparisons are not fully objective.
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detailModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Model Details</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
 </div>
 
 <script>
+const DETAIL_DATA = """ + detail_json + """;
+const DETAIL_MAP = {};
+DETAIL_DATA.forEach(d => { DETAIL_MAP[d.name] = d; });
+
+function esc(s) {
+  if (s === null || s === undefined) return '';
+  const d = document.createElement('div');
+  d.textContent = String(s);
+  return d.innerHTML;
+}
+
+function kvGrid(obj, valueClass) {
+  let html = '<div class="modal-kv">';
+  for (const [k, v] of Object.entries(obj)) {
+    const cls = valueClass && (typeof v === 'string' && (v.includes('gguf') || v.includes('--'))) ? 'v mono' : 'v';
+    html += `<span class="k">${esc(k)}</span><span class="${cls}">${esc(v)}</span>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function showModal(detail) {
+  document.getElementById('modalTitle').textContent = detail.name;
+  let body = '';
+
+  // Status badge
+  if (detail.status) {
+    const statusColor = detail.status === 'completed' ? '#3fb950' : '#d29922';
+    body += `<div style="margin-bottom:12px"><span class="badge" style="background:${statusColor}22;color:${statusColor};border:1px solid ${statusColor}44">${esc(detail.status)}</span>`;
+    if (detail.category) body += ` <span style="color:#8b949e;font-size:0.85em">${esc(detail.category)} on ${esc(detail.gpu || '?')}</span>`;
+    body += '</div>';
+  } else if (detail.category) {
+    body += `<div style="margin-bottom:12px;color:#8b949e;font-size:0.85em">${esc(detail.category)} on ${esc(detail.gpu || '?')}</div>`;
+  }
+
+  // Settings
+  if (detail.settings) {
+    body += '<div class="modal-section"><div class="modal-section-title">Settings</div>';
+    body += kvGrid(detail.settings);
+    body += '</div>';
+  }
+
+  // VRAM
+  if (detail.vram) {
+    body += '<div class="modal-section"><div class="modal-section-title">VRAM & Context</div>';
+    body += kvGrid(detail.vram);
+    body += '</div>';
+  }
+
+  // Throughput
+  if (detail.throughput) {
+    body += '<div class="modal-section"><div class="modal-section-title">Throughput</div>';
+    body += kvGrid(detail.throughput);
+    body += '</div>';
+  }
+
+  // Benchmarks
+  if (detail.benchmarks) {
+    body += '<div class="modal-section"><div class="modal-section-title">Benchmark Details</div>';
+    for (const [benchName, kv] of Object.entries(detail.benchmarks)) {
+      body += '<div class="modal-bench">';
+      body += `<div class="bench-name">${esc(benchName)}</div>`;
+      body += '<div class="bench-kv">';
+      for (const [k, v] of Object.entries(kv)) {
+        body += `<span class="k">${esc(k)}</span><span class="v">${esc(v)}</span>`;
+      }
+      body += '</div></div>';
+    }
+    body += '</div>';
+  }
+
+  // Timing
+  if (detail.timing) {
+    body += '<div class="modal-section"><div class="modal-section-title">Timing</div>';
+    body += kvGrid(detail.timing);
+    body += '</div>';
+  }
+
+  // Errors
+  if (detail.hard_error) {
+    body += '<div class="modal-section"><div class="modal-section-title">Hard Error</div>';
+    body += `<div class="modal-error">${esc(detail.hard_error)}</div>`;
+    body += '</div>';
+  }
+  if (detail.lcb_error && !detail.hard_error) {
+    body += '<div class="modal-section"><div class="modal-section-title">LCB Error</div>';
+    body += `<div class="modal-error">${esc(detail.lcb_error)}</div>`;
+    body += '</div>';
+  }
+  if (detail.tau2_error && !detail.hard_error) {
+    body += '<div class="modal-section"><div class="modal-section-title">tau2 Error</div>';
+    body += `<div class="modal-error">${esc(detail.tau2_error)}</div>`;
+    body += '</div>';
+  }
+
+  // Failures / adaptive retry
+  if (detail.failures && detail.failures.length > 0) {
+    body += '<div class="modal-section"><div class="modal-section-title">Failures & Retry History</div>';
+    for (const f of detail.failures) {
+      body += '<div class="modal-fail-entry">';
+      body += `<div class="fail-header">${esc(f.benchmark || '?')}`;
+      if (f.attempt) body += ` - attempt ${esc(f.attempt)}`;
+      if (f.timestamp) body += ` <span style="color:#484f58">(${esc(f.timestamp)})</span>`;
+      body += '</div>';
+      body += `<div>${esc(f.error)}</div>`;
+      if (f.settings) body += `<div class="fail-settings">Settings: ${esc(f.settings)}</div>`;
+      body += '</div>';
+    }
+    body += '</div>';
+  }
+
+  document.getElementById('modalBody').innerHTML = body;
+  document.getElementById('detailModal').classList.add('active');
+}
+
+function showDetail(name) {
+  if (DETAIL_MAP[name]) {
+    showModal(DETAIL_MAP[name]);
+  }
+}
+
+function closeModal() {
+  document.getElementById('detailModal').classList.remove('active');
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
 // Sortable table
 document.addEventListener('DOMContentLoaded', function() {
   const table = document.getElementById('resultsTable');
@@ -363,10 +700,11 @@ document.addEventListener('DOMContentLoaded', function() {
 </html>"""
 
 with open(REPORT_OUT, 'w') as f:
-    f.write(html)
+    f.write(html_doc)
 
 print("Report generated at:", REPORT_OUT)
 print("Models:", len(models))
+print("With detail data:", has_detail)
 print("With tok/s:", len([m for m in models if m['decode_tps']]))
 print("With LCB:", len([m for m in models if m['livecodebench']]))
 print("With tau2:", len([m for m in models if m['tau2']]))

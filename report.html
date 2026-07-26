@@ -34,6 +34,43 @@ tr:hover { background: #161b22; }
 .summary-card h3 { color: #58a6ff; margin-bottom: 8px; }
 .summary-card ul { margin: 10px 0 0 20px; color: #8b949e; font-size: 0.9em; }
 .summary-card li { margin: 4px 0; }
+
+/* Model name click + info icon */
+.model-name { cursor: pointer; color: #c9d1d9; text-decoration: none; }
+.model-name:hover { color: #58a6ff; }
+.info-icon { display: inline-block; width: 16px; height: 16px; line-height: 16px; text-align: center;
+  border-radius: 50%; background: #21262d; color: #8b949e; font-size: 0.7em; margin-left: 6px;
+  cursor: pointer; vertical-align: middle; transition: all 0.15s; }
+.info-icon:hover { background: #1f6feb; color: #fff; }
+.has-detail .info-icon { color: #58a6ff; }
+
+/* Modal */
+.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7); z-index: 1000; justify-content: center; align-items: flex-start; padding-top: 40px; }
+.modal-overlay.active { display: flex; }
+.modal { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 0;
+  max-width: 700px; width: 90%; max-height: 85vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+.modal-header { padding: 18px 20px 12px; border-bottom: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center; }
+.modal-header h3 { color: #58a6ff; font-size: 1.1em; }
+.modal-close { background: none; border: none; color: #8b949e; font-size: 1.4em; cursor: pointer; padding: 0 5px; line-height: 1; }
+.modal-close:hover { color: #f85149; }
+.modal-body { padding: 16px 20px; }
+.modal-section { margin-bottom: 16px; }
+.modal-section-title { color: #8b949e; font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+.modal-kv { display: grid; grid-template-columns: 1fr 2fr; gap: 4px 12px; font-size: 0.88em; }
+.modal-kv .k { color: #8b949e; }
+.modal-kv .v { color: #c9d1d9; word-break: break-word; }
+.modal-kv .v.mono { font-family: 'SF Mono', 'Cascadia Code', Consolas, monospace; font-size: 0.82em; }
+.modal-error { background: #f8514911; border: 1px solid #f8514933; border-radius: 6px; padding: 8px 12px;
+  font-size: 0.82em; color: #f85149; margin: 4px 0; font-family: monospace; white-space: pre-wrap; word-break: break-word; }
+.modal-fail-entry { background: #161b22; border-left: 3px solid #f85149; padding: 8px 12px; margin: 6px 0; font-size: 0.82em; }
+.modal-fail-entry .fail-header { color: #f85149; font-weight: 600; margin-bottom: 4px; }
+.modal-fail-entry .fail-settings { color: #8b949e; font-family: monospace; font-size: 0.9em; margin-top: 4px; }
+.modal-bench { background: #0d1117; border: 1px solid #21262d; border-radius: 6px; padding: 8px 12px; margin: 6px 0; }
+.modal-bench .bench-name { color: #58a6ff; font-weight: 600; font-size: 0.85em; margin-bottom: 4px; }
+.modal-bench .bench-kv { display: grid; grid-template-columns: 1fr 2fr; gap: 2px 12px; font-size: 0.82em; }
+.modal-bench .bench-kv .k { color: #8b949e; }
+.modal-bench .bench-kv .v { color: #c9d1d9; }
 </style>
 </head>
 <body>
@@ -41,19 +78,21 @@ tr:hover { background: #161b22; }
 <h1>LLM Benchmark Results</h1>
 <div class="subtitle">
   Hardware: RTX 3060 12GB + Tesla V100 32GB |
-  Date: 2026-07-25 |
-  24 models tested |
-  Click column headers to sort
+  Date: 2026-07-26 |
+  35 models tested |
+  Click column headers to sort |
+  Click model name or (i) icon for details
 </div>
 
 <div class="note">
   <strong>Benchmarks:</strong> LiveCodeBench (competitive programming, 75 problems, pass@1, thinking disabled) |
   tau2-bench (agentic tool use, airline domain, 15 tasks) |
   HumanEval (code completion, only Qwen2.5-Coder completed in raw mode -- rerun needed for chat mode)<br>
-  <strong>tok/s:</strong> Decode throughput on 3060 at 8K context, flash attention on. MoE models use cpu-moe.
+  <strong>tok/s:</strong> Decode throughput on 3060 at 8K context, flash attention on. MoE models use cpu-moe.<br>
+  <strong>Detail view:</strong> Click any model name to see settings, VRAM usage, wall times, errors, and retry history.
 </div>
 
-<h2>Full Results (click headers to sort)</h2>
+<h2>Full Results (click headers to sort, click model name for details)</h2>
 <table id="resultsTable">
 <thead>
 <tr>
@@ -71,7 +110,10 @@ tr:hover { background: #161b22; }
 <tbody>
 <tr>
   <td class="center">1</td>
-  <td data-sort="ternary-bonsai-27b q2_0 (dspark)">Ternary-Bonsai-27B Q2_0 (dspark)</td>
+  <td data-sort="ternary-bonsai-27b q2_0 (dspark)" class="has-detail">
+    <span class="model-name" onclick='showDetail("Ternary-Bonsai-27B Q2_0 (dspark)")'>Ternary-Bonsai-27B Q2_0 (dspark)</span>
+    <span class="info-icon" onclick='showDetail("Ternary-Bonsai-27B Q2_0 (dspark)")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-27b">27B Ternary</span></td>
   <td class="center">V100</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:17%;background:#bc8cff"></div><span class="bar-label">36</span></div></td>
@@ -81,7 +123,10 @@ tr:hover { background: #161b22; }
   <td class="center">63</td>
 </tr><tr>
   <td class="center">2</td>
-  <td data-sort="lfm2.5-8b-a1b-clean-realworld-v2 q4_k_m">LFM2.5-8B-A1B-Clean-RealWorld-v2 Q4_K_M</td>
+  <td data-sort="lfm2.5-8b-a1b-clean-realworld-v2 q4_k_m" class="has-detail">
+    <span class="model-name" onclick='showDetail("LFM2.5-8B-A1B-Clean-RealWorld-v2 Q4_K_M")'>LFM2.5-8B-A1B-Clean-RealWorld-v2 Q4_K_M</span>
+    <span class="info-icon" onclick='showDetail("LFM2.5-8B-A1B-Clean-RealWorld-v2 Q4_K_M")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-8b">8B</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:50%;background:#bc8cff"></div><span class="bar-label">106</span></div></td>
@@ -91,7 +136,10 @@ tr:hover { background: #161b22; }
   <td class="center">32</td>
 </tr><tr>
   <td class="center">3</td>
-  <td data-sort="gemma4-coding q4_k_m">gemma4-coding Q4_K_M</td>
+  <td data-sort="gemma4-coding q4_k_m" class="has-detail">
+    <span class="model-name" onclick='showDetail("gemma4-coding Q4_K_M")'>gemma4-coding Q4_K_M</span>
+    <span class="info-icon" onclick='showDetail("gemma4-coding Q4_K_M")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-other">Other</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:17%;background:#bc8cff"></div><span class="bar-label">37</span></div></td>
@@ -101,7 +149,10 @@ tr:hover { background: #161b22; }
   <td class="center">621</td>
 </tr><tr>
   <td class="center">4</td>
-  <td data-sort="deepseek-coder-v2-lite iq4_xs">DeepSeek-Coder-V2-Lite IQ4_XS</td>
+  <td data-sort="deepseek-coder-v2-lite iq4_xs" class="has-detail">
+    <span class="model-name" onclick='showDetail("DeepSeek-Coder-V2-Lite IQ4_XS")'>DeepSeek-Coder-V2-Lite IQ4_XS</span>
+    <span class="info-icon" onclick='showDetail("DeepSeek-Coder-V2-Lite IQ4_XS")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-other">Other</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:43%;background:#bc8cff"></div><span class="bar-label">92</span></div></td>
@@ -111,7 +162,10 @@ tr:hover { background: #161b22; }
   <td class="center">58</td>
 </tr><tr>
   <td class="center">5</td>
-  <td data-sort="qwen3.5-9b-deepseek-v4-flash q4_k_m">Qwen3.5-9B-DeepSeek-V4-Flash Q4_K_M</td>
+  <td data-sort="qwen3.5-9b-deepseek-v4-flash q4_k_m" class="has-detail">
+    <span class="model-name" onclick='showDetail("Qwen3.5-9B-DeepSeek-V4-Flash Q4_K_M")'>Qwen3.5-9B-DeepSeek-V4-Flash Q4_K_M</span>
+    <span class="info-icon" onclick='showDetail("Qwen3.5-9B-DeepSeek-V4-Flash Q4_K_M")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-8b">9B</span></td>
   <td class="center">V100</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:38%;background:#bc8cff"></div><span class="bar-label">81</span></div></td>
@@ -121,7 +175,10 @@ tr:hover { background: #161b22; }
   <td class="center">24</td>
 </tr><tr>
   <td class="center">6</td>
-  <td data-sort="gemma-4-12b-it-qat q4_0">gemma-4-12B-it-QAT Q4_0</td>
+  <td data-sort="gemma-4-12b-it-qat q4_0" class="has-detail">
+    <span class="model-name" onclick='showDetail("gemma-4-12B-it-QAT Q4_0")'>gemma-4-12B-it-QAT Q4_0</span>
+    <span class="info-icon" onclick='showDetail("gemma-4-12B-it-QAT Q4_0")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-12b">12-14B</span></td>
   <td class="center">V100</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:26%;background:#bc8cff"></div><span class="bar-label">56</span></div></td>
@@ -131,7 +188,10 @@ tr:hover { background: #161b22; }
   <td class="center">17</td>
 </tr><tr>
   <td class="center">7</td>
-  <td data-sort="thinkingcap-qwen3.6-27b q4_k_m (v100)">ThinkingCap-Qwen3.6-27B Q4_K_M (V100)</td>
+  <td data-sort="thinkingcap-qwen3.6-27b q4_k_m (v100)" class="has-detail">
+    <span class="model-name" onclick='showDetail("ThinkingCap-Qwen3.6-27B Q4_K_M (V100)")'>ThinkingCap-Qwen3.6-27B Q4_K_M (V100)</span>
+    <span class="info-icon" onclick='showDetail("ThinkingCap-Qwen3.6-27B Q4_K_M (V100)")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-27b">27B Dense</span></td>
   <td class="center">V100</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:14%;background:#bc8cff"></div><span class="bar-label">30</span></div></td>
@@ -141,7 +201,10 @@ tr:hover { background: #161b22; }
   <td class="center">31</td>
 </tr><tr>
   <td class="center">8</td>
-  <td data-sort="lfm2.5-8b-a1b base q4_k_m">LFM2.5-8B-A1B base Q4_K_M</td>
+  <td data-sort="lfm2.5-8b-a1b base q4_k_m" class="has-detail">
+    <span class="model-name" onclick='showDetail("LFM2.5-8B-A1B base Q4_K_M")'>LFM2.5-8B-A1B base Q4_K_M</span>
+    <span class="info-icon" onclick='showDetail("LFM2.5-8B-A1B base Q4_K_M")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-8b">8B</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:100%;background:#bc8cff"></div><span class="bar-label">213</span></div></td>
@@ -151,7 +214,10 @@ tr:hover { background: #161b22; }
   <td class="center">325</td>
 </tr><tr>
   <td class="center">9</td>
-  <td data-sort="lfm2.5-8b-a1b q6_k">LFM2.5-8B-A1B Q6_K</td>
+  <td data-sort="lfm2.5-8b-a1b q6_k" class="has-detail">
+    <span class="model-name" onclick='showDetail("LFM2.5-8B-A1B Q6_K")'>LFM2.5-8B-A1B Q6_K</span>
+    <span class="info-icon" onclick='showDetail("LFM2.5-8B-A1B Q6_K")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-8b">8B</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:79%;background:#bc8cff"></div><span class="bar-label">168</span></div></td>
@@ -161,7 +227,10 @@ tr:hover { background: #161b22; }
   <td class="center">326</td>
 </tr><tr>
   <td class="center">10</td>
-  <td data-sort="gemma-4-12b-it-qat q4_0 (3060 128k)">gemma-4-12B-it-QAT Q4_0 (3060 128K)</td>
+  <td data-sort="gemma-4-12b-it-qat q4_0 (3060 128k)" class="has-detail">
+    <span class="model-name" onclick='showDetail("gemma-4-12B-it-QAT Q4_0 (3060 128K)")'>gemma-4-12B-it-QAT Q4_0 (3060 128K)</span>
+    <span class="info-icon" onclick='showDetail("gemma-4-12B-it-QAT Q4_0 (3060 128K)")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-12b">12-14B</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:18%;background:#bc8cff"></div><span class="bar-label">38</span></div></td>
@@ -171,7 +240,10 @@ tr:hover { background: #161b22; }
   <td class="center">50</td>
 </tr><tr>
   <td class="center">11</td>
-  <td data-sort="qwopus3.6-35b-a3b-coder-mtp q4_k_m">Qwopus3.6-35B-A3B-Coder-MTP Q4_K_M</td>
+  <td data-sort="qwopus3.6-35b-a3b-coder-mtp q4_k_m" class="has-detail">
+    <span class="model-name" onclick='showDetail("Qwopus3.6-35B-A3B-Coder-MTP Q4_K_M")'>Qwopus3.6-35B-A3B-Coder-MTP Q4_K_M</span>
+    <span class="info-icon" onclick='showDetail("Qwopus3.6-35B-A3B-Coder-MTP Q4_K_M")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-moe">MoE 35B</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:13%;background:#bc8cff"></div><span class="bar-label">27</span></div></td>
@@ -181,7 +253,10 @@ tr:hover { background: #161b22; }
   <td class="center">760</td>
 </tr><tr>
   <td class="center">12</td>
-  <td data-sort="gemma-4-26b-a4b-it-qat q4_0">gemma-4-26B-A4B-it-QAT Q4_0</td>
+  <td data-sort="gemma-4-26b-a4b-it-qat q4_0" class="has-detail">
+    <span class="model-name" onclick='showDetail("gemma-4-26B-A4B-it-QAT Q4_0")'>gemma-4-26B-A4B-it-QAT Q4_0</span>
+    <span class="info-icon" onclick='showDetail("gemma-4-26B-A4B-it-QAT Q4_0")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-moe">26B MoE</span></td>
   <td class="center">V100</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:39%;background:#bc8cff"></div><span class="bar-label">83</span></div></td>
@@ -191,7 +266,10 @@ tr:hover { background: #161b22; }
   <td class="center">23</td>
 </tr><tr>
   <td class="center">13</td>
-  <td data-sort="qwen3.6-27b-mtp q4_k_m">Qwen3.6-27B-MTP Q4_K_M</td>
+  <td data-sort="qwen3.6-27b-mtp q4_k_m" class="has-detail">
+    <span class="model-name" onclick='showDetail("Qwen3.6-27B-MTP Q4_K_M")'>Qwen3.6-27B-MTP Q4_K_M</span>
+    <span class="info-icon" onclick='showDetail("Qwen3.6-27B-MTP Q4_K_M")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-27b">27B Dense</span></td>
   <td class="center">V100</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:14%;background:#bc8cff"></div><span class="bar-label">30</span></div></td>
@@ -201,7 +279,10 @@ tr:hover { background: #161b22; }
   <td class="center">37</td>
 </tr><tr>
   <td class="center">14</td>
-  <td data-sort="btl-3 full q4_k_m (v100)">BTL-3 Full Q4_K_M (V100)</td>
+  <td data-sort="btl-3 full q4_k_m (v100)" class="has-detail">
+    <span class="model-name" onclick='showDetail("BTL-3 Full Q4_K_M (V100)")'>BTL-3 Full Q4_K_M (V100)</span>
+    <span class="info-icon" onclick='showDetail("BTL-3 Full Q4_K_M (V100)")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-other">Other</span></td>
   <td class="center">V100</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:14%;background:#bc8cff"></div><span class="bar-label">30</span></div></td>
@@ -211,7 +292,10 @@ tr:hover { background: #161b22; }
   <td class="center">18</td>
 </tr><tr>
   <td class="center">15</td>
-  <td data-sort="ravenx-openfable-holo3 q4_k_m">RavenX-OpenFable-Holo3 Q4_K_M</td>
+  <td data-sort="ravenx-openfable-holo3 q4_k_m" class="has-detail">
+    <span class="model-name" onclick='showDetail("RavenX-OpenFable-Holo3 Q4_K_M")'>RavenX-OpenFable-Holo3 Q4_K_M</span>
+    <span class="info-icon" onclick='showDetail("RavenX-OpenFable-Holo3 Q4_K_M")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-other">Other</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:13%;background:#bc8cff"></div><span class="bar-label">27</span></div></td>
@@ -221,7 +305,10 @@ tr:hover { background: #161b22; }
   <td class="center">99</td>
 </tr><tr>
   <td class="center">16</td>
-  <td data-sort="deepseek-r1-0528-qwen3-8b q4_k_m">DeepSeek-R1-0528-Qwen3-8B Q4_K_M</td>
+  <td data-sort="deepseek-r1-0528-qwen3-8b q4_k_m" class="has-detail">
+    <span class="model-name" onclick='showDetail("DeepSeek-R1-0528-Qwen3-8B Q4_K_M")'>DeepSeek-R1-0528-Qwen3-8B Q4_K_M</span>
+    <span class="info-icon" onclick='showDetail("DeepSeek-R1-0528-Qwen3-8B Q4_K_M")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-8b">8B</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:28%;background:#bc8cff"></div><span class="bar-label">60</span></div></td>
@@ -231,7 +318,10 @@ tr:hover { background: #161b22; }
   <td class="center">174</td>
 </tr><tr>
   <td class="center">17</td>
-  <td data-sort="nanbeige4-3b-thinking q8_0">Nanbeige4-3B-Thinking Q8_0</td>
+  <td data-sort="nanbeige4-3b-thinking q8_0" class="has-detail">
+    <span class="model-name" onclick='showDetail("Nanbeige4-3B-Thinking Q8_0")'>Nanbeige4-3B-Thinking Q8_0</span>
+    <span class="info-icon" onclick='showDetail("Nanbeige4-3B-Thinking Q8_0")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-other">Other</span></td>
   <td class="center">3060</td>
   <td class="center"><span class="na">N/A</span></td>
@@ -241,7 +331,10 @@ tr:hover { background: #161b22; }
   <td class="center">90</td>
 </tr><tr>
   <td class="center">18</td>
-  <td data-sort="ravenx-openfable-coderagent gemma4 q4_k_m">RavenX-OpenFable-Coderagent gemma4 Q4_K_M</td>
+  <td data-sort="ravenx-openfable-coderagent gemma4 q4_k_m" class="has-detail">
+    <span class="model-name" onclick='showDetail("RavenX-OpenFable-Coderagent gemma4 Q4_K_M")'>RavenX-OpenFable-Coderagent gemma4 Q4_K_M</span>
+    <span class="info-icon" onclick='showDetail("RavenX-OpenFable-Coderagent gemma4 Q4_K_M")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-other">Other</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:17%;background:#bc8cff"></div><span class="bar-label">36</span></div></td>
@@ -251,7 +344,10 @@ tr:hover { background: #161b22; }
   <td class="center">653</td>
 </tr><tr>
   <td class="center">19</td>
-  <td data-sort="deepseek-r1-0528-qwen3-8b q8_0">DeepSeek-R1-0528-Qwen3-8B Q8_0</td>
+  <td data-sort="deepseek-r1-0528-qwen3-8b q8_0" class="has-detail">
+    <span class="model-name" onclick='showDetail("DeepSeek-R1-0528-Qwen3-8B Q8_0")'>DeepSeek-R1-0528-Qwen3-8B Q8_0</span>
+    <span class="info-icon" onclick='showDetail("DeepSeek-R1-0528-Qwen3-8B Q8_0")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-8b">8B</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:18%;background:#bc8cff"></div><span class="bar-label">39</span></div></td>
@@ -261,7 +357,23 @@ tr:hover { background: #161b22; }
   <td class="center">78</td>
 </tr><tr>
   <td class="center">20</td>
-  <td data-sort="qwen2.5-coder-14b-instruct q4_k_m">qwen2.5-coder-14b-instruct Q4_K_M</td>
+  <td data-sort="bonsai-27b q1_0 (3060)" class="has-detail">
+    <span class="model-name" onclick='showDetail("Bonsai-27B Q1_0 (3060)")'>Bonsai-27B Q1_0 (3060)</span>
+    <span class="info-icon" onclick='showDetail("Bonsai-27B Q1_0 (3060)")'>i</span>
+  </td>
+  <td class="center"><span class="badge badge-27b">27B Ternary</span></td>
+  <td class="center">3060</td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:13%;background:#bc8cff"></div><span class="bar-label">28</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:51%;background:#1f6feb"></div><span class="bar-label">46.7%</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:18%;background:#d29922"></div><span class="bar-label">0.1429</span></div></td>
+  <td class="center">75</td>
+</tr><tr>
+  <td class="center">21</td>
+  <td data-sort="qwen2.5-coder-14b-instruct q4_k_m" class="has-detail">
+    <span class="model-name" onclick='showDetail("qwen2.5-coder-14b-instruct Q4_K_M")'>qwen2.5-coder-14b-instruct Q4_K_M</span>
+    <span class="info-icon" onclick='showDetail("qwen2.5-coder-14b-instruct Q4_K_M")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-12b">12-14B</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:16%;background:#bc8cff"></div><span class="bar-label">35</span></div></td>
@@ -270,8 +382,11 @@ tr:hover { background: #161b22; }
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:17%;background:#d29922"></div><span class="bar-label">0.1333</span></div></td>
   <td class="center">29</td>
 </tr><tr>
-  <td class="center">21</td>
-  <td data-sort="gemma4-v2 q4_k_m">gemma4-v2 Q4_K_M</td>
+  <td class="center">22</td>
+  <td data-sort="gemma4-v2 q4_k_m" class="has-detail">
+    <span class="model-name" onclick='showDetail("gemma4-v2 Q4_K_M")'>gemma4-v2 Q4_K_M</span>
+    <span class="info-icon" onclick='showDetail("gemma4-v2 Q4_K_M")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-other">Other</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:17%;background:#bc8cff"></div><span class="bar-label">37</span></div></td>
@@ -280,8 +395,11 @@ tr:hover { background: #161b22; }
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:17%;background:#d29922"></div><span class="bar-label">0.1333</span></div></td>
   <td class="center">88</td>
 </tr><tr>
-  <td class="center">22</td>
-  <td data-sort="nanbeige4-3b-thinking q4_k_m">Nanbeige4-3B-Thinking Q4_K_M</td>
+  <td class="center">23</td>
+  <td data-sort="nanbeige4-3b-thinking q4_k_m" class="has-detail">
+    <span class="model-name" onclick='showDetail("Nanbeige4-3B-Thinking Q4_K_M")'>Nanbeige4-3B-Thinking Q4_K_M</span>
+    <span class="info-icon" onclick='showDetail("Nanbeige4-3B-Thinking Q4_K_M")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-other">Other</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:5%;background:#bc8cff"></div><span class="bar-label">10</span></div></td>
@@ -290,8 +408,24 @@ tr:hover { background: #161b22; }
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:17%;background:#d29922"></div><span class="bar-label">0.1333</span></div></td>
   <td class="center">94</td>
 </tr><tr>
-  <td class="center">23</td>
-  <td data-sort="qwen3.6-35b-a3b-abliterated-heretic q4_k_m">Qwen3.6-35B-A3B-Abliterated-Heretic Q4_K_M</td>
+  <td class="center">24</td>
+  <td data-sort="qwen3.6-27b-fablefusion-mtp q4_k_m" class="has-detail">
+    <span class="model-name" onclick='showDetail("Qwen3.6-27B-FableFusion-MTP Q4_K_M")'>Qwen3.6-27B-FableFusion-MTP Q4_K_M</span>
+    <span class="info-icon" onclick='showDetail("Qwen3.6-27B-FableFusion-MTP Q4_K_M")'>i</span>
+  </td>
+  <td class="center"><span class="badge badge-27b">27B Dense</span></td>
+  <td class="center">V100</td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:14%;background:#bc8cff"></div><span class="bar-label">30</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:72%;background:#1f6feb"></div><span class="bar-label">65.3%</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:12%;background:#d29922"></div><span class="bar-label">0.1000</span></div></td>
+  <td class="center">52</td>
+</tr><tr>
+  <td class="center">25</td>
+  <td data-sort="qwen3.6-35b-a3b-abliterated-heretic q4_k_m" class="has-detail">
+    <span class="model-name" onclick='showDetail("Qwen3.6-35B-A3B-Abliterated-Heretic Q4_K_M")'>Qwen3.6-35B-A3B-Abliterated-Heretic Q4_K_M</span>
+    <span class="info-icon" onclick='showDetail("Qwen3.6-35B-A3B-Abliterated-Heretic Q4_K_M")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-moe">MoE 35B</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:13%;background:#bc8cff"></div><span class="bar-label">28</span></div></td>
@@ -300,8 +434,11 @@ tr:hover { background: #161b22; }
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:11%;background:#d29922"></div><span class="bar-label">0.0909</span></div></td>
   <td class="center">396</td>
 </tr><tr>
-  <td class="center">24</td>
-  <td data-sort="gemma4-v2-agentic q3_k_m (3060+mtp)">gemma4-v2-agentic Q3_K_M (3060+MTP)</td>
+  <td class="center">26</td>
+  <td data-sort="gemma4-v2-agentic q3_k_m (3060+mtp)" class="has-detail">
+    <span class="model-name" onclick='showDetail("gemma4-v2-agentic Q3_K_M (3060+MTP)")'>gemma4-v2-agentic Q3_K_M (3060+MTP)</span>
+    <span class="info-icon" onclick='showDetail("gemma4-v2-agentic Q3_K_M (3060+MTP)")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-other">Other</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:16%;background:#bc8cff"></div><span class="bar-label">34</span></div></td>
@@ -310,8 +447,11 @@ tr:hover { background: #161b22; }
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:8%;background:#d29922"></div><span class="bar-label">0.0667</span></div></td>
   <td class="center">15</td>
 </tr><tr>
-  <td class="center">25</td>
-  <td data-sort="gemma4-v2-agentic q4_k_m (3060+mtp)">gemma4-v2-agentic Q4_K_M (3060+MTP)</td>
+  <td class="center">27</td>
+  <td data-sort="gemma4-v2-agentic q4_k_m (3060+mtp)" class="has-detail">
+    <span class="model-name" onclick='showDetail("gemma4-v2-agentic Q4_K_M (3060+MTP)")'>gemma4-v2-agentic Q4_K_M (3060+MTP)</span>
+    <span class="info-icon" onclick='showDetail("gemma4-v2-agentic Q4_K_M (3060+MTP)")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-other">Other</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:18%;background:#bc8cff"></div><span class="bar-label">38</span></div></td>
@@ -320,8 +460,11 @@ tr:hover { background: #161b22; }
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:8%;background:#d29922"></div><span class="bar-label">0.0667</span></div></td>
   <td class="center">19</td>
 </tr><tr>
-  <td class="center">26</td>
-  <td data-sort="qwen3.6-35b-a3b iq3_k_r4">Qwen3.6-35B-A3B IQ3_K_R4 <span class="failed">(!)</span></td>
+  <td class="center">28</td>
+  <td data-sort="qwen3.6-35b-a3b iq3_k_r4" class="has-detail">
+    <span class="model-name" onclick='showDetail("Qwen3.6-35B-A3B IQ3_K_R4")'>Qwen3.6-35B-A3B IQ3_K_R4 <span class="failed">(!)</span></span>
+    <span class="info-icon" onclick='showDetail("Qwen3.6-35B-A3B IQ3_K_R4")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-moe">MoE 35B</span></td>
   <td class="center">3060</td>
   <td class="center"><span class="na">N/A</span></td>
@@ -330,28 +473,37 @@ tr:hover { background: #161b22; }
   <td class="center"><span class="na">N/A</span></td>
   <td class="center"><span class="na">-</span></td>
 </tr><tr>
-  <td class="center">27</td>
-  <td data-sort="ternary-bonsai-27b q2_0 (3060)">Ternary-Bonsai-27B Q2_0 (3060)</td>
-  <td class="center"><span class="badge badge-27b">27B Ternary</span></td>
-  <td class="center">3060</td>
-  <td class="center"><span class="na">N/A</span></td>
-  <td class="center"><span class="na">N/A</span></td>
-  <td class="center"><span class="na">N/A</span></td>
-  <td class="center"><span class="na">N/A</span></td>
-  <td class="center"><span class="na">-</span></td>
-</tr><tr>
-  <td class="center">28</td>
-  <td data-sort="ternary-bonsai-27b q2_0 (3060+dspark)">Ternary-Bonsai-27B Q2_0 (3060+dspark)</td>
-  <td class="center"><span class="badge badge-27b">27B Ternary</span></td>
-  <td class="center">3060</td>
-  <td class="center"><span class="na">N/A</span></td>
-  <td class="center"><span class="na">N/A</span></td>
-  <td class="center"><span class="na">N/A</span></td>
-  <td class="center"><span class="na">N/A</span></td>
-  <td class="center"><span class="na">-</span></td>
-</tr><tr>
   <td class="center">29</td>
-  <td data-sort="btl-3-compact avq2">BTL-3-Compact AVQ2</td>
+  <td data-sort="ternary-bonsai-27b q2_0 (3060)" class="has-detail">
+    <span class="model-name" onclick='showDetail("Ternary-Bonsai-27B Q2_0 (3060)")'>Ternary-Bonsai-27B Q2_0 (3060)</span>
+    <span class="info-icon" onclick='showDetail("Ternary-Bonsai-27B Q2_0 (3060)")'>i</span>
+  </td>
+  <td class="center"><span class="badge badge-27b">27B Ternary</span></td>
+  <td class="center">3060</td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:12%;background:#bc8cff"></div><span class="bar-label">27</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
+  <td class="center"><span class="na">N/A</span></td>
+  <td class="center"><span class="na">N/A</span></td>
+  <td class="center"><span class="na">-</span></td>
+</tr><tr>
+  <td class="center">30</td>
+  <td data-sort="ternary-bonsai-27b q2_0 (3060+dspark)" class="has-detail">
+    <span class="model-name" onclick='showDetail("Ternary-Bonsai-27B Q2_0 (3060+dspark)")'>Ternary-Bonsai-27B Q2_0 (3060+dspark)</span>
+    <span class="info-icon" onclick='showDetail("Ternary-Bonsai-27B Q2_0 (3060+dspark)")'>i</span>
+  </td>
+  <td class="center"><span class="badge badge-27b">27B Ternary</span></td>
+  <td class="center">3060</td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:12%;background:#bc8cff"></div><span class="bar-label">25</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
+  <td class="center"><span class="na">N/A</span></td>
+  <td class="center"><span class="na">N/A</span></td>
+  <td class="center"><span class="na">-</span></td>
+</tr><tr>
+  <td class="center">31</td>
+  <td data-sort="btl-3-compact avq2" class="has-detail">
+    <span class="model-name" onclick='showDetail("BTL-3-Compact AVQ2")'>BTL-3-Compact AVQ2</span>
+    <span class="info-icon" onclick='showDetail("BTL-3-Compact AVQ2")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-other">Other</span></td>
   <td class="center">3060</td>
   <td class="center"><span class="na">N/A</span></td>
@@ -360,8 +512,11 @@ tr:hover { background: #161b22; }
   <td class="center"><span class="na">N/A</span></td>
   <td class="center"><span class="na">-</span></td>
 </tr><tr>
-  <td class="center">30</td>
-  <td data-sort="laguna-s-2.1 ud-iq3_s">Laguna-S-2.1 UD-IQ3_S</td>
+  <td class="center">32</td>
+  <td data-sort="laguna-s-2.1 ud-iq3_s" class="has-detail">
+    <span class="model-name" onclick='showDetail("Laguna-S-2.1 UD-IQ3_S")'>Laguna-S-2.1 UD-IQ3_S</span>
+    <span class="info-icon" onclick='showDetail("Laguna-S-2.1 UD-IQ3_S")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-other">Other</span></td>
   <td class="center">3060</td>
   <td class="center"><span class="na">N/A</span></td>
@@ -370,8 +525,11 @@ tr:hover { background: #161b22; }
   <td class="center"><span class="na">N/A</span></td>
   <td class="center">3</td>
 </tr><tr>
-  <td class="center">31</td>
-  <td data-sort="hermes3.6-35b-a3b genesis v5 apex-compact">Hermes3.6-35B-A3B Genesis V5 APEX-Compact</td>
+  <td class="center">33</td>
+  <td data-sort="hermes3.6-35b-a3b genesis v5 apex-compact" class="has-detail">
+    <span class="model-name" onclick='showDetail("Hermes3.6-35B-A3B Genesis V5 APEX-Compact")'>Hermes3.6-35B-A3B Genesis V5 APEX-Compact</span>
+    <span class="info-icon" onclick='showDetail("Hermes3.6-35B-A3B Genesis V5 APEX-Compact")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-moe">MoE 35B</span></td>
   <td class="center">3060</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:12%;background:#bc8cff"></div><span class="bar-label">26</span></div></td>
@@ -380,8 +538,11 @@ tr:hover { background: #161b22; }
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:0%;background:#d29922"></div><span class="bar-label">0.0000</span></div></td>
   <td class="center">75</td>
 </tr><tr>
-  <td class="center">32</td>
-  <td data-sort="btl-3-compact avq2 (v100)">BTL-3-Compact AVQ2 (V100)</td>
+  <td class="center">34</td>
+  <td data-sort="btl-3-compact avq2 (v100)" class="has-detail">
+    <span class="model-name" onclick='showDetail("BTL-3-Compact AVQ2 (V100)")'>BTL-3-Compact AVQ2 (V100)</span>
+    <span class="info-icon" onclick='showDetail("BTL-3-Compact AVQ2 (V100)")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-other">Other</span></td>
   <td class="center">V100</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:6%;background:#bc8cff"></div><span class="bar-label">12</span></div></td>
@@ -390,8 +551,11 @@ tr:hover { background: #161b22; }
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:0%;background:#d29922"></div><span class="bar-label">0.0000</span></div></td>
   <td class="center">45</td>
 </tr><tr>
-  <td class="center">33</td>
-  <td data-sort="laguna-s-2.1 ud-iq3_s (v100)">Laguna-S-2.1 UD-IQ3_S (V100)</td>
+  <td class="center">35</td>
+  <td data-sort="laguna-s-2.1 ud-iq3_s (v100)" class="has-detail">
+    <span class="model-name" onclick='showDetail("Laguna-S-2.1 UD-IQ3_S (V100)")'>Laguna-S-2.1 UD-IQ3_S (V100)</span>
+    <span class="info-icon" onclick='showDetail("Laguna-S-2.1 UD-IQ3_S (V100)")'>i</span>
+  </td>
   <td class="center"><span class="badge badge-other">Other</span></td>
   <td class="center">V100</td>
   <td class="center"><div class="bar-container"><div class="bar-fill" style="width:1%;background:#bc8cff"></div><span class="bar-label">3</span></div></td>
@@ -427,6 +591,15 @@ tr:hover { background: #161b22; }
 </div>
 
 <div class="summary-card">
+  <h3>Quantization Degradation: Q1_0 vs Q2_0 (Bonsai-27B)</h3>
+  <ul>
+    <li><strong>Bonsai-27B Q1_0 (1.13 bpw, 3.8GB)</strong>: LCB drops from 62.7% to 46.7% (-16pp), tau2 collapses from 0.45 to 0.14 (-0.31) vs Q2_0</li>
+    <li>262K context now fits on 3060 (9.7GB vs 12.8GB for Q2_0 which OOM'd), throughput +6% (28.3 vs 26.6 tok/s)</li>
+    <li>Agentic tool-use is far more sensitive to weight precision than code generation (retains 75% LCB quality but only 31% tau2 quality)</li>
+  </ul>
+</div>
+
+<div class="summary-card">
   <h3>Speed vs Quality Tradeoffs</h3>
   <ul>
     <li><strong style="color:#bc8cff">LFM2.5-8B base</strong> is the fastest at 213 tok/s -- 6x faster than MoE models -- with decent tau2 (0.46)</li>
@@ -454,7 +627,7 @@ tr:hover { background: #161b22; }
 <h2>Failures & Issues</h2>
 <table>
   <tr><th>Model</th><th>Benchmark</th><th>Error</th></tr>
-<tr><td>Qwen3.6-35B-A3B IQ3_K_R4</td><td>tau2</td><td class="failed">Server died</td></tr><tr><td>Qwen3.6-35B-A3B IQ3_K_R4</td><td>tau2</td><td class="failed">Server died</td></tr><tr><td>Qwen3.6-35B-A3B IQ3_K_R4</td><td>tau2</td><td class="failed">Server died</td></tr><tr><td>Qwen3.6-35B-A3B IQ3_K_R4</td><td>all</td><td class="failed">Unsupported quantization format: ggml type 138 (IQ3_K_R4) not in [0, 42). Requires newer llama.cpp build or different qu</td></tr><tr><td>Qwen3.6-35B-A3B IQ3_K_R4</td><td>livecodebench</td><td class="failed">Server died: del '/home/files/llms/Qwen3.6-35B-A3B-IQ3_K_R4.gguf'
+<tr><td>Qwen3.6-35B-A3B IQ3_K_R4</td><td>tau2</td><td class="failed">Server died</td></tr><tr><td>Qwen3.6-35B-A3B IQ3_K_R4</td><td>tau2</td><td class="failed">Server died</td></tr><tr><td>Qwen3.6-35B-A3B IQ3_K_R4</td><td>tau2</td><td class="failed">Server died</td></tr><tr><td>Qwen3.6-35B-A3B IQ3_K_R4</td><td>all</td><td class="failed">Unsupported quantization format: ggml type 138 (IQ3_K_R4) not in [0, 42). Requires newer llama.cpp build or different qu</td></tr><tr><td>Qwen3.6-35B-A3B IQ3_K_R4</td><td>livecodebench</td><td class="failed">Server died: del &#x27;/home/files/llms/Qwen3.6-35B-A3B-IQ3_K_R4.gguf&#x27;
 0.00.461.325 E srv    load_model: failed to load model</td></tr><tr><td>Nanbeige4-3B-Thinking Q4_K_M</td><td>server_start</td><td class="failed">CUDA forward compatibility error after long run - GPU not detected. Ran on CPU.</td></tr></table>
 
 <div class="note">
@@ -465,10 +638,151 @@ tr:hover { background: #161b22; }
   - DeepSeek-R1 models ran tau2 with reduced context (16-32K) to fit VRAM; LCB with 32K context<br>
   - tok/s measured at 8K context with 256-token decode, flash attention on; production config (cpu-moe, q8_0 KV for MoE; q4_0 KV for dense)<br>
   - DeepSeek-Coder-V2-Lite tok/s measured at 4K context due to VRAM constraints<br>
-  - Speed benchmarks are raw decode throughput; actual benchmark throughput varies with prompt processing overhead
+  - Speed benchmarks are raw decode throughput; actual benchmark throughput varies with prompt processing overhead<br>
+  - tau2 user sim varies by GPU: Bonsai Q2_0 (27B, V100) when agent on 3060; Gemma QAT (12B, 3060) when agent on V100. Cross-GPU tau2 comparisons are not fully objective.
+</div>
+
+<!-- Detail Modal -->
+<div class="modal-overlay" id="detailModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Model Details</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
 </div>
 
 <script>
+const DETAIL_DATA = [{"settings": {"File": "LFM2.5-8B-A1B-Clean-RealWorld-v2-Q4_K_M.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "45.3%", "Wall time": "126s (2 min)"}, "tau2-bench": {"reward": "0.5333", "Wall time": "1891s (32 min)"}, "HumanEval": {"pass@1": "0.0%"}, "HumanEval (chat)": {"pass@1": "0.0%", "Wall time": "729s (12 min)"}, "Aider (diff)": {"pass rate": "0%", "passed": 0, "total": 10}}, "throughput": {"Decode tok/s": 105.7, "Prompt tok/s": 22.3}, "timing": {"Started": "2026-07-07T12:29:11", "Finished": "2026-07-07T12:44:31", "Duration": "15 min"}, "status": "humaneval_done", "name": "LFM2.5-8B-A1B-Clean-RealWorld-v2 Q4_K_M", "category": "8B", "gpu": "3060"}, {"settings": {"File": "LFM2.5-8B-A1B-Q4_K_M.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "45.3%", "Wall time": "84s (1 min)"}, "tau2-bench": {"reward": "0.4615", "Wall time": "19475s (325 min)"}, "HumanEval": {"pass@1": "0.0%"}, "HumanEval (chat)": {"pass@1": "0.0%", "Wall time": "726s (12 min)"}}, "throughput": {"Decode tok/s": 213.2, "Prompt tok/s": 319.4}, "timing": {"Started": "2026-07-07T12:44:34", "Finished": "2026-07-07T12:59:36", "Duration": "15 min"}, "status": "humaneval_done", "name": "LFM2.5-8B-A1B base Q4_K_M", "category": "8B", "gpu": "3060"}, {"settings": {"File": "LFM2.5-8B-A1B-Q6_K.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "45.3%", "Wall time": "86s (1 min)"}, "tau2-bench": {"reward": "0.4615", "Wall time": "19571s (326 min)"}, "HumanEval": {"pass@1": "0.0%"}, "HumanEval (chat)": {"pass@1": "0.0%", "Wall time": "814s (14 min)"}, "Aider (diff)": {"pass rate": "10%", "passed": 1, "total": 10}}, "throughput": {"Decode tok/s": 168.4, "Prompt tok/s": 292.1}, "timing": {"Started": "2026-07-07T12:59:39", "Finished": "2026-07-07T13:19:19", "Duration": "20 min"}, "status": "humaneval_done", "name": "LFM2.5-8B-A1B Q6_K", "category": "8B", "gpu": "3060"}, {"settings": {"File": "qwen2.5-coder-14b-instruct-q4_k_m.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "80.0%", "Wall time": "86s (1 min)"}, "tau2-bench": {"reward": "0.1333", "Wall time": "1728s (29 min)"}, "HumanEval": {"pass@1": "85.4%", "Wall time": "403s (7 min)"}, "Aider (diff)": {"pass rate": "20%", "passed": 2, "total": 10}}, "throughput": {"Decode tok/s": 34.6, "Prompt tok/s": 137.5}, "timing": {"Started": "2026-07-07T13:19:23", "Finished": "2026-07-07T13:27:02", "Duration": "8 min"}, "status": "humaneval_done", "name": "qwen2.5-coder-14b-instruct Q4_K_M", "category": "12-14B", "gpu": "3060"}, {"settings": {"File": "Qwopus3.6-35B-A3B-Coder-MTP-Q4_K_M.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "80.0%", "Wall time": "120s (2 min)"}, "tau2-bench": {"reward": "0.4000", "Wall time": "45580s (760 min)"}, "HumanEval": {"pass@1": "0.6%"}, "HumanEval (chat)": {"pass@1": "0.6%", "Wall time": "660s (11 min)"}, "Aider (diff)": {"pass rate": "10%", "passed": 1, "total": 10}}, "throughput": {"Decode tok/s": 27.2, "Prompt tok/s": 20.3}, "timing": {"Started": "2026-07-07T13:27:05", "Finished": "2026-07-07T15:12:42", "Duration": "106 min"}, "status": "humaneval_done", "name": "Qwopus3.6-35B-A3B-Coder-MTP Q4_K_M", "category": "MoE 35B", "gpu": "3060"}, {"settings": {"File": "Qwen3.6-35B-A3B-IQ3_K_R4.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "14.7%"}}, "hard_error": "Server died: del '/home/files/llms/Qwen3.6-35B-A3B-IQ3_K_R4.gguf'\n0.00.464.245 E srv    load_model: failed to load model, '/home/files/llms/Qwen3.6-35B-A3B-IQ3_K_R4.gguf'\n0.00.464.248 I srv    operator(): operator(): cleaning up before exit...\n0.00.465.183 E srv  llama_server: exiting due to model loading error\n", "lcb_error": "Server died: del '/home/files/llms/Qwen3.6-35B-A3B-IQ3_K_R4.gguf'\n0.00.461.325 E srv    load_model: failed to load model, '/home/files/llms/Qwen3.6-35B-A3B-IQ3_K_R4.gguf'\n0.00.461.327 I srv    operator(): operator(): cleaning up before exit...\n0.00.462.405 E srv  llama_server: exiting due to model loading error\n", "tau2_error": "Unsupported quant format (type 138)", "failures": [{"benchmark": "tau2", "attempt": "1", "error": "Server died", "timestamp": "2026-07-11T19:49:45", "settings": "{'ctx': 'current', 'steps': 30}"}, {"benchmark": "tau2", "attempt": "2", "error": "Server died", "timestamp": "2026-07-11T19:49:47", "settings": "{'ctx': 'current', 'steps': 15}"}, {"benchmark": "tau2", "attempt": "3", "error": "Server died", "timestamp": "2026-07-11T19:49:49", "settings": "{'ctx': 'current', 'steps': 10}"}, {"benchmark": "all", "attempt": "final", "error": "Unsupported quantization format: ggml type 138 (IQ3_K_R4) not in [0, 42). Requires newer llama.cpp build or different quant.", "timestamp": "2026-07-11T00:00:00", "settings": "N/A"}, {"benchmark": "livecodebench", "attempt": "", "error": "Server died: del '/home/files/llms/Qwen3.6-35B-A3B-IQ3_K_R4.gguf'\n0.00.461.325 E srv    load_model: failed to load model, '/home/files/llms/Qwen3.6-35B-A3B-IQ3_K_R4.gguf'\n0.00.461.327 I srv    operator(): operator(): cleaning up before exit...\n0.00.462.405 E srv  llama_server: exiting due to model loading error\n", "timestamp": "2026-07-12T18:21:09", "settings": "--gpu-layers 99 --cpu-moe --ctx-size 262144 --ubatch-size 512 --threads 6 --threads-batch 6 --cache-type-k q8_0 --cache-type-v q8_0"}], "timing": {"Started": "2026-07-07T15:12:47", "Finished": "2026-07-07T15:12:53", "Duration": "6s"}, "status": "failed", "name": "Qwen3.6-35B-A3B IQ3_K_R4", "category": "MoE 35B", "gpu": "3060"}, {"settings": {"File": "Qwen3.6-35B-A3B-Abliterated-Heretic-Q4_K_M.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "14.7%", "Wall time": "95s (2 min)"}, "tau2-bench": {"reward": "0.0909", "Wall time": "23748s (396 min)"}, "HumanEval": {"pass@1": "42.7%"}, "HumanEval (chat)": {"pass@1": "42.7%", "Wall time": "754s (13 min)"}}, "throughput": {"Decode tok/s": 27.8, "Prompt tok/s": 28.2}, "timing": {"Started": "2026-07-07T15:13:02", "Finished": "2026-07-07T16:46:55", "Duration": "94 min"}, "status": "humaneval_done", "name": "Qwen3.6-35B-A3B-Abliterated-Heretic Q4_K_M", "category": "MoE 35B", "gpu": "3060"}, {"settings": {"File": "RavenX-OpenFable-Qwopus-Coder-Holo3-Qwen3.6-35B-A3B-MTP-Q4_K_M.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "85.3%", "Wall time": "117s (2 min)"}, "tau2-bench": {"reward": "0.3846", "Wall time": "5921s (99 min)"}, "HumanEval": {"pass@1": "0.6%"}, "HumanEval (chat)": {"pass@1": "0.6%", "Wall time": "639s (11 min)"}, "Aider (diff)": {"pass rate": "20%", "passed": 2, "total": 10}}, "throughput": {"Decode tok/s": 26.8, "Prompt tok/s": 29.9}, "timing": {"Started": "2026-07-07T16:47:00", "Finished": "2026-07-07T18:34:48", "Duration": "108 min"}, "status": "humaneval_done", "name": "RavenX-OpenFable-Holo3 Q4_K_M", "category": "Other", "gpu": "3060"}, {"settings": {"File": "DeepSeek-R1-0528-Qwen3-8B-Q8_0.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "17.3%"}, "tau2-bench": {"reward": "0.1429", "Wall time": "4680s (78 min)"}, "HumanEval (chat)": {"Wall time": "464s (8 min)", "exit code": 1}}, "name": "DeepSeek-R1-0528-Qwen3-8B Q8_0", "category": "8B", "gpu": "3060"}, {"settings": {"File": "DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "17.3%", "Wall time": "5283s (88 min)"}, "tau2-bench": {"reward": "0.2857", "Wall time": "10440s (174 min)"}, "HumanEval (chat)": {"Wall time": "518s (9 min)", "exit code": 1}}, "name": "DeepSeek-R1-0528-Qwen3-8B Q4_K_M", "category": "8B", "gpu": "3060"}, {"settings": {"File": "gemma4-coding-Q4_K_M.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "54.7%", "Wall time": "993s (17 min)"}, "tau2-bench": {"reward": "0.5000", "Wall time": "37274s (621 min)"}, "HumanEval": {"pass@1": "3.7%"}, "HumanEval (chat)": {"pass@1": "3.7%", "Wall time": "308s (5 min)"}}, "name": "gemma4-coding Q4_K_M", "category": "Other", "gpu": "3060"}, {"settings": {"File": "gemma4-v2-Q4_K_M.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "58.7%", "Wall time": "755s (13 min)"}, "tau2-bench": {"reward": "0.1333", "Wall time": "5289s (88 min)"}, "HumanEval": {"pass@1": "1.8%"}, "HumanEval (chat)": {"pass@1": "1.8%", "Wall time": "302s (5 min)"}, "Aider (diff)": {"pass rate": "0%", "passed": 0, "total": 10}}, "name": "gemma4-v2 Q4_K_M", "category": "Other", "gpu": "3060"}, {"settings": {"File": "DeepSeek-Coder-V2-Lite-Instruct-IQ4_XS.gguf"}, "benchmarks": {"LiveCodeBench": {"Wall time": "990s (17 min)"}, "tau2-bench": {"reward": "0.5000", "Wall time": "3494s (58 min)"}, "HumanEval": {"pass@1": "4.9%"}, "HumanEval (chat)": {"pass@1": "4.9%", "Wall time": "141s (2 min)"}}, "name": "DeepSeek-Coder-V2-Lite IQ4_XS", "category": "Other", "gpu": "3060"}, {"settings": {"File": "RavenX-OpenFable-Coderagent-gemma4-fable5-Q4_K_M.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "54.7%", "Wall time": "816s (14 min)"}, "tau2-bench": {"reward": "0.1538", "Wall time": "39210s (653 min)"}, "HumanEval": {"pass@1": "3.0%"}, "HumanEval (chat)": {"pass@1": "3.0%", "Wall time": "316s (5 min)"}}, "name": "RavenX-OpenFable-Coderagent gemma4 Q4_K_M", "category": "Other", "gpu": "3060"}, {"settings": {"DSpark": "False", "File": "Qwen3.5-9B-DeepSeek-V4-Flash-Q4_K_M.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "18.7%", "Wall time": "3509s (58 min)"}, "tau2-bench": {"reward": "0.4667", "Wall time": "1448s (24 min)"}}, "throughput": {"Decode tok/s": 80.7}, "name": "Qwen3.5-9B-DeepSeek-V4-Flash Q4_K_M", "category": "9B", "gpu": "V100"}, {"settings": {"DSpark": "False", "File": "gemma-4-12B-it-QAT-Q4_0.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "86.7%", "Wall time": "1427s (24 min)"}, "tau2-bench": {"reward": "0.4667", "Wall time": "1025s (17 min)"}}, "throughput": {"Decode tok/s": 56.3}, "name": "gemma-4-12B-it-QAT Q4_0", "category": "12-14B", "gpu": "V100"}, {"settings": {"DSpark": "False", "File": "gemma-4-26B-A4B-it-QAT-Q4_0.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "89.3%", "Wall time": "1241s (21 min)"}, "tau2-bench": {"reward": "0.4000", "Wall time": "1394s (23 min)"}}, "throughput": {"Decode tok/s": 83.3}, "name": "gemma-4-26B-A4B-it-QAT Q4_0", "category": "26B MoE", "gpu": "V100"}, {"settings": {"DSpark": "True", "File": "Ternary-Bonsai-27B-Q2_0.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "62.7%", "Wall time": "1847s (31 min)"}, "tau2-bench": {"reward": "0.8000", "Wall time": "3806s (63 min)"}}, "throughput": {"Decode tok/s": 36.3}, "name": "Ternary-Bonsai-27B Q2_0 (dspark)", "category": "27B Ternary", "gpu": "V100"}, {"settings": {"DSpark": "False", "File": "Qwen3.6-27B-MTP-Q4_K_M.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "53.3%", "Wall time": "5141s (86 min)"}, "tau2-bench": {"reward": "0.4000", "Wall time": "2206s (37 min)"}}, "throughput": {"Decode tok/s": 30.1}, "name": "Qwen3.6-27B-MTP Q4_K_M", "category": "27B Dense", "gpu": "V100"}, {"settings": {"File": "Ternary-Bonsai-27B-Q2_0.gguf"}, "vram": {"200K ctx": "11381 MiB (11.1 GB)", "100K ctx": "9133 MiB (8.9 GB)", "Max ctx no-draft": "200000", "Max ctx dspark": "100000"}, "throughput": {"Decode tok/s (3060)": 26.6}, "name": "Ternary-Bonsai-27B Q2_0 (3060)", "category": "27B Ternary", "gpu": "3060"}, {"settings": {"DSpark": "True", "File": "Ternary-Bonsai-27B-Q2_0.gguf"}, "benchmarks": {"LCB (3060+dspark)": {"pass@1": "64.0%", "Wall time": "2634s (44 min)"}, "tau2 (3060+dspark)": {"reward": "0.4545", "Wall time": "5843s (97 min)"}}, "throughput": {"Decode tok/s (3060+dspark)": 25.0}, "name": "Ternary-Bonsai-27B Q2_0 (3060+dspark)", "category": "27B Ternary", "gpu": "3060"}, {"settings": {"MTP": "False", "File": "gemma-4-12B-it-QAT-Q4_0.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "90.7%", "Wall time": "2091s (35 min)"}, "tau2-bench": {"reward": "0.4286", "Wall time": "2994s (50 min)"}}, "throughput": {"Decode tok/s": 38.2}, "name": "gemma-4-12B-it-QAT Q4_0 (3060 128K)", "category": "12-14B", "gpu": "3060"}, {"settings": {"MTP": "True", "File": "gemma4-v2-agentic-Q3_K_M.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "50.7%", "Wall time": "797s (13 min)"}, "tau2-bench": {"reward": "0.0667", "Wall time": "878s (15 min)"}}, "throughput": {"Decode tok/s": 34.5}, "name": "gemma4-v2-agentic Q3_K_M (3060+MTP)", "category": "Other", "gpu": "3060"}, {"settings": {"MTP": "True", "File": "gemma4-v2-agentic-Q4_K_M.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "50.7%", "Wall time": "678s (11 min)"}, "tau2-bench": {"reward": "0.0667", "Wall time": "1126s (19 min)"}}, "throughput": {"Decode tok/s": 38.0}, "name": "gemma4-v2-agentic Q4_K_M (3060+MTP)", "category": "Other", "gpu": "3060"}, {"settings": {"Thinking model": "True", "File": "Nanbeige4-3B-Thinking-Q8_0.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "13.3%", "Wall time": "4324s (72 min)"}, "tau2-bench": {"reward": "0.1667", "Wall time": "5382s (90 min)"}}, "name": "Nanbeige4-3B-Thinking Q8_0", "category": "Other", "gpu": "3060"}, {"settings": {"Thinking model": "True", "File": "Nanbeige4-3B-Thinking-Q4_K_M.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "0.0%", "error": "CUDA init failed - ran on CPU at 9.6 tok/s. Aborted."}, "tau2-bench": {"reward": "0.1333", "Wall time": "5622s (94 min)"}}, "throughput": {"Decode tok/s": 10.0}, "failures": [{"benchmark": "server_start", "attempt": "", "error": "CUDA forward compatibility error after long run - GPU not detected. Ran on CPU.", "timestamp": "2026-07-24T09:10:40"}], "name": "Nanbeige4-3B-Thinking Q4_K_M", "category": "Other", "gpu": "3060"}, {"settings": {"Binary": "btl-3-fork", "Thinking model": "True", "File": "BTL-3-Compact-AVQ2.gguf"}, "lcb_error": "Server died: Compact-AVQ2.gguf'\n0.00.839.655 E llama_model_load: error loading model: missing tensor 'token_embd.weight'\n0.00.839.715 E llama_model_load_from_file_impl: failed to load model\n0.00.839.773 E common_fit_params: encountered an error while trying to fit params to free device memory: failed to load model\n0.01.463.147 E llama_model_load: error loading model: missing tensor 'token_embd.weight'\n0.01.463.196 E llama_model_load_from_file_impl: failed to load model\n0.01.463.203 E cmn  common", "name": "BTL-3-Compact AVQ2", "category": "Other", "gpu": "3060"}, {"settings": {"Thinking model": "True", "File": "Laguna-S-2.1-UD-IQ3_S.gguf"}, "benchmarks": {"LiveCodeBench": {"Wall time": "253s (4 min)", "exit code": -15}, "tau2-bench": {"Wall time": "177s (3 min)", "exit code": -9}}, "name": "Laguna-S-2.1 UD-IQ3_S", "category": "Other", "gpu": "3060"}, {"settings": {"Thinking model": "True", "File": "Hermes3.6-35B-A3B-Uncensored-Genesis-V5-APEX-Compact.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "82.7%", "Wall time": "3579s (60 min)"}, "tau2-bench": {"reward": "0.0000", "Wall time": "4492s (75 min)"}}, "throughput": {"Decode tok/s": 26.5}, "name": "Hermes3.6-35B-A3B Genesis V5 APEX-Compact", "category": "MoE 35B", "gpu": "3060"}, {"settings": {"Binary": "btl-3-fork (--reasoning off)", "Thinking model": "True", "File": "BTL-3-Compact-AVQ2.gguf"}, "benchmarks": {"LiveCodeBench": {"Wall time": "12714s (212 min)"}, "tau2-bench": {"reward": "0.0000", "Wall time": "2722s (45 min)"}}, "throughput": {"Decode tok/s": 12.2}, "lcb_error": "Server died: Compact-AVQ2.gguf'\n0.00.790.633 E llama_model_load: error loading model: missing tensor 'token_embd.weight'\n0.00.790.690 E llama_model_load_from_file_impl: failed to load model\n0.00.790.740 E common_fit_params: encountered an error while trying to fit params to free device memory: failed to load model\n0.01.406.619 E llama_model_load: error loading model: missing tensor 'token_embd.weight'\n0.01.406.671 E llama_model_load_from_file_impl: failed to load model\n0.01.406.677 E cmn  common", "name": "BTL-3-Compact AVQ2 (V100)", "category": "Other", "gpu": "V100"}, {"settings": {"Thinking model": "True", "File": "Laguna-S-2.1-UD-IQ3_S.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "81.3%", "Wall time": "8434s (141 min)"}, "tau2-bench": {"Wall time": "958s (16 min)", "exit code": -9}}, "throughput": {"Decode tok/s": 3.0}, "name": "Laguna-S-2.1 UD-IQ3_S (V100)", "category": "Other", "gpu": "V100"}, {"settings": {"Thinking model": "True", "File": "ThinkingCap-Qwen3.6-27B-Q4_K_M.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "86.7%", "Wall time": "2953s (49 min)"}, "tau2-bench": {"reward": "0.4667", "Wall time": "1839s (31 min)"}}, "throughput": {"Decode tok/s": 29.8}, "name": "ThinkingCap-Qwen3.6-27B Q4_K_M (V100)", "category": "27B Dense", "gpu": "V100"}, {"settings": {"Binary": "upstream llama.cpp (--reasoning off)", "Thinking model": "True", "File": "BTL-3-merged-Q4_K_M.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "86.7%", "Wall time": "3553s (59 min)"}, "tau2-bench": {"reward": "0.4000", "Wall time": "1064s (18 min)"}}, "throughput": {"Decode tok/s": 29.6}, "name": "BTL-3 Full Q4_K_M (V100)", "category": "Other", "gpu": "V100"}, {"settings": {"File": "Qwen3.6-27B-FableFusion-MTP-Q4_K_M.gguf"}, "benchmarks": {"LiveCodeBench": {"pass@1": "65.3%", "Wall time": "2760s (46 min)"}, "tau2-bench": {"reward": "0.1000", "Wall time": "3119s (52 min)"}}, "throughput": {"Decode tok/s": 30.2}, "timing": {"Started": "2026-07-26T06:12:46", "Finished": "2026-07-26T07:52:27", "Duration": "100 min"}, "status": "completed", "name": "Qwen3.6-27B-FableFusion-MTP Q4_K_M", "category": "27B Dense", "gpu": "V100"}, {"settings": {"Quant": "Q1_0", "Bits/weight": 1.13, "File": "Bonsai-27B-Q1_0.gguf"}, "vram": {"262K ctx": "9719 MiB (9.5 GB)", "131K ctx": "6775 MiB (6.6 GB)", "Max ctx (3060)": "262144"}, "benchmarks": {"LCB (3060)": {"pass@1": "46.7%", "Wall time": "2677s (45 min)"}, "tau2 (3060)": {"reward": "0.1429", "Wall time": "4488s (75 min)"}}, "throughput": {"Decode tok/s (3060)": 28.3}, "timing": {"Started": "2026-07-26T18:39:25", "Finished": "2026-07-26T20:39:31", "Duration": "120 min"}, "status": "completed", "name": "Bonsai-27B Q1_0 (3060)", "category": "27B Ternary", "gpu": "3060"}];
+const DETAIL_MAP = {};
+DETAIL_DATA.forEach(d => { DETAIL_MAP[d.name] = d; });
+
+function esc(s) {
+  if (s === null || s === undefined) return '';
+  const d = document.createElement('div');
+  d.textContent = String(s);
+  return d.innerHTML;
+}
+
+function kvGrid(obj, valueClass) {
+  let html = '<div class="modal-kv">';
+  for (const [k, v] of Object.entries(obj)) {
+    const cls = valueClass && (typeof v === 'string' && (v.includes('gguf') || v.includes('--'))) ? 'v mono' : 'v';
+    html += `<span class="k">${esc(k)}</span><span class="${cls}">${esc(v)}</span>`;
+  }
+  html += '</div>';
+  return html;
+}
+
+function showModal(detail) {
+  document.getElementById('modalTitle').textContent = detail.name;
+  let body = '';
+
+  // Status badge
+  if (detail.status) {
+    const statusColor = detail.status === 'completed' ? '#3fb950' : '#d29922';
+    body += `<div style="margin-bottom:12px"><span class="badge" style="background:${statusColor}22;color:${statusColor};border:1px solid ${statusColor}44">${esc(detail.status)}</span>`;
+    if (detail.category) body += ` <span style="color:#8b949e;font-size:0.85em">${esc(detail.category)} on ${esc(detail.gpu || '?')}</span>`;
+    body += '</div>';
+  } else if (detail.category) {
+    body += `<div style="margin-bottom:12px;color:#8b949e;font-size:0.85em">${esc(detail.category)} on ${esc(detail.gpu || '?')}</div>`;
+  }
+
+  // Settings
+  if (detail.settings) {
+    body += '<div class="modal-section"><div class="modal-section-title">Settings</div>';
+    body += kvGrid(detail.settings);
+    body += '</div>';
+  }
+
+  // VRAM
+  if (detail.vram) {
+    body += '<div class="modal-section"><div class="modal-section-title">VRAM & Context</div>';
+    body += kvGrid(detail.vram);
+    body += '</div>';
+  }
+
+  // Throughput
+  if (detail.throughput) {
+    body += '<div class="modal-section"><div class="modal-section-title">Throughput</div>';
+    body += kvGrid(detail.throughput);
+    body += '</div>';
+  }
+
+  // Benchmarks
+  if (detail.benchmarks) {
+    body += '<div class="modal-section"><div class="modal-section-title">Benchmark Details</div>';
+    for (const [benchName, kv] of Object.entries(detail.benchmarks)) {
+      body += '<div class="modal-bench">';
+      body += `<div class="bench-name">${esc(benchName)}</div>`;
+      body += '<div class="bench-kv">';
+      for (const [k, v] of Object.entries(kv)) {
+        body += `<span class="k">${esc(k)}</span><span class="v">${esc(v)}</span>`;
+      }
+      body += '</div></div>';
+    }
+    body += '</div>';
+  }
+
+  // Timing
+  if (detail.timing) {
+    body += '<div class="modal-section"><div class="modal-section-title">Timing</div>';
+    body += kvGrid(detail.timing);
+    body += '</div>';
+  }
+
+  // Errors
+  if (detail.hard_error) {
+    body += '<div class="modal-section"><div class="modal-section-title">Hard Error</div>';
+    body += `<div class="modal-error">${esc(detail.hard_error)}</div>`;
+    body += '</div>';
+  }
+  if (detail.lcb_error && !detail.hard_error) {
+    body += '<div class="modal-section"><div class="modal-section-title">LCB Error</div>';
+    body += `<div class="modal-error">${esc(detail.lcb_error)}</div>`;
+    body += '</div>';
+  }
+  if (detail.tau2_error && !detail.hard_error) {
+    body += '<div class="modal-section"><div class="modal-section-title">tau2 Error</div>';
+    body += `<div class="modal-error">${esc(detail.tau2_error)}</div>`;
+    body += '</div>';
+  }
+
+  // Failures / adaptive retry
+  if (detail.failures && detail.failures.length > 0) {
+    body += '<div class="modal-section"><div class="modal-section-title">Failures & Retry History</div>';
+    for (const f of detail.failures) {
+      body += '<div class="modal-fail-entry">';
+      body += `<div class="fail-header">${esc(f.benchmark || '?')}`;
+      if (f.attempt) body += ` - attempt ${esc(f.attempt)}`;
+      if (f.timestamp) body += ` <span style="color:#484f58">(${esc(f.timestamp)})</span>`;
+      body += '</div>';
+      body += `<div>${esc(f.error)}</div>`;
+      if (f.settings) body += `<div class="fail-settings">Settings: ${esc(f.settings)}</div>`;
+      body += '</div>';
+    }
+    body += '</div>';
+  }
+
+  document.getElementById('modalBody').innerHTML = body;
+  document.getElementById('detailModal').classList.add('active');
+}
+
+function showDetail(name) {
+  if (DETAIL_MAP[name]) {
+    showModal(DETAIL_MAP[name]);
+  }
+}
+
+function closeModal() {
+  document.getElementById('detailModal').classList.remove('active');
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
 // Sortable table
 document.addEventListener('DOMContentLoaded', function() {
   const table = document.getElementById('resultsTable');
