@@ -20,6 +20,7 @@ V100_MODELS = [
     ("Qwopus3.6-27B-v2-MTP-Q4_K_M.gguf",          "CUDA0", False, True),   # new
     ("Qwopus3.5-27B-v3-Q4_K_M.gguf",              "CUDA0", False, False),  # new, no MTP
     ("Qwopus3.6-27B-Coder-Compat-MTP-Q4_K_M.gguf","CUDA0", False, True),   # new
+    ("Qwen3.6-27B-FableFusion-MTP-Q4_K_M.gguf",  "CUDA0", False, True),   # new - DavidAU Fable Fusion 711
 ]
 
 M3060_MODELS = [

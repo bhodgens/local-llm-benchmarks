@@ -23,7 +23,7 @@ LCB_DIR = "/home/caimlas/git/LiveCodeBench"
 TAU2_DIR = "/home/caimlas/git/tau2-bench"
 
 # V100 service to stop during benchmarks
-V100_SERVICE = "caimlas-coder"
+V100_SERVICE = "caimlas-bonsai"
 
 MODELS = [
     {
@@ -75,6 +75,17 @@ MODELS = [
         "name": "Qwen3.6-27B-MTP Q4_K_M",
         "file": "Qwen3.6-27B-MTP-Q4_K_M.gguf",
         "lcb_model": "local/qwen36-27b-mtp",
+        "binary": BINARY_UPSTREAM,
+        "args": ["--gpu-layers", "99", "--ctx-size", "262144", "--ubatch-size", "512",
+                 "--threads", "8", "--threads-batch", "8",
+                 "--cache-type-k", "q8_0", "--cache-type-v", "q8_0"],
+        "category": "27B",
+        "thinking": True,
+    },
+    {
+        "name": "Qwen3.6-27B-FableFusion-MTP Q4_K_M",
+        "file": "Qwen3.6-27B-FableFusion-MTP-Q4_K_M.gguf",
+        "lcb_model": "local/qwen36-27b-fable-mtp",
         "binary": BINARY_UPSTREAM,
         "args": ["--gpu-layers", "99", "--ctx-size", "262144", "--ubatch-size", "512",
                  "--threads", "8", "--threads-batch", "8",
