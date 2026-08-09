@@ -110,6 +110,65 @@ not be used for this model.
 
 ---
 
+## Failure Mode 5: BTL-4 IQ2_XXS Benchmark Issues (2026-08-09)
+
+### Affected: BTL-4 IQ2_XXS on 3060
+
+Four separate issues occurred during the benchmark run. All diagnosed and resolved.
+
+---
+
+### Issue 5a: LCB Model Not Registered (FIXED)
+
+**Symptom**: LCB runner exits immediately with `KeyError: 'local/btl4-iq2xxs'`
+**Root cause**: Model name not registered in LiveCodeBench's `lm_styles.py`
+**Fix**: Added entries for both quants:
+```python
+LanguageModel("local/btl4-iq2xxs", "BTL-4-IQ2_XXS", LMStyle.OpenAIChat, datetime(2024, 4, 1)),
+LanguageModel("local/btl4-q4km", "BTL-4-Q4_K_M", LMStyle.OpenAIChat, datetime(2024, 4, 1)),
+```
+File: `/home/caimlas/git/LiveCodeBench/lcb_runner/lm_styles.py`
+**Status**: Fixed. LCB ran successfully on retry (50.67% pass@1).
+
+---
+
+### Issue 5b: tau2 User Sim GPU Conflict (FIXED)
+
+**Symptom**: tau2-bench connection errors on all 15 tasks. Every task fails after 3 retries.
+**Root cause**: ExLlamaV3 (Gemma backend on port 8080) requires Ampere+ (sm_80+).
+The V100 is sm_70 (Volta), so Gemma cannot be moved to V100 as user sim.
+Meanwhile BTL-4 takes ~10GB on the 3060, leaving no room for Gemma's ExLlamaV3 (also ~10GB).
+Both models need GPU memory but cannot share the 3060 simultaneously.
+**Fix**: Used Qwythos-27B (llama.cpp, port 8081 on V100) as tau2 user simulator instead of Gemma.
+Qwythos runs fine on sm_70 via llama.cpp and is already configured as a systemd service.
+**Status**: Fixed. tau2 ran successfully (0.38 reward, 5/15 tasks passed).
+
+---
+
+### Issue 5c: tau2 Stale Results Blocking Non-Interactive Run (FIXED)
+
+**Symptom**: tau2 crashes with `EOFError: EOF when reading a line`
+**Root cause**: A results.json from the failed first run (issue 5b) existed at
+`tau2-bench/data/simulations/tau2_3060_BTL-4-IQ2XXS/results.json`.
+tau2 prompts "Do you want to resume the run? (y/n)" interactively.
+The benchmark script runs non-interactively (subprocess), so the prompt hits EOF and crashes.
+**Fix**: Delete stale results directory before re-running:
+`rm -rf /home/caimlas/git/tau2-bench/data/simulations/tau2_3060_BTL-4-IQ2XXS/`
+**Status**: Fixed. Added to checklist for future runs.
+
+---
+
+### Issue 5d: LCB Output Directory Mismatch (FIXED)
+
+**Symptom**: LCB completes 75 problems but pass@1 parses as None in the script.
+**Root cause**: The script looked for results in `output/local_btl4-iq2xxs/` but
+LCB writes to `output/BTL-4-IQ2_XXS/` (derived from the model display name in lm_styles.py,
+not the --model CLI argument). The eval JSON existed but in a different directory.
+**Fix**: Changed `output_dir` in the script from `local_btl4-iq2xxs` to `BTL-4-IQ2_XXS`.
+**Status**: Fixed. Eval JSON parsed correctly on manual check.
+
+---
+
 ## Models With Complete Results
 
 | Model | LCB pass@1 | tok/s | tau2 reward | GPU |
@@ -129,5 +188,6 @@ not be used for this model.
 | gemma4-v2 Q4_K_M | 0.587 | - | 0.133 | 3060 |
 | Neutrino-8B (FV5) | 0.080 | 41.3 | failed | V100 |
 | Nanbeige4-3B Q4_K_M | 0.000 | 10.0 | 0.133 | 3060 |
+| BTL-4 IQ2_XXS | 0.507 | 72.9 | 0.380 | 3060 |
 
 Full sortable report: `/home/caimlas/llm-benchmarks/report.html`
