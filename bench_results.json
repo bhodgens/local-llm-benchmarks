@@ -225,5 +225,195 @@
         "draft acceptance = 0.85106 (160 accepted / 188 generated), mean len = 2.70"
       ]
     }
+  },
+  "Qwythos-27B-MTP-Q4_K_M.gguf [no-spec]": {
+    "decode_tps_runs": [
+      30.1,
+      29.3
+    ],
+    "decode_tps_avg": 29.7,
+    "mtp_log": {
+      "lines": []
+    }
+  },
+  "Qwythos-27B-MTP-Q4_K_M.gguf [MTP-n3]": {
+    "decode_tps_runs": [
+      40.8,
+      39.8
+    ],
+    "decode_tps_avg": 40.3,
+    "mtp_log": {
+      "lines": [
+        "0.12.140.147 I slot print_timing: id  1 | task 0 | draft acceptance = 0.56250 (    9 accepted /    16 generated), mean len =  2.50",
+        "0.18.419.085 I slot print_timing: id  1 | task 10 | draft acceptance = 0.59489 (  163 accepted /   274 generated), mean len =  2.77",
+        "0.24.845.984 I slot print_timing: id  1 | task 105 | draft acceptance = 0.63740 (  167 accepted /   262 generated), mean len =  2.90"
+      ]
+    }
+  },
+  "Qwythos-27B-MTP-Q4_K_M.gguf [MTP-n5]": {
+    "decode_tps_runs": [
+      34.8,
+      33.7
+    ],
+    "decode_tps_avg": 34.2,
+    "mtp_log": {
+      "lines": [
+        "0.12.087.544 I slot print_timing: id  1 | task 0 | draft acceptance = 0.45455 (   10 accepted /    22 generated), mean len =  3.00",
+        "0.19.452.262 I slot print_timing: id  1 | task 9 | draft acceptance = 0.43069 (  174 accepted /   404 generated), mean len =  3.15",
+        "0.27.037.717 I slot print_timing: id  1 | task 93 | draft acceptance = 0.44898 (  176 accepted /   392 generated), mean len =  3.23"
+      ]
+    }
+  },
+  "Qwythos-9B-Claude-Mythos-5-1M-MTP-Q4_K_M.gguf [no-spec]": {
+    "decode_tps_runs": [
+      83.4,
+      79.5
+    ],
+    "decode_tps_avg": 81.5,
+    "mtp_log": {
+      "lines": []
+    }
+  },
+  "Qwythos-9B-Claude-Mythos-5-1M-MTP-Q4_K_M.gguf [MTP-n3]": {
+    "decode_tps_runs": [
+      99.3,
+      80.2
+    ],
+    "decode_tps_avg": 89.8,
+    "mtp_log": {
+      "lines": [
+        "0.06.618.427 I slot print_timing: id  1 | task 0 | draft acceptance = 0.90909 (   10 accepted /    11 generated), mean len =  3.50",
+        "0.09.195.892 I slot print_timing: id  1 | task 9 | draft acceptance = 0.67194 (  170 accepted /   253 generated), mean len =  3.00",
+        "0.12.389.464 I slot print_timing: id  1 | task 97 | draft acceptance = 0.50165 (  152 accepted /   303 generated), mean len =  2.49"
+      ]
+    }
+  },
+  "Qwythos-9B-Claude-Mythos-5-1M-MTP-Q4_K_M.gguf [MTP-n5]": {
+    "decode_tps_runs": [
+      95.1,
+      81.8
+    ],
+    "decode_tps_avg": 88.4,
+    "mtp_log": {
+      "lines": [
+        "0.06.704.232 I slot print_timing: id  1 | task 0 | draft acceptance = 0.73333 (   11 accepted /    15 generated), mean len =  3.75",
+        "0.09.397.138 I slot print_timing: id  1 | task 8 | draft acceptance = 0.58642 (  190 accepted /   324 generated), mean len =  3.92",
+        "0.12.526.107 I slot print_timing: id  1 | task 76 | draft acceptance = 0.50416 (  182 accepted /   361 generated), mean len =  3.49"
+      ]
+    }
+  },
+  "Qwen3.8-27B-Q4_K_M.gguf [no-spec]": {
+    "decode_tps_runs": [
+      31.1,
+      30.0
+    ],
+    "decode_tps_avg": 30.6,
+    "mtp_log": {
+      "lines": []
+    }
+  },
+  "Qwen3.8-27B-Q4_K_M.gguf [MTP-n3]": {
+    "decode_tps_runs": [
+      37.2,
+      34.0
+    ],
+    "decode_tps_avg": 35.6,
+    "mtp_log": {
+      "lines": [
+        "0.12.007.725 I slot print_timing: id  1 | task 0 | draft acceptance = 1.00000 (   11 accepted /    11 generated), mean len =  3.75",
+        "0.18.881.440 I slot print_timing: id  1 | task 8 | draft acceptance = 0.52703 (  156 accepted /   296 generated), mean len =  2.58",
+        "0.26.407.368 I slot print_timing: id  1 | task 110 | draft acceptance = 0.49351 (  152 accepted /   308 generated), mean len =  2.48"
+      ]
+    }
+  },
+  "Qwen3.8-27B-Q4_K_M.gguf [MTP-n5]": {
+    "decode_tps_runs": [
+      30.4,
+      39.6
+    ],
+    "decode_tps_avg": 35.0,
+    "mtp_log": {
+      "lines": [
+        "0.11.969.363 I slot print_timing: id  1 | task 0 | draft acceptance = 1.00000 (   12 accepted /    12 generated), mean len =  5.00",
+        "0.20.380.815 I slot print_timing: id  1 | task 7 | draft acceptance = 0.35903 (  163 accepted /   454 generated), mean len =  2.79",
+        "0.26.840.912 I slot print_timing: id  1 | task 102 | draft acceptance = 0.60063 (  191 accepted /   318 generated), mean len =  3.98"
+      ]
+    }
+  },
+  "Qwen3.8-27B-Uncensored-Q4_K_M.gguf [no-spec]": {
+    "decode_tps_runs": [
+      31.5,
+      30.0
+    ],
+    "decode_tps_avg": 30.8,
+    "mtp_log": {
+      "lines": []
+    }
+  },
+  "Qwen3.8-27B-Uncensored-Q4_K_M.gguf [MTP-n3]": {
+    "decode_tps_runs": [
+      40.7,
+      35.1
+    ],
+    "decode_tps_avg": 37.9,
+    "mtp_log": {
+      "lines": [
+        "0.10.924.802 I slot print_timing: id  1 | task 0 | draft acceptance = 0.60000 (    9 accepted /    15 generated), mean len =  2.50",
+        "0.17.220.945 I slot print_timing: id  1 | task 10 | draft acceptance = 0.60517 (  164 accepted /   271 generated), mean len =  2.80",
+        "0.24.510.368 I slot print_timing: id  1 | task 104 | draft acceptance = 0.51333 (  154 accepted /   300 generated), mean len =  2.54"
+      ]
+    }
+  },
+  "Qwen3.8-27B-Uncensored-Q4_K_M.gguf [MTP-n5]": {
+    "decode_tps_runs": [
+      34.6,
+      41.2
+    ],
+    "decode_tps_avg": 37.9,
+    "mtp_log": {
+      "lines": [
+        "0.12.071.823 I slot print_timing: id  1 | task 0 | draft acceptance = 0.47619 (   10 accepted /    21 generated), mean len =  3.00",
+        "0.19.462.518 I slot print_timing: id  1 | task 9 | draft acceptance = 0.43970 (  175 accepted /   398 generated), mean len =  3.19",
+        "0.25.679.571 I slot print_timing: id  1 | task 92 | draft acceptance = 0.63279 (  193 accepted /   305 generated), mean len =  4.11"
+      ]
+    }
+  },
+  "Qwen3.8-27B-AEON-Ultimate-Uncensored-Q4_K_M.gguf [no-spec]": {
+    "decode_tps_runs": [
+      31.3,
+      30.1
+    ],
+    "decode_tps_avg": 30.7,
+    "mtp_log": {
+      "lines": []
+    }
+  },
+  "Qwen3.8-27B-AEON-Ultimate-Uncensored-Q4_K_M.gguf [MTP-n3]": {
+    "decode_tps_runs": [
+      38.3,
+      40.1
+    ],
+    "decode_tps_avg": 39.2,
+    "mtp_log": {
+      "lines": [
+        "0.12.039.377 I slot print_timing: id  1 | task 0 | draft acceptance = 0.69231 (    9 accepted /    13 generated), mean len =  2.80",
+        "0.18.720.935 I slot print_timing: id  1 | task 10 | draft acceptance = 0.53584 (  157 accepted /   293 generated), mean len =  2.60",
+        "0.25.110.832 I slot print_timing: id  1 | task 111 | draft acceptance = 0.65116 (  168 accepted /   258 generated), mean len =  2.95"
+      ]
+    }
+  },
+  "Qwen3.8-27B-AEON-Ultimate-Uncensored-Q4_K_M.gguf [MTP-n5]": {
+    "decode_tps_runs": [
+      32.0,
+      30.0
+    ],
+    "decode_tps_avg": 31.0,
+    "mtp_log": {
+      "lines": [
+        "0.12.070.366 I slot print_timing: id  1 | task 0 | draft acceptance = 0.55556 (   10 accepted /    18 generated), mean len =  3.00",
+        "0.20.058.172 I slot print_timing: id  1 | task 9 | draft acceptance = 0.38303 (  167 accepted /   436 generated), mean len =  2.90",
+        "0.28.586.289 I slot print_timing: id  1 | task 100 | draft acceptance = 0.37162 (  165 accepted /   444 generated), mean len =  2.83"
+      ]
+    }
   }
 }

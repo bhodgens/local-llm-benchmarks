@@ -197,6 +197,18 @@ for m in progress['models']:
     if tps is None:
         tps = m.get('decode_tps_3060_dspark')
 
+    # MTP acceptance (from mtp_acceptance summary recorded by orchestrators)
+    mtp_acc = None
+    mtp_tps = None
+    macc = m.get('mtp_acceptance')
+    if isinstance(macc, dict):
+        n3 = macc.get('MTP-n3') or macc.get('MTP-n5')
+        if isinstance(n3, dict):
+            a = n3.get('acceptance_avg')
+            if isinstance(a, (int, float)):
+                mtp_acc = round(a * 100, 1)  # percent
+                mtp_tps = n3.get('decode_tps')
+
     name_lower = name.lower()
     if 'bonsai' in name_lower:
         category = '27B Ternary'
@@ -229,6 +241,8 @@ for m in progress['models']:
         'tau2': tau2_reward,
         'tau2_time_min': round(tau2_time / 60) if tau2_time else None,
         'decode_tps': tps,
+        'mtp_acceptance': mtp_acc,
+        'mtp_tps': mtp_tps,
         'failures': m.get('failures', []),
         'detail': detail,
     })
@@ -346,6 +360,7 @@ tr:hover { background: #161b22; }
   <th data-type="number" data-key="he">HumanEval</th>
   <th data-type="number" data-key="lcb">LiveCodeBench</th>
   <th data-type="number" data-key="tau2">tau2-bench</th>
+  <th data-type="number" data-key="mtp">MTP acc %</th>
   <th data-type="number" data-key="tau2_time">tau2 Time (min)</th>
 </tr>
 </thead>
@@ -396,6 +411,7 @@ for i, m in enumerate(models_sorted, 1):
   {bar_cell(m['human_eval'], 1.0, pct, '#238636')}
   {bar_cell(m['livecodebench'], lcb_max, pct, '#1f6feb')}
   {bar_cell(m['tau2'], tau2_max, tau2_fmt, '#d29922')}
+  {bar_cell(m['mtp_acceptance'], 100.0, lambda v: f'{v:.1f}%', '#ff7b72')}
   <td class="center">{str(m['tau2_time_min']) if m['tau2_time_min'] else '<span class="na">-</span>'}</td>
 </tr>"""
 
@@ -652,7 +668,8 @@ document.addEventListener('DOMContentLoaded', function() {
       case 'he': return parseFloat(cells[5].textContent.replace(/[^0-9.]/g, '')) || -1;
       case 'lcb': return parseFloat(cells[6].textContent.replace(/[^0-9.]/g, '')) || -1;
       case 'tau2': return parseFloat(cells[7].textContent.replace(/[^0-9.]/g, '')) || -1;
-      case 'tau2_time': return parseFloat(cells[8].textContent.replace(/[^0-9.]/g, '')) || 99999;
+      case 'mtp': return parseFloat(cells[8].textContent.replace(/[^0-9.]/g, '')) || -1;
+      case 'tau2_time': return parseFloat(cells[9].textContent.replace(/[^0-9.]/g, '')) || 99999;
       default: return 0;
     }
   }
