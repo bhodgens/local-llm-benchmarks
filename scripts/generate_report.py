@@ -108,6 +108,114 @@ def get_tps(name):
     return None
 
 
+# Base-model lineage per entry. Sources:
+#   [gguf] = general.base_model.* from the GGUF header (authoritative)
+#   [hf]   = upstream model card / base_model tag (authoritative)
+#   [infer]= family/architecture inference (flagged in lineage note)
+# value = (base_label, lineage_note); unknown bases intentionally omitted -> shown as em dash.
+BASE_MODELS = {
+    # --- Qwen3.8-27B family ---
+    'Qwen3.8-27B Q4_K_S': ('Qwen3.8-27B', 'Qwen/Qwen3.8-27B [gguf]'),
+    'Qwen3.8-27B Q4_K_M': ('Qwen3.8-27B', 'Qwen/Qwen3.8-27B [gguf]'),
+    'Qwen3.8-27B UD-IQ2_XXS': ('Qwen3.8-27B', 'Qwen/Qwen3.8-27B [gguf]'),
+    'Qwen3.8-27B Q4_K_M MTP': ('Qwen3.8-27B', 'Qwen/Qwen3.8-27B [gguf]'),
+    'Qwen3.8-27B Q4_K_M MTP [Sharp]': ('Qwen3.8-27B', 'Qwen/Qwen3.8-27B [gguf]'),
+    'Qwen3.8-27B Heretic Q4_K_M': ('Qwen3.8-27B', 'Qwen3.8-27B abliterated (Heretic) [infer: family]'),
+    'Qwen3.8-27B Uncensored Q4_K_M MTP': ('Qwen3.8-27B', 'Qwen3.8-27B abliterated [infer: family]'),
+    'Qwen3.8-27B AEON Ultimate Uncensored Q4_K_M MTP': ('Qwen3.8-27B', 'Aeon Uncensored bf16 merge [infer: family]'),
+    'Qwen3.8-27B UD-IQ3_S (GGUF, ~3.5bpw)': ('Qwen3.8-27B', 'Qwen/Qwen3.8-27B [gguf]'),
+    'Qwen3.8-27B UD-Q4_K_S (GGUF, ~4.5bpw)': ('Qwen3.8-27B', 'Qwen/Qwen3.8-27B [gguf]'),
+    'Qwen3.8-27B EXL3 3.5bpw [Mia-AiLab]': ('Qwen3.8-27B', 'Qwen/Qwen3.8-27B [infer: family]'),
+    'Qwen3.8-27B EXL3 4.0bpw [turboderp]': ('Qwen3.8-27B', 'Qwen/Qwen3.8-27B [infer: family]'),
+    'Qwen3.8-27B EXL3 4.5bpw [darkbit1001]': ('Qwen3.8-27B', 'Qwen/Qwen3.8-27B [infer: family]'),
+    'Carnice-V3 Q4_K_M': ('Qwen3.8-27B', 'base_model: Qwen/Qwen3.8-27B [gguf]'),
+    'Carnice-V3 Q4_K_M [Sharp]': ('Qwen3.8-27B', 'base_model: Qwen/Qwen3.8-27B [gguf]'),
+    'Qwopus3.8-27B-Flash MTP Q4_K_M': ('Qwen3.8-27B', 'Qwopus3.8 line [infer: family/name]'),
+    'Whittle-MoE-27B-A18B v2.1 Q4_K_M': ('Qwen3.8-27B', 'base_model: Qwen/Qwen3.8-27B-FP8, dense->MoE sparsification (logic65) [hf]'),
+    'Whittle-MoE-27B-A18B v2.1 Q4_K_M (3060)': ('Qwen3.8-27B', 'base_model: Qwen/Qwen3.8-27B-FP8, dense->MoE sparsification (logic65) [hf]'),
+    'Whittle-MoE-27B-A18B v2.1 BF16': ('Qwen3.8-27B', 'base_model: Qwen/Qwen3.8-27B-FP8, dense->MoE sparsification (logic65) [hf]'),
+
+    # --- Qwen3.6-27B family ---
+    'Qwen3.6-27B-MTP Q4_K_M': ('Qwen3.6-27B', 'Qwen/Qwen3.6-27B [infer: family]'),
+    'Qwen3.6-27B-FableFusion-MTP Q4_K_M': ('Qwen3.6-27B', 'FableFusion merge on Qwen3.6-27B [infer: family/name]'),
+    'Qwen3.6-27B-FableFusion-711 Q4_K_M MTP': ('Qwen3.6-27B', 'FableFusion-711 merge on Qwen3.6-27B [infer: family/name]'),
+    'ThinkingCap-Qwen3.6-27B Q4_K_M (V100)': ('Qwen3.6-27B', 'base_model: Qwen/Qwen3.6-27B (bottlecapai) [hf]'),
+    'ThinkingCap-Qwen3.6-27B Q4_K_M [Sharp]': ('Qwen3.6-27B', 'base_model: Qwen/Qwen3.6-27B (bottlecapai) [hf]'),
+    'BTL-3 Full Q4_K_M (V100)': ('Qwen3.6-27B', 'base_model: Qwen/Qwen3.6-27B pinned rev (badtheorylabs) [hf]'),
+    'BTL-3-Compact AVQ2': ('Qwen3.6-27B', 'lineage Qwen3.6-27B -> BTL-3 RL-0013 (badtheorylabs) [hf]'),
+    'BTL-3-Compact AVQ2 (V100)': ('Qwen3.6-27B', 'lineage Qwen3.6-27B -> BTL-3 RL-0013 (badtheorylabs) [hf]'),
+    'Qwopus3.6-27B-v2-MTP Q4_K_M': ('Qwen3.6-27B', 'Qwopus3.6-27B-v2 <- Qwen/Qwen3.6-27B (Jackrong) [hf]'),
+    'Qwopus3.6-27B-Coder-MTP Q5_K_S (speed-only)': ('Qwen3.6-27B', 'Coder <- Qwopus3.6-27B-v2 <- Qwen/Qwen3.6-27B [hf]'),
+    'Qwopus3.6-27B-Coder-Compat-MTP Q4_K_M (speed-only)': ('Qwen3.6-27B', 'Coder <- Qwopus3.6-27B-v2 <- Qwen/Qwen3.6-27B [hf]'),
+
+    # --- Qwen3.5-27B family ---
+    'Qwythos-27B-MTP Q4_K_M': ('Qwen3.5-27B', 'base_model: Qwen/Qwen3.5-27B (empero-ai, full-param SFT->DPO->ESFT) [hf]'),
+    'Qwythos-27B-MTP Q4_K_M [Sharp]': ('Qwen3.5-27B', 'base_model: Qwen/Qwen3.5-27B (empero-ai) [hf]'),
+
+    # --- Qwen3.6-35B-A3B family ---
+    'Qwen3.6-35B-A3B IQ3_K_R4': ('Qwen3.6-35B-A3B', 'Qwen/Qwen3.6-35B-A3B [gguf]'),
+    'Qwen3.6-35B-A3B-Abliterated-Heretic Q4_K_M': ('Qwen3.6-35B-A3B', 'base_model: Qwen/Qwen3.6-35B-A3B [gguf]'),
+    'Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL': ('Qwen3.6-35B-A3B', 'base_model: Qwen/Qwen3.6-35B-A3B [gguf]'),
+    'Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL [Sharp]': ('Qwen3.6-35B-A3B', 'base_model: Qwen/Qwen3.6-35B-A3B [gguf]'),
+    'RavenX-OpenFable-Holo3 Q4_K_M': ('Qwen3.6-35B-A3B', 'base_model: nightmedia Qwen3.6-35B-A3B-Holo3-Qwopus-BF16 [gguf]'),
+    'RavenX-OpenFable-Holo3 Q4_K_M [Sharp]': ('Qwen3.6-35B-A3B', 'base_model: nightmedia Qwen3.6-35B-A3B-Holo3-Qwopus-BF16 [gguf]'),
+    'Qwopus3.6-35B-A3B-Coder-MTP Q4_K_M': ('Qwen3.6-35B-A3B', 'Qwopus3.6 coder line, MoE sibling of 27B-v2 [infer: family]'),
+    'Hermes3.6-35B-A3B Genesis V5 APEX-Compact': ('Qwen3.6-35B-A3B', 'gguf name: Qwen3.6-35B-A3B-Uncensored-HauhauCS [gguf]'),
+    'Ornith-1.5-35B-A3B Q4_K_M': ('Ornith-1.0 35B', 'Ornith-1.5 extends Ornith-1.0 (built on Qwen3.5 + Gemma4) (ornith-ai) [hf]'),
+    'Ornith-1.5-35B-A3B Q4_K_M [Sharp]': ('Ornith-1.0 35B', 'Ornith-1.5 extends Ornith-1.0 (built on Qwen3.5 + Gemma4) (ornith-ai) [hf]'),
+    'Ornith-1.5-35B-A3B NVFP4 [FreeToken]': ('Ornith-1.0 35B', 'Ornith-1.5 extends Ornith-1.0 (built on Qwen3.5 + Gemma4) (ornith-ai) [hf]'),
+    'BTL-4 IQ2_XXS (3060)': ('Ornith-1.0 35B', 'base_model: Ornith 1.0 35B [gguf]'),
+    'BTL-4 Q4_K_M': ('Ornith-1.0 35B', 'base_model: Ornith 1.0 35B [gguf]'),
+
+    # --- Qwen3.5-9B / 4B family ---
+    'Qwythos-9B-Claude-Mythos-5-1M MTP Q4_K_M': ('Qwen3.5-9B', 'base_model: Qwen/Qwen3.5-9B (empero-ai, Claude-Mythos traces) [hf]'),
+    'Mythos-9B-MTP Q4_K_M': ('Qwen3.5-9B', 'Qwythos-9B-Claude-Mythos-5-1M <- Qwen/Qwen3.5-9B [hf]'),
+    'Qwen3.5-9B-DeepSeek-V4-Flash Q4_K_M': ('Qwen3.5-9B', 'DeepSeek-V4 reasoning distill of Qwen3.5-9B [infer: family/name]'),
+    'Qwen3.5-4B-MTP Q4_K_M (ThumbLLM)': ('Qwen3.5-4B', 'base_model: Qwen/Qwen3.5-4B [gguf]'),
+
+    # --- LFM ---
+    'LFM2.5-8B-A1B-Clean-RealWorld-v2 Q4_K_M': ('LFM2.5-8B-A1B', 'base_model: LiquidAI/LFM2.5-8B-A1B [gguf]'),
+    'LFM2.5-8B-A1B base Q4_K_M': ('LFM2.5-8B-A1B-Base', 'base_model: LiquidAI/LFM2.5-8B-A1B-Base [gguf]'),
+    'LFM2.5-8B-A1B Q6_K': ('LFM2.5-8B-A1B-Base', 'base_model: LiquidAI/LFM2.5-8B-A1B-Base [gguf]'),
+
+    # --- Gemma 4 ---
+    'gemma-4-12B-it-QAT Q4_0': ('gemma-4-12B-it', 'google QAT release (gg-hf-qat) [gguf]'),
+    'gemma-4-12B-it-QAT Q4_0 (3060 128K)': ('gemma-4-12B-it', 'google QAT release (gg-hf-qat) [gguf]'),
+    'gemma-4-12B-it-QAT w4a16 [FreeToken]': ('gemma-4-12B-it', 'google w4a16-ct checkpoint [gguf-lineage]'),
+    'gemma-4-26B-A4B-it-QAT Q4_0': ('gemma-4-26B-A4B-it', 'google QAT release [gguf]'),
+    'gemma4-coding Q4_K_M': ('gemma-4-12B', 'Gemma4 Coding merged fp16 [infer: gguf name]'),
+    'gemma4-v2 Q4_K_M': ('gemma-4-12B', 'Gemma4 v2 merged fp16 [infer: gguf name]'),
+    'gemma4-v2-agentic Q3_K_M (3060+MTP)': ('gemma-4-12B', 'gemma4-v2 agentic merge [infer: family]'),
+    'gemma4-v2-agentic Q4_K_M (3060+MTP)': ('gemma-4-12B', 'gemma4-v2 agentic merge [infer: family]'),
+    'gemma4-coding fable5-composer2.5 Q4_K_M': ('gemma-4-12B', 'merge: gemma4-coding + fable5-composer2.5 [infer: name]'),
+    'RavenX-OpenFable-Coderagent gemma4 Q4_K_M': ('gemma-4-12B', 'coderagent gemma4 merge [infer: name]'),
+
+    # --- misc / other families ---
+    'Ternary-Bonsai-27B Q2_0 (dspark)': ('Qwen3.6-27B', 'Derived from Qwen3.6-27B, ternary QAT (Prism ML) [hf]'),
+    'Ternary-Bonsai-27B Q2_0 (dspark) [Sharp]': ('Qwen3.6-27B', 'Derived from Qwen3.6-27B, ternary QAT (Prism ML) [hf]'),
+    'Ternary-Bonsai-27B Q2_0 (3060)': ('Qwen3.6-27B', 'Derived from Qwen3.6-27B, ternary QAT (Prism ML) [hf]'),
+    'Ternary-Bonsai-27B Q2_0 (3060+dspark)': ('Qwen3.6-27B', 'Derived from Qwen3.6-27B, ternary QAT (Prism ML) [hf]'),
+    'Bonsai-27B Q1_0 (3060)': ('Qwen3.6-27B', '1-bit Bonsai, derived from Qwen3.6-27B (Prism ML) [hf]'),
+    'Qwythos-27B-v1 Q4_K_M': ('Qwen3.5-27B', 'base_model: Qwen/Qwen3.5-27B (empero-ai) [hf]'),
+    'qwen2.5-coder-14b-instruct Q4_K_M': ('Qwen2.5-Coder-14B', 'Qwen/Qwen2.5-Coder-14B-Instruct [gguf]'),
+    'DeepSeek-R1-0528-Qwen3-8B Q8_0': ('Qwen3-8B', 'DeepSeek-R1-0528 distill to Qwen3-8B (official DeepSeek) [infer: known release]'),
+    'DeepSeek-R1-0528-Qwen3-8B Q4_K_M': ('Qwen3-8B', 'DeepSeek-R1-0528 distill to Qwen3-8B (official DeepSeek) [infer: known release]'),
+    'DeepSeek-Coder-V2-Lite IQ4_XS': ('—', 'standalone upstream model (DeepSeek-Coder-V2-Lite)'),
+    'Neutrino-8B (FV5 ternary)': ('Qwen3-8B', 'Base: Qwen/Qwen3-8B, ternary QAT by Fermion Research [hf]'),
+    'Instella-MoE-16B-A3B-SFT INT4 (bitsandbytes NF4)': ('AMD Instella-MoE-16B-A3B', 'AMD Instella SFT [infer: name]'),
+    'Nanbeige4-3B-Thinking Q8_0': ('Nanbeige4-3B', '[infer: name]'),
+    'Nanbeige4-3B-Thinking Q4_K_M': ('Nanbeige4-3B', '[infer: name]'),
+    'Muse-Glimmer-30B-UD-Q4_K_XL': ('—', 'standalone (own muse-glimmer arch) [gguf]'),
+    'Muse-Glimmer-30B-UD-Q4_K_XL [Sharp]': ('—', 'standalone (own muse-glimmer arch) [gguf]'),
+    'Laguna-S-2.1 UD-IQ3_S': ('Laguna-S-2.1', 'base_model: poolside/Laguna-S-2.1 [gguf]'),
+    'Laguna-S-2.1 UD-IQ3_S (V100)': ('Laguna-S-2.1', 'base_model: poolside/Laguna-S-2.1 [gguf]'),
+}
+
+def get_base(name):
+    return BASE_MODELS.get(name, ('—', ''))
+
+
+
 def build_detail(m):
     """Extract all available detail fields for a model entry."""
     detail = {}
@@ -301,11 +409,15 @@ for m in progress['models']:
     detail['name'] = name
     detail['category'] = category
     detail['gpu'] = m.get('gpu', '3060')
+    base_label, base_note = get_base(name)
+    if base_note:
+        detail['lineage'] = base_note
 
     models.append({
         'name': name,
         'category': category,
         'gpu': m.get('gpu', '3060'),
+        'base_model': base_label,
         'human_eval': he_score,
         'livecodebench': lcb_score,
         'tau2': tau2_reward,
@@ -433,6 +545,7 @@ tr:hover { background: #161b22; }
 <tr>
   <th data-type="number" data-key="idx">#</th>
   <th data-type="string" data-key="name">Model</th>
+  <th data-type="string" data-key="base">Base</th>
   <th data-type="string" data-key="category">Type</th>
   <th data-type="string" data-key="template">Template</th>
   <th data-type="string" data-key="engine">Engine</th>
@@ -491,6 +604,7 @@ for i, m in enumerate(models_sorted, 1):
         tmpl_badge = '<span class="na">-</span>'
     escaped_name = html.escape(m['name'], quote=True)
     js_name = json.dumps(m['name'])
+    base_label, base_note = get_base(m['name'])
 
     html_doc += f"""<tr>
   <td class="center">{i}</td>
@@ -498,6 +612,7 @@ for i, m in enumerate(models_sorted, 1):
     <span class="model-name" onclick='showDetail({js_name})'>{escaped_name}{fail_marker}</span>
     <span class="info-icon" onclick='showDetail({js_name})'>i</span>
   </td>
+  <td class="center"><span title="{html.escape(base_note)}">{html.escape(base_label)}</span></td>
   <td class="center"><span class="badge {cat_badge}">{m['category']}</span></td>
   <td class="center">{tmpl_badge}</td>
   <td class="center">{engine_badge}</td>
@@ -781,22 +896,27 @@ document.addEventListener('DOMContentLoaded', function() {
   let sortKey = 'tau2';
 
   function getCellValue(row, key) {
+    // Column position is derived from the header row's data-key order, so the
+    // switch below can never go stale when columns are added/reordered.
+    const keyToIdx = {};
+    table.querySelectorAll('thead th').forEach((th, i) => {
+      keyToIdx[th.getAttribute('data-key')] = i;
+    });
     const cells = row.querySelectorAll('td');
+    const ci = keyToIdx[key] !== undefined ? keyToIdx[key] : -1;
+    if (ci < 0) return 0;
+    const txt = cells[ci].textContent.trim();
     switch(key) {
-      case 'idx': return parseInt(cells[0].textContent);
-      case 'name': return cells[1].getAttribute('data-sort') || cells[1].textContent.toLowerCase();
-      case 'category': return cells[2].textContent.trim();
-      case 'template': return cells[3].textContent.trim();
-      case 'engine': return cells[4].textContent.trim();
-      case 'bk': return parseFloat(cells[5].textContent.replace(/[^0-9.]/g, '')) || -1;
-      case 'gpu': return cells[6].textContent.trim();
-      case 'tps': return parseFloat(cells[7].textContent.replace(/[^0-9.]/g, '')) || -1;
-      case 'he': return parseFloat(cells[8].textContent.replace(/[^0-9.]/g, '')) || -1;
-      case 'lcb': return parseFloat(cells[9].textContent.replace(/[^0-9.]/g, '')) || -1;
-      case 'tau2': return parseFloat(cells[10].textContent.replace(/[^0-9.]/g, '')) || -1;
-      case 'mtp': return parseFloat(cells[11].textContent.replace(/[^0-9.]/g, '')) || -1;
-      case 'tau2_time': return parseFloat(cells[12].textContent.replace(/[^0-9.]/g, '')) || 99999;
-      default: return 0;
+      case 'idx': return parseInt(cells[ci].textContent);
+      case 'name': return cells[ci].getAttribute('data-sort') || txt.toLowerCase();
+      case 'base': case 'category': case 'template': case 'engine': case 'gpu':
+        return txt === '—' ? '' : txt.toLowerCase();
+      case 'bench_date': return txt === '-' ? '' : txt;
+      default:
+        // numeric columns: strip non-numeric chars; N/A or '-' -> -1 (or 99999 for time)
+        const n = parseFloat(txt.replace(/[^0-9.]/g, ''));
+        if (!isNaN(n)) return n;
+        return key === 'tau2_time' ? 99999 : -1;
     }
   }
 
@@ -823,7 +943,7 @@ document.addEventListener('DOMContentLoaded', function() {
         sortDir = sortDir === 'asc' ? 'desc' : 'asc';
       } else {
         sortKey = key;
-        sortDir = key === 'name' || key === 'category' ? 'asc' : 'desc';
+        sortDir = key === 'name' || key === 'category' || key === 'base' || key === 'bench_date' ? 'asc' : 'desc';
       }
 
       headers.forEach(h => h.classList.remove('sorted-asc', 'sorted-desc'));

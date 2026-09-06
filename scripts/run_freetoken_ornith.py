@@ -81,10 +81,15 @@ def timed_completion(prompt, max_tokens=256):
     start = time.time()
     conn.request("POST", "/v1/chat/completions", payload, {"Content-Type": "application/json"})
     resp = conn.getresponse()
-    data = json.loads(resp.read())
+    body = resp.read()
     elapsed = time.time() - start
-    usage = data.get("usage", {})
-    toks = usage.get("completion_tokens", max_tokens)
+    if resp.status != 200:
+        raise RuntimeError(f"HTTP {resp.status} from server: {body[:200]!r}")
+    data = json.loads(body)
+    usage = data.get("usage") or {}
+    toks = usage.get("completion_tokens")
+    if not isinstance(toks, (int, float)) or toks <= 0:
+        raise RuntimeError(f"no completion_tokens in response usage (elapsed {elapsed:.3f}s): {body[:200]!r}")
     return toks / elapsed if elapsed > 0 else 0, toks
 
 def probe_tps():
