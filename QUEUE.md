@@ -168,8 +168,8 @@ Empirical audit of all 52 LCB output dirs found 19 with >=10% empty generations
 
 1. **CONFIRMED + FIXED**: thinking-family models missing from the
    `LCB_DISABLE_THINKING` allowlist (oai_runner.py) thought by default and burned
-   the 4096-token budget. Qwythos-9B-Mythos (52% empty) rerun in flight.
-   Same mechanism suspected: Qwen3.8-27B family (17-29% empty despite kwarg being
+   the 4096-token budget. Qwythos-9B-Mythos rerun DONE: 0.40 -> **0.587** (+18.7pp),
+   0/75 empty with kwarg sent. Same mechanism suspected: Qwen3.8-27B family (17-29% empty despite kwarg being
    sent - sent BEFORE 'qwen38' was added to the allowlist), Heretic-35B (85%),
    DSV4-Flash (81%), R1-8B Q4 (79%), Nanbeige (87%).
 2. **UNKNOWN cause**: LFM2.5-8B trio (35-43% empty, NOT a thinking model),

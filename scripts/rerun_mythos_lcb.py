@@ -13,7 +13,7 @@ import subprocess, json, time, os, urllib.request, shutil, re, sys, glob
 
 BINARY = "/home/caimlas/git/llama.cpp/build/bin/llama-server"
 LLMS_DIR = "/home/files/llms"
-PORT = 18099
+PORT = 18096  # NOT 18099: other bench harnesses use it; collision = health-checking the wrong server
 LOGS = "/tmp/coding-bench/logs"
 PROGRESS_FILE = "/tmp/coding-bench/progress.json"
 BENCH_PY = "/home/caimlas/bench-venv/bin/python"
@@ -43,13 +43,16 @@ def save_progress(p):
 
 
 def main():
-    # 1. preserve broken artifacts
-    if os.path.exists(OUT_DIR):
+    # 1. preserve broken artifacts (only if OUT_DIR has content; never clobber an
+    # existing .broken preservation with an empty dir)
+    if os.path.exists(OUT_DIR) and any(os.scandir(OUT_DIR)):
         broken = OUT_DIR + ".thinking-artifact-broken"
         if os.path.exists(broken):
             shutil.rmtree(broken)
         os.rename(OUT_DIR, broken)
         log(f"preserved old output as {os.path.basename(broken)}")
+    elif os.path.exists(OUT_DIR):
+        os.rmdir(OUT_DIR)  # leftover empty dir from a crashed prior attempt
 
     # 2. start agent server on 3060
     env = dict(os.environ)
@@ -64,18 +67,32 @@ def main():
     proc = subprocess.Popen(cmd, env=env, stdout=srv_log, stderr=subprocess.STDOUT, text=True)
     for _ in range(240):
         time.sleep(2)
-        try:
-            urllib.request.urlopen(f"http://127.0.0.1:{PORT}/health", timeout=3)
-            log("agent server up (3060)")
-            break
-        except Exception:
-            pass
         if proc.poll() is not None:
             log("FATAL: server died: " + open(os.path.join(LOGS, "mythos_lcb_rerun_server.log")).read()[-300:])
             sys.exit(1)
+        try:
+            urllib.request.urlopen(f"http://127.0.0.1:{PORT}/health", timeout=3)
+            break
+        except Exception:
+            pass
     else:
         proc.kill()
         log("FATAL: server timeout")
+        sys.exit(1)
+
+    # Identity check: confirm the server answering on PORT is OUR Mythos model,
+    # not another harness's server that happens to be up.
+    try:
+        props = json.loads(urllib.request.urlopen(f"http://127.0.0.1:{PORT}/props", timeout=5).read())
+        model_path = str(props)
+        if "Mythos" not in model_path and "mythos" not in model_path.lower():
+            log(f"FATAL: port {PORT} is served by a different model, aborting: {model_path[:200]}")
+            proc.kill()
+            sys.exit(1)
+        log("identity verified: our Mythos server is answering")
+    except Exception as e:
+        log(f"FATAL: could not verify server identity: {e}")
+        proc.kill()
         sys.exit(1)
 
     try:
@@ -121,20 +138,29 @@ def main():
         progress = load_progress()
         for m in progress["models"]:
             if m["name"] == NAME:
-                old = m.get("livecodebench", {})
-                m["livecodebench"] = {"pass_at_1": pass1,
-                                      "wall_time_s": round(elapsed, 1),
-                                      "exit_code": result.returncode}
-                m.setdefault("failures", []).append({
-                    "benchmark": "livecodebench (invalidated run)",
-                    "attempt": "1",
-                    "error": f"First run scored 0.40 as artifact: LCB_DISABLE_THINKING allowlist "
-                             f"lacked 'qwythos'/'mythos', model thought by default, 39/75 outputs "
-                             f"empty (4096-token budget consumed by reasoning). Answered problems "
-                             f"went 30/36. Rerun with thinking off: {pass1}.",
-                    "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime()),
-                })
-                _ = old
+                if pass1 is None:
+                    # NEVER clobber a recorded score with None; record failure only
+                    m.setdefault("failures", []).append({
+                        "benchmark": "livecodebench rerun (failed to produce score)",
+                        "attempt": "2",
+                        "error": f"Rerun crashed or produced no artifacts; livecodebench entry left "
+                                 f"unchanged. exit_code={result.returncode}",
+                        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime()),
+                    })
+                    log("pass@1 is None - livecodebench entry NOT modified")
+                else:
+                    m["livecodebench"] = {"pass_at_1": pass1,
+                                          "wall_time_s": round(elapsed, 1),
+                                          "exit_code": result.returncode}
+                    m.setdefault("failures", []).append({
+                        "benchmark": "livecodebench (invalidated run)",
+                        "attempt": "1",
+                        "error": f"First run scored 0.40 as artifact: LCB_DISABLE_THINKING allowlist "
+                                 f"lacked 'qwythos'/'mythos', model thought by default, 39/75 outputs "
+                                 f"empty (4096-token budget consumed by reasoning). Answered problems "
+                                 f"went 30/36. Rerun with thinking off: {pass1}.",
+                        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%S+00:00", time.gmtime()),
+                    })
                 break
         save_progress(progress)
         log("progress.json updated")
