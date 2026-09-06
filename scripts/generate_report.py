@@ -28,9 +28,24 @@ for m in progress.get('models', []):
     if tps:
         orig_tps[m['name']] = tps
 
+def _search_terms_for(name):
+    """Candidate LCB output-dir tokens for a progress entry name, including
+    variants with noise tokens (MTP, Sharp, quant suffixes) stripped — LCB dir
+    names don't always carry the same tokens as the entry name (e.g. entry
+    'Qwythos-9B-... MTP Q4_K_M' vs dir 'Qwythos-9B-... Q4_K_M')."""
+    safe = name.replace(' ', '_')
+    terms = [safe, safe.replace('_Q4_K_M','').replace('_Q6_K','').replace('_Q8_0','').replace('_Q4_0','').replace('_IQ4_XS','')]
+    for t in list(terms):
+        stripped = t
+        for noise in ('_MTP', '_Sharp', '_dspark', '_3060', '_V100'):
+            stripped = stripped.replace(noise, '')
+        if stripped and stripped not in terms:
+            terms.append(stripped)
+    return terms
+
+
 def find_lcb_score(model_name):
-    safe = model_name.replace(' ', '_')
-    search_terms = [safe, safe.replace('_Q4_K_M','').replace('_Q6_K','').replace('_Q8_0','').replace('_Q4_0','').replace('_IQ4_XS','')]
+    search_terms = _search_terms_for(model_name)
     for base_dir in [LCB_OUTPUT_DIR, '/tmp/coding-bench/results/lcb_thinking_off']:
         if not os.path.exists(base_dir):
             continue
@@ -56,8 +71,7 @@ def find_bench_date(model_name):
         if v:
             return str(v)[:10]
     name = model_name['name']
-    safe = name.replace(' ', '_')
-    search_terms = [safe, safe.replace('_Q4_K_M','').replace('_Q6_K','').replace('_Q8_0','').replace('_Q4_0','').replace('_IQ4_XS','')]
+    search_terms = _search_terms_for(name)
     # Fuzzy fallbacks: strip parentheticals and known suffix tokens to find the LCB dir
     base = re.sub(r'\(.*?\)', '', name).strip()
     for junk in (' Q4_K_M', ' Q4_K_S', ' Q5_K_S', ' Q6_K', ' Q8_0', ' Q4_0', ' Q2_0',

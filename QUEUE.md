@@ -158,3 +158,66 @@ hf download EschaLabs/Qwen3.6-35B-A3B-Escha-W2 --local-dir /home/files/llms/esch
 Current: 366 GB free on /home (1.5 TB used of 1.9 TB)
 Required: ~10 GB (IQ2_XXS) + ~21 GB (Q4_K_M) = ~31 GB total
 Status: Sufficient
+
+---
+
+# QUEUED (2026-09-06): LCB empty-content audit remediation
+
+Empirical audit of all 52 LCB output dirs found 19 with >=10% empty generations
+(empty `output_list` = model returned empty content = scored 0). Root causes:
+
+1. **CONFIRMED + FIXED**: thinking-family models missing from the
+   `LCB_DISABLE_THINKING` allowlist (oai_runner.py) thought by default and burned
+   the 4096-token budget. Qwythos-9B-Mythos (52% empty) rerun in flight.
+   Same mechanism suspected: Qwen3.8-27B family (17-29% empty despite kwarg being
+   sent - sent BEFORE 'qwen38' was added to the allowlist), Heretic-35B (85%),
+   DSV4-Flash (81%), R1-8B Q4 (79%), Nanbeige (87%).
+2. **UNKNOWN cause**: LFM2.5-8B trio (35-43% empty, NOT a thinking model),
+   Carnice-V3 (17%), Muse-Glimmer (20%), K2-Horizon (27%). Zero timeouts/errors
+   in runner+server logs; ~70% empty-position overlap across the 3 LFM variants
+   -> template/model-level (LFM2.5 returns empty content for certain LCB prompt
+   shapes; LFM has no enable_thinking kwarg to send).
+
+### Remediation queue (rerun LCB 75 after current jobs finish)
+- [ ] Tier 1 (thinking-suspect, high impact): Qwen3.8-27B Q4_K_S, Q4_K_M, Q4_K_M MTP,
+      Heretic, Uncensored MTP, AEON, UD-IQ3_S, UD-Q4_K_S (all V100) - verify kwarg
+      suppression with a live probe first; for templates that ignore
+      enable_thinking, serve with --reasoning-budget 0 instead
+- [ ] Tier 2: Heretic-35B-A3B, Qwen3.5-9B-DSV4-Flash, DeepSeek-R1-0528 Q4_K_M,
+      Nanbeige4-3B Q8_0 (same verify-first protocol)
+- [ ] Tier 3 (unknown cause): LFM2.5 base/Q6_K/Clean-RealWorld - diagnose first
+      (single-problem probe: capture raw response for one known-empty prompt;
+      check whether LFM template needs --reasoning-budget 0 or different sys format),
+      then rerun all three
+- [ ] Tier 4 (moderate): Carnice-V3, Muse-Glimmer, K2-Horizon
+- Preserved artifacts: broken outputs kept as <dir>.thinking-artifact-broken
+- Every rerun: record empty-rate + invalidation note in progress.json failures
+
+---
+
+# QUEUED (2026-09-06): tok/s re-test, top-5 LCB + top-5 tau2 (V100 ECC disabled)
+
+Purpose: measure ECC-off impact on V100 decode/prompt tok/s. Protocol identical to
+original speed_norm: llama-bench (pp512/tg128, -r 3, fa on, q8_0 kv) + 256-token
+decode probe. Record next to old numbers; report delta %.
+Note: ECC change affects V100 only -> 3060-lane rows are control re-measurements
+(two of them have no prior tok/s at all).
+
+### Top-5 LCB (tie at 92% -> 6 entries)
+- [ ] Qwythos-27B-v1 Q4_K_M          - V100 - orig flags: run_qwythos_27b (262K, jinja)
+- [ ] Qwythos-27B-MTP Q4_K_M         - V100 - orig flags + draft-mtp n3 (42.9 t/s config)
+- [ ] Nail-35B UD-Q4_K_XL [Sharp]    - V100 - run_sharp_template.py flags
+- [ ] BTL-4 Q4_K_M                   - V100 - run_btl4_q4km_v100.py flags
+- [ ] Ornith-1.5-35B Q4_K_M [Sharp]  - V100 - run_sharp_template.py flags
+- [ ] gemma-4-12B-it-QAT Q4_0 (3060 128K) - 3060 control
+
+### Top-5 tau2 (tie at 0.50 -> 6 entries)
+- [ ] Ternary-Bonsai-27B Q2_0 (dspark) - V100 - PrismML binary + dspark draft config
+- [ ] Carnice-V3 Q4_K_M                - V100
+- [ ] Qwopus3.6-27B-v2-MTP Q4_K_M      - V100 - cpu-moe 262K config
+- [ ] LFM2.5-8B-A1B-Clean-RealWorld-v2 - 3060 control
+- [ ] gemma4-coding Q4_K_M             - 3060 - NO prior tok/s (first measurement)
+- [ ] DeepSeek-Coder-V2-Lite IQ4_XS    - 3060 - NO prior tok/s (first measurement)
+
+Sequencing: after LCB remediation Tier 1/2 (both need V100; do tok/s re-tests
+first per model since the server is already up - probe adds ~3 min per model).
