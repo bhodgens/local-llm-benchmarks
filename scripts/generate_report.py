@@ -48,6 +48,58 @@ def find_lcb_score(model_name):
                                 return score
     return None
 
+def find_bench_date(model_name):
+    """Benchmark run day (YYYY-MM-DD): explicit timestamps first, then the
+    mtime of the matching LCB output file as a fallback proxy."""
+    for k in ('timestamp', 'start_time', 'end_time'):
+        v = model_name.get(k)
+        if v:
+            return str(v)[:10]
+    name = model_name['name']
+    safe = name.replace(' ', '_')
+    search_terms = [safe, safe.replace('_Q4_K_M','').replace('_Q6_K','').replace('_Q8_0','').replace('_Q4_0','').replace('_IQ4_XS','')]
+    # Fuzzy fallbacks: strip parentheticals and known suffix tokens to find the LCB dir
+    base = re.sub(r'\(.*?\)', '', name).strip()
+    for junk in (' Q4_K_M', ' Q4_K_S', ' Q5_K_S', ' Q6_K', ' Q8_0', ' Q4_0', ' Q2_0',
+                 ' MTP', ' BF16', ' GGUF', ' EXL3'):
+        base = base.replace(junk, '')
+    base = base.strip()
+    if base and base.lower() not in [t.lower() for t in search_terms]:
+        search_terms.append(base)
+    # First-word prefix fallback (e.g. 'gemma4-coding fable5-composer2.5' -> 'gemma4-coding')
+    first_word = base.split()[0] if base.split() else ''
+    if len(first_word) >= 8 and first_word.lower() not in [t.lower() for t in search_terms]:
+        search_terms.append(first_word)
+    # Curated aliases: display name fragment -> exact LCB output dir
+    ALIASES = {
+        'BTL-3 Full Q4_K_M': 'BTL-3-merged-Q4_K_M',
+    }
+    for frag, dirname_alias in ALIASES.items():
+        if frag.lower() in name.lower():
+            search_terms.append(dirname_alias)
+    # BTL-4 style: 'BTL-4 Q4_K_M' -> 'BTL-4' would also match BTL-4-IQ2_XXS; handled by
+    # best-mtime? No - wrong dir could win. Prefer term with highest similarity: pick dirs
+    # whose name starts with the base when base is short.
+    best = None
+    for base_dir in [LCB_OUTPUT_DIR, '/tmp/coding-bench/results/lcb_thinking_off']:
+        if not os.path.exists(base_dir):
+            continue
+        for d in glob.glob(base_dir + '/*'):
+            dirname = os.path.basename(d)
+            for term in search_terms:
+                tl = term.lower().replace('_', ' ').replace('-', ' ')
+                dl = dirname.lower().replace('_', ' ').replace('-', ' ')
+                if (term and (term in dirname or dirname in term)) or \
+                   (len(tl) >= 6 and (tl in dl or dl.startswith(tl))):
+                    eval_files = glob.glob(d + '/*_eval.json')
+                    if eval_files:
+                        mt = os.path.getmtime(eval_files[0])
+                        if best is None or mt > best:
+                            best = mt
+    if best is not None:
+        return datetime.fromtimestamp(best).strftime('%Y-%m-%d')
+    return None
+
 def get_tps(name):
     if name in orig_tps:
         return orig_tps[name]
@@ -80,6 +132,19 @@ def build_detail(m):
     if m.get('max_ctx_3060_nodraft'): vram['Max ctx no-draft'] = str(m['max_ctx_3060_nodraft'])
     if m.get('max_ctx_3060_dspark'): vram['Max ctx dspark'] = str(m['max_ctx_3060_dspark'])
     if vram: detail['vram'] = vram
+
+    # BenchKit suites
+    bk = m.get('benchkit', {})
+    if isinstance(bk, dict) and bk:
+        bkd = {}
+        for suite, d in bk.items():
+            if isinstance(d, dict) and d.get('score_pct') is not None:
+                entry = {'score': f"{d['score_pct']:.0f}% ({d.get('passed','?')}/{d.get('total','?')})"}
+                if d.get('wall_time_s'):
+                    entry['wall time'] = f"{d['wall_time_s']/60:.0f} min"
+                bkd[suite] = entry
+        if bkd:
+            detail['benchkit'] = bkd
 
     # Benchmark details with wall times
     benchmarks = {}
@@ -197,6 +262,11 @@ for m in progress['models']:
     if tps is None:
         tps = m.get('decode_tps_3060_dspark')
 
+    template = m.get('template') or ('stock' if 'livecodebench' in m or m.get('gpu') else None)
+    engine = m.get('engine') or 'llama.cpp'
+    bk = m.get('benchkit', {})
+    bk_score = bk.get('sanity', {}).get('score_pct') if isinstance(bk, dict) else None
+
     # MTP acceptance (from mtp_acceptance summary recorded by orchestrators)
     mtp_acc = None
     mtp_tps = None
@@ -243,6 +313,10 @@ for m in progress['models']:
         'decode_tps': tps,
         'mtp_acceptance': mtp_acc,
         'mtp_tps': mtp_tps,
+        'template': template,
+        'engine': engine,
+        'benchkit_sanity': bk_score,
+        'bench_date': find_bench_date(m),
         'failures': m.get('failures', []),
         'detail': detail,
     })
@@ -284,6 +358,11 @@ tr:hover { background: #161b22; }
 .badge-12b { background: #d2992222; color: #d29922; border: 1px solid #d2992244; }
 .badge-27b { background: #f8514922; color: #f85149; border: 1px solid #f8514944; }
 .badge-other { background: #8b949e22; color: #8b949e; border: 1px solid #8b949e44; }
+.badge-sharp { background: #f0883e22; color: #f0883e; border: 1px solid #f0883e44; }
+.badge-stock { background: #8b949e18; color: #6e7681; border: 1px solid #8b949e30; }
+.badge-ft { background: #a371f722; color: #a371f7; border: 1px solid #a371f744; }
+.badge-lcpp { background: #8b949e14; color: #768390; border: 1px solid #8b949e28; }
+.badge-exl3 { background: #f0883e22; color: #f0883e; border: 1px solid #f0883e44; }
 .note { background: #161b22; border-left: 3px solid #58a6ff; padding: 10px 15px; margin: 15px 0; font-size: 0.85em; color: #8b949e; }
 .failed { color: #f85149; }
 .summary-card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 15px; margin: 10px 0; }
@@ -355,6 +434,10 @@ tr:hover { background: #161b22; }
   <th data-type="number" data-key="idx">#</th>
   <th data-type="string" data-key="name">Model</th>
   <th data-type="string" data-key="category">Type</th>
+  <th data-type="string" data-key="template">Template</th>
+  <th data-type="string" data-key="engine">Engine</th>
+  <th data-type="number" data-key="bk">Sanity %</th>
+  <th data-type="string" data-key="bench_date">Run Date</th>
   <th data-type="string" data-key="gpu">GPU</th>
   <th data-type="number" data-key="tps">tok/s</th>
   <th data-type="number" data-key="he">HumanEval</th>
@@ -396,6 +479,16 @@ for i, m in enumerate(models_sorted, 1):
 
     detail_count = len(m['detail']) - 3  # subtract name, category, gpu
     detail_class = 'has-detail' if detail_count > 1 else ''
+    engine_badge = ('<span class="badge badge-ft">FreeToken</span>' if m.get('engine') == 'freetoken'
+                    else '<span class="badge badge-exl3">EXL3</span>' if m.get('engine') == 'exllamav3'
+                    else '<span class="badge badge-lcpp">llama.cpp</span>')
+    tmpl_badge = ''
+    if m.get('template') == 'sharp':
+        tmpl_badge = '<span class="badge badge-sharp">Sharp</span>'
+    elif m.get('template') == 'stock':
+        tmpl_badge = '<span class="badge badge-stock">stock</span>'
+    else:
+        tmpl_badge = '<span class="na">-</span>'
     escaped_name = html.escape(m['name'], quote=True)
     js_name = json.dumps(m['name'])
 
@@ -406,11 +499,15 @@ for i, m in enumerate(models_sorted, 1):
     <span class="info-icon" onclick='showDetail({js_name})'>i</span>
   </td>
   <td class="center"><span class="badge {cat_badge}">{m['category']}</span></td>
+  <td class="center">{tmpl_badge}</td>
+  <td class="center">{engine_badge}</td>
+  {bar_cell(m['benchkit_sanity'], 100.0, lambda v: f'{v:.0f}%', '#39c5cf')}
+  <td class="center">{'<span class="na">-</span>' if not m['bench_date'] else m['bench_date']}</td>
   <td class="center">{m['gpu']}</td>
   {bar_cell(m['decode_tps'], tps_max, tps_fmt, '#bc8cff')}
   {bar_cell(m['human_eval'], 1.0, pct, '#238636')}
-  {bar_cell(m['livecodebench'], lcb_max, pct, '#1f6feb')}
-  {bar_cell(m['tau2'], tau2_max, tau2_fmt, '#d29922')}
+  {bar_cell(m['livecodebench'], lcb_max, pct, '#79c0ff')}
+  {bar_cell(m['tau2'], tau2_max, tau2_fmt, '#56d364')}
   {bar_cell(m['mtp_acceptance'], 100.0, lambda v: f'{v:.1f}%', '#ff7b72')}
   <td class="center">{str(m['tau2_time_min']) if m['tau2_time_min'] else '<span class="na">-</span>'}</td>
 </tr>"""
@@ -473,6 +570,17 @@ html_doc += """</tbody>
     <li><strong>Qwen3.6-Abliterated-Heretic</strong> is consistently the weakest across all benchmarks</li>
     <li><strong>DeepSeek-Coder-V2-Lite</strong> is surprisingly strong on tau2 (0.50) despite being a coding model</li>
     <li><strong>IQ3_K_R4</strong> permanently failed (unsupported ggml type 138 quantization in llama.cpp v9836)</li>
+  </ul>
+</div>
+
+<div class="summary-card">
+  <h3>EXL3 on V100: Instruction-Set Wall (2026-09-04)</h3>
+  <ul>
+    <li><strong style="color:#f85149">EXL3 quants of Qwen3.8-27B cannot run on the V100</strong> - exllamav3 GEMM/GEMV kernels unconditionally require cp.async + mma.m16n8k16 (Ampere sm_80+ ISA). Verified 4 ways: wheel arch list (8.0-12.0), kernel source (no __CUDA_ARCH__ guards), ptxas probe (nvcc -arch=sm_70 rejects both instructions), runtime (cudaErrorNoKernelImageForDevice)</li>
+    <li>No alternative engine exists: vLLM/SGLang have no EXL3 support (open feature request), GPTQModel's EXL3 path is sm_75+. Fix requires an upstream pre-Ampere kernel path</li>
+    <li><strong style="color:#3fb950">GGUF fallback benchmarked instead</strong> (bpw-matched, same base): UD-IQ3_S (3.44bpw ~ Mia 3.5bpw) LCB 0.707 @ 29.1 t/s; UD-Q4_K_S (4.49bpw ~ darkbit 4.5bpw) LCB 0.693 @ 33.1 t/s; both 84% sanity</li>
+    <li>Q4_K_S is +14% faster at equal quality (LCB delta inside noise band; same-base runs span 0.693-0.760). Unsloth UD quants did NOT beat plain Q4_K_S (0.747)</li>
+    <li>EXL3 quality ceiling foregone (turboderp KLD ladder, weighted vs BF16): 3bpw 0.000399 / 4bpw 0.000124 / 5bpw 0.000038 - ~3.2x fidelity per bpw step, inaccessible until an Ampere+ GPU with &gt;=16GB VRAM is available</li>
   </ul>
 </div>
 
@@ -576,6 +684,21 @@ function showModal(detail) {
     body += '</div>';
   }
 
+  // BenchKit
+  if (detail.benchkit) {
+    body += '<div class="modal-section"><div class="modal-section-title">BenchKit Suites</div>';
+    for (const [suite, kv] of Object.entries(detail.benchkit)) {
+      body += `<div class="modal-bench">`;
+      body += `<div class="bench-name">${esc(suite)}</div>`;
+      body += '<div class="bench-kv">';
+      for (const [k, v] of Object.entries(kv)) {
+        body += `<span class="k">${esc(k)}</span><span class="v">${esc(v)}</span>`;
+      }
+      body += '</div></div>';
+    }
+    body += '</div>';
+  }
+
   // Benchmarks
   if (detail.benchmarks) {
     body += '<div class="modal-section"><div class="modal-section-title">Benchmark Details</div>';
@@ -663,13 +786,16 @@ document.addEventListener('DOMContentLoaded', function() {
       case 'idx': return parseInt(cells[0].textContent);
       case 'name': return cells[1].getAttribute('data-sort') || cells[1].textContent.toLowerCase();
       case 'category': return cells[2].textContent.trim();
-      case 'gpu': return cells[3].textContent.trim();
-      case 'tps': return parseFloat(cells[4].textContent.replace(/[^0-9.]/g, '')) || -1;
-      case 'he': return parseFloat(cells[5].textContent.replace(/[^0-9.]/g, '')) || -1;
-      case 'lcb': return parseFloat(cells[6].textContent.replace(/[^0-9.]/g, '')) || -1;
-      case 'tau2': return parseFloat(cells[7].textContent.replace(/[^0-9.]/g, '')) || -1;
-      case 'mtp': return parseFloat(cells[8].textContent.replace(/[^0-9.]/g, '')) || -1;
-      case 'tau2_time': return parseFloat(cells[9].textContent.replace(/[^0-9.]/g, '')) || 99999;
+      case 'template': return cells[3].textContent.trim();
+      case 'engine': return cells[4].textContent.trim();
+      case 'bk': return parseFloat(cells[5].textContent.replace(/[^0-9.]/g, '')) || -1;
+      case 'gpu': return cells[6].textContent.trim();
+      case 'tps': return parseFloat(cells[7].textContent.replace(/[^0-9.]/g, '')) || -1;
+      case 'he': return parseFloat(cells[8].textContent.replace(/[^0-9.]/g, '')) || -1;
+      case 'lcb': return parseFloat(cells[9].textContent.replace(/[^0-9.]/g, '')) || -1;
+      case 'tau2': return parseFloat(cells[10].textContent.replace(/[^0-9.]/g, '')) || -1;
+      case 'mtp': return parseFloat(cells[11].textContent.replace(/[^0-9.]/g, '')) || -1;
+      case 'tau2_time': return parseFloat(cells[12].textContent.replace(/[^0-9.]/g, '')) || 99999;
       default: return 0;
     }
   }

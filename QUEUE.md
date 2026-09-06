@@ -117,6 +117,42 @@ hf download EschaLabs/Qwen3.6-35B-A3B-Escha-W2 --local-dir /home/files/llms/esch
 
 ---
 
+## Queued: ThumbLLM model (Qwen3.5-4B-MTP Q4_K_M)
+
+- Source release: https://github.com/TeksEdge/ThumbLLM/releases/tag/thumbllm-qwen3.5-4b-mtp-q4_k_m-cpu-win-x64-v0.1.0
+- Actual model: unsloth/Qwen3.5-4B-MTP-GGUF -> `Qwen3.5-4B-Q4_K_M.gguf` (2.83 GB)
+- Note: the ThumbLLM release itself is a Windows-x64 CPU-only bundle (exe, 252 MB)
+  and does not run on this Linux box. Benchmark the underlying model file instead.
+- Target GPU: V100 or 3060 (fits both; MTP heads are the interesting axis ->
+  benchmark no-spec vs MTP n=3 like the other Qwen MTP models)
+- Harness: tok/s + BenchKit gate + LCB 75; register LCB id `local/qwen35-4b-mtp-q4km`
+- Status: QUEUED (not downloaded, not run)
+
+---
+
+## Queued: Qwopus3.8-27B-Flash MTP Q4_K_M (V100)
+
+- Source: https://huggingface.co/Jackrong/Qwopus3.8-27B-Flash-GGUF
+- File: `Qwopus3.8-27B-Flash-MTP-Q4_K_M.gguf` (16.81 GB) — Qwen3.8-27B fine-tune
+  with bundled NextN/MTP head; fits V100 32GB with full MTP
+- Target GPU: V100 (CUDA0)
+- **Production-optimal settings** (per model card battery + house findings):
+  - `--flash-attn on`, `--cache-type-k q8_0 --cache-type-v q8_0`
+  - `--spec-type draft-mtp --spec-draft-n-max 3` (self-speculative MTP;
+    model card reports 80.7% weighted draft acceptance, +12.8% decode)
+  - `--ctx-size 65536 --ubatch-size 512 --gpu-layers 99`
+  - thinking disabled (`--reasoning-budget 0` or template flag) for coding runs;
+    LCB rows both thinking-on and thinking-off if time allows
+- Harness: tok/s probe + BenchKit sanity:25 + LCB 75 (thinking off);
+  record MTP acceptance rates (house report column) alongside decode t/s
+- Baselines in progress.json: plain Qwen3.8 Q4_K_M MTP n3 = 35.6 t/s @ 0.674 acc,
+  LCB 0.760; this run tests whether Flash's claimed acceptance gain (+14.6pp)
+  holds at Q4_K_M on V100
+- LCB id to register: `local/qwopus38-flash-q4km-mtp`
+- Status: QUEUED (not downloaded, not run)
+
+---
+
 ## Disk Space
 
 Current: 366 GB free on /home (1.5 TB used of 1.9 TB)
