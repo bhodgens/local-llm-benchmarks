@@ -415,5 +415,148 @@
         "0.28.586.289 I slot print_timing: id  1 | task 100 | draft acceptance = 0.37162 (  165 accepted /   444 generated), mean len =  2.83"
       ]
     }
+  },
+  "Qwythos-27B-MTP-Q4_K_M.gguf [ecc-off]": {
+    "ecc_off": {
+      "pp512": 662.19,
+      "tg128": 31.62,
+      "decode_tps_probe": 40.61
+    },
+    "prior_speed_norm": {},
+    "gpu": "GPU0",
+    "mode": "mtp3",
+    "timestamp": "2026-09-07T16:32:06+00:00"
+  },
+  "Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf [ecc-off]": {
+    "ecc_off": {
+      "pp512": 751.98,
+      "tg128": 91.65,
+      "decode_tps_probe": 85.31
+    },
+    "prior_speed_norm": {},
+    "gpu": "GPU0",
+    "mode": "plain",
+    "timestamp": "2026-09-07T16:32:06+00:00"
+  },
+  "badtheorylabs_BTL-4-Q4_K_M.gguf [ecc-off]": {
+    "ecc_off": {
+      "pp512": 753.9,
+      "tg128": 93.69,
+      "decode_tps_probe": 88.81
+    },
+    "prior_speed_norm": {
+      "pp512": 150.88,
+      "tg128": 88.85
+    },
+    "gpu": "GPU0",
+    "mode": "plain",
+    "timestamp": "2026-09-07T16:32:06+00:00"
+  },
+  "Ornith-1.5-35B-Q4_K_M.gguf [ecc-off]": {
+    "ecc_off": {
+      "pp512": 724.98,
+      "tg128": 97.81,
+      "decode_tps_probe": 92.06
+    },
+    "prior_speed_norm": {},
+    "gpu": "GPU0",
+    "mode": "plain",
+    "timestamp": "2026-09-07T16:32:06+00:00"
+  },
+  "gemma-4-12B-it-QAT-Q4_0.gguf [ecc-off]": {
+    "ecc_off": {
+      "pp512": 1087.15,
+      "tg128": 38.13,
+      "decode_tps_probe": 39.81
+    },
+    "prior_speed_norm": {},
+    "gpu": "GPU1",
+    "mode": "plain",
+    "timestamp": "2026-09-07T16:32:06+00:00"
+  },
+  "Ternary-Bonsai-27B-Q2_0.gguf [ecc-off]": {
+    "ecc_off": {
+      "error": "server died: ad model, '/home/files/llms/Ternary-Bonsai-27B-Q2_0.gguf'\n0.00.346.711 I srv    operator(): operator(): cleaning up before exit...\n0.00.347.575 E srv  llama_server: exiting due to model loading error\n"
+    },
+    "prior_speed_norm": {},
+    "gpu": "GPU0",
+    "mode": "dspark",
+    "timestamp": "2026-09-07T16:32:06+00:00"
+  },
+  "Carnice-V3-Q4_K_M.gguf [ecc-off]": {
+    "ecc_off": {
+      "pp512": 658.71,
+      "tg128": 32.35,
+      "decode_tps_probe": 31.24
+    },
+    "prior_speed_norm": {},
+    "gpu": "GPU0",
+    "mode": "plain",
+    "timestamp": "2026-09-07T16:32:06+00:00"
+  },
+  "Qwopus3.6-27B-v2-MTP-Q4_K_M.gguf [ecc-off]": {
+    "ecc_off": {
+      "pp512": 657.79,
+      "tg128": 32.13,
+      "decode_tps_probe": 32.03
+    },
+    "prior_speed_norm": {},
+    "gpu": "GPU0",
+    "mode": "plain",
+    "timestamp": "2026-09-07T16:32:06+00:00"
+  },
+  "LFM2.5-8B-A1B-Clean-RealWorld-v2-Q4_K_M.gguf [ecc-off]": {
+    "ecc_off": {
+      "pp512": 4627.68,
+      "tg128": 195.27,
+      "decode_tps_probe": 205.85
+    },
+    "prior_speed_norm": {},
+    "gpu": "GPU1",
+    "mode": "plain",
+    "timestamp": "2026-09-07T16:32:06+00:00"
+  },
+  "gemma4-coding-Q4_K_M.gguf [ecc-off]": {
+    "ecc_off": {
+      "pp512": 998.47,
+      "tg128": 35.83,
+      "decode_tps_probe": 37.18
+    },
+    "prior_speed_norm": {},
+    "gpu": "GPU1",
+    "mode": "plain",
+    "timestamp": "2026-09-07T16:32:06+00:00"
+  },
+  "Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL [ecc-off-origcfg]": {
+    "ecc_off_origcfg": {
+      "error": "ltiple values can be given for each parameter by separating them with ','\nor by specifying the parameter multiple times. Ranges can be given as\n'first-last' or 'first-last+step' or 'first-last*mult'.\n"
+    },
+    "gpu": "GPU0",
+    "note": "cpu-moe 262K ctx, matches original run config",
+    "timestamp": "2026-09-07T17:01:17+00:00"
+  },
+  "Ornith-1.5-35B-A3B Q4_K_M [Sharp] [ecc-off-origcfg]": {
+    "ecc_off_origcfg": {
+      "error": "ltiple values can be given for each parameter by separating them with ','\nor by specifying the parameter multiple times. Ranges can be given as\n'first-last' or 'first-last+step' or 'first-last*mult'.\n"
+    },
+    "gpu": "GPU0",
+    "note": "cpu-moe 262K ctx, matches original run config",
+    "timestamp": "2026-09-07T17:01:17+00:00"
+  },
+  "Ternary-Bonsai-27B Q2_0 [ecc-off-prismml-bench]": {
+    "bench": {
+      "error": "a |            test |                  t/s |\n| ------------------------------ | ---------: | ---------: | ---------- | --: | ------: | -----: | -----: | --: | --------------: | -------------------: |\n"
+    },
+    "gpu": "GPU0",
+    "note": "PrismML fork (Q2_0_g128); llama-bench cannot do dspark pairs",
+    "timestamp": "2026-09-07T17:01:17+00:00"
+  },
+  "Ternary-Bonsai-27B Q2_0 (dspark) [ecc-off-dspark-probe]": {
+    "probe": {
+      "error": "server died: ad model, '/home/files/llms/Ternary-Bonsai-27B-Q2_0.gguf'\n0.02.295.502 I srv    operator(): operator(): cleaning up before exit...\n0.02.296.759 E srv  llama_server: exiting due to model loading error\n"
+    },
+    "gpu": "GPU0",
+    "note": "PrismML + dspark draft n=4, same protocol as original 36.3 t/s",
+    "timestamp": "2026-09-07T17:01:17+00:00"
   }
 }

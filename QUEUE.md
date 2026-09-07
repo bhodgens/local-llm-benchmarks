@@ -223,3 +223,16 @@ Note: ECC change affects V100 only -> 3060-lane rows are control re-measurements
 
 Sequencing: after LCB remediation Tier 1/2 (both need V100; do tok/s re-tests
 first per model since the server is already up - probe adds ~3 min per model).
+
+---
+
+# DONE (2026-09-06): ECC tok/s re-tests
+
+Executed via scripts/ecc_toks_retest.py + ecc_toks_followup*.py. Results and
+verdict: ecc_retest_results.md + bench_results.json [ecc-off*] keys.
+**Verdict: ECC-off = +0% to +5.4% decode on V100, within control-lane noise
+(control 3060 moved +4.2% with no HW change). No material tok/s impact.**
+Blocked follow-ups (documented in ecc_retest_results.md): Nail/Ornith 262K
+cpu-moe configs fail on current llama.cpp build (create_context); Bonsai
+dspark PrismML probe aborted (VRAM fit conflicts, low-value per house rule);
+DS-Coder-V2-Lite GGUF deleted.
