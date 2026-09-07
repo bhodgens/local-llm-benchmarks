@@ -179,19 +179,21 @@ Empirical audit of all 52 LCB output dirs found 19 with >=10% empty generations
    shapes; LFM has no enable_thinking kwarg to send).
 
 ### Remediation queue (rerun LCB 75 after current jobs finish)
-- [ ] Tier 1 (thinking-suspect, high impact): Qwen3.8-27B Q4_K_S, Q4_K_M, Q4_K_M MTP,
-      Heretic, Uncensored MTP, AEON, UD-IQ3_S, UD-Q4_K_S (all V100) - verify kwarg
-      suppression with a live probe first; for templates that ignore
-      enable_thinking, serve with --reasoning-budget 0 instead
-- [ ] Tier 2: Heretic-35B-A3B, Qwen3.5-9B-DSV4-Flash, DeepSeek-R1-0528 Q4_K_M,
-      Nanbeige4-3B Q8_0 (same verify-first protocol)
-- [ ] Tier 3 (unknown cause): LFM2.5 base/Q6_K/Clean-RealWorld - diagnose first
-      (single-problem probe: capture raw response for one known-empty prompt;
-      check whether LFM template needs --reasoning-budget 0 or different sys format),
-      then rerun all three
-- [ ] Tier 4 (moderate): Carnice-V3, Muse-Glimmer, K2-Horizon
-- Preserved artifacts: broken outputs kept as <dir>.thinking-artifact-broken
-- Every rerun: record empty-rate + invalidation note in progress.json failures
+- **IN PROGRESS (2026-09-06 05:13)**: `scripts/lcb_remediation_reruns.py` running
+  all 13 rerunnable models sequentially on V100 (dedicated port 18096, /props
+  identity check, never overwrites a score with None). Broken artifacts per model
+  -> `<dir>.empty-content-broken`.
+- [x] Tier 1: Qwen3.8-27B Q4_K_M, Q4_K_M MTP, Heretic, Uncensored MTP, AEON,
+      UD-IQ3_S, UD-Q4_K_S (7 on disk; **Q4_K_S GGUF deleted** -> invalidation note only)
+- [x] Tier 2 partially: Heretic-35B-A3B queued in script.
+      **DELETED, NOT RERUNNABLE (invalidation notes added to progress.json)**:
+      Qwen3.5-9B-DSV4-Flash (61 empty), DeepSeek-R1-0528 Q4_K_M (59 empty),
+      Nanbeige4-3B Q8_0 (65 empty). Recorded scores are lower bounds only.
+- [x] Tier 3: LFM base/Q6_K/Clean-RealWorld queued in script (rerun doubles as the
+      diagnosis: if empty-rate stays high with kwarg sent, cause is template-level)
+- [x] Tier 4: Carnice-V3, Muse-Glimmer queued in script. K2-Horizon BF16: 27% empty,
+      file deleted earlier -> not rerunnable.
+- Rerun trigger for reference: Qwythos-9B-Mythos 0.40 -> 0.587 (+18.7pp), 0/75 empty.
 
 ---
 
