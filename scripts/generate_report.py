@@ -311,6 +311,17 @@ def build_detail(m):
     if m.get('decode_tps_3060'): throughput['Decode tok/s (3060)'] = m['decode_tps_3060']
     if m.get('decode_tps_3060_dspark'): throughput['Decode tok/s (3060+dspark)'] = m['decode_tps_3060_dspark']
     if m.get('prompt_tps'): throughput['Prompt tok/s'] = m['prompt_tps']
+    # dspark draft-pair probes (Bonsai ecc retest, MiniCPM draft head)
+    for dk, label in [('ecc_dspark_retry', 'Bonsai dspark (draft n=4) decode tok/s'),
+                      ('dspark_draft', 'DSpark draft-head decode tok/s')]:
+        ds = m.get(dk)
+        if isinstance(ds, dict):
+            val = ds.get('dspark_decode_tps') or ds.get('decode_tps')
+            if val:
+                line = str(val)
+                if ds.get('plain_baseline'):
+                    line += f" (plain {ds['plain_baseline']}, {ds.get('delta_pct','?')}%)"
+                throughput[label] = line
     if throughput: detail['throughput'] = throughput
 
     # Errors
@@ -383,6 +394,20 @@ for m in progress['models']:
         tps = m.get('decode_tps_3060')
     if tps is None:
         tps = m.get('decode_tps_3060_dspark')
+
+    # dspark draft-pair measurements (ecc_dspark_retry / dspark_draft subdicts):
+    # show as annotated main tok/s + detail-modal line, never as a separate column
+    dspark_note = None
+    for dk, label in [('ecc_dspark_retry', 'Bonsai dspark (draft n=4, ECC-off retest)'),
+                      ('dspark_draft', 'MiniCPM dspark (draft n=4)')]:
+        ds = m.get(dk)
+        if isinstance(ds, dict) and ds.get('dspark_decode_tps') or isinstance(ds, dict) and ds.get('decode_tps'):
+            val = ds.get('dspark_decode_tps') or ds.get('decode_tps')
+            base = ds.get('plain_baseline')
+            if val:
+                dspark_note = f"{label}: {val} tok/s" + (f" vs plain {base} ({ds.get('delta_pct','?'):+}%)" if base else "")
+                if tps is None:
+                    tps = val
 
     template = m.get('template') or ('stock' if 'livecodebench' in m or m.get('gpu') else None)
     engine = m.get('engine') or 'llama.cpp'
