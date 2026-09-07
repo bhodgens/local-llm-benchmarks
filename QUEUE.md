@@ -161,7 +161,31 @@ Status: Sufficient
 
 ---
 
-# QUEUED (2026-09-06): LCB empty-content audit remediation
+# QUEUED (2026-09-06): LCB empty-content audit + ECC tok/s re-tests + new models
+
+## STATUS: ALL EXECUTED (2026-09-07)
+
+1. **LCB empty-content remediation** - DONE, commit b0fb999. Qwen3.8 family
+   +9-17pp across 7 variants; Heretic-35B and LFM trio diagnosed as REAL
+   (not artifacts); 5 deleted-file models carry invalidation notes.
+2. **ECC tok/s re-tests** - DONE, commit c7761a3. Verdict: +0% to +5.4%,
+   within control-lane noise. See ecc_retest_results.md.
+3. **Bonsai dspark retry** - DONE. WORKS: 37.69 t/s (prior 36.3, +3.8%).
+   Root cause of earlier failures: caimlas-qwythos holding V100 VRAM, NOT
+   fit-logic conflicts. Recipe: PrismML fork + `-fit off`, V100 must be
+   exclusive (stop production service first). Result in progress.json
+   `Ternary-Bonsai-27B Q2_0 (dspark)` -> ecc_dspark_retry.
+4. **DogukanUrker-BTL-4 Q4_K_M** (community quant from tweet) - DONE.
+   V100: 91.7 t/s, sanity 92%, LCB 0.92 (0 empty), tau2 0.40 - statistically
+   indistinguishable from our badtheorylabs build (88.8/92%/0.92/0.20-ish).
+   The upstream Q4_K_M is healthy on V100 full-offload; no --n-cpu-moe needed.
+5. **MiniCPM5-2B Q8_0** (openbmb) - DONE on BOTH GPUs per user config
+   (131K ctx, f16 KV, temp 1.0/top-p 0.95 serving; temp 0.0 for benches).
+   3060: 112.7 t/s, sanity 72%, LCB 0.573 (0 empty), tau2 0.571.
+   V100: 166.0 t/s, sanity 64%, LCB 0.520 (0 empty), tau2 0.333.
+   Read: fast little model; quality mid-pack at 2B; sanity/LCB/tau2 deltas
+   between GPUs are run variance, not silicon (same quant). Note:
+   openbmb/MiniCPM5-2B-DSpark exists (official draft model) - unexplored.
 
 Empirical audit of all 52 LCB output dirs found 19 with >=10% empty generations
 (empty `output_list` = model returned empty content = scored 0). Root causes:
