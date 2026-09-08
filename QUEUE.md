@@ -110,54 +110,54 @@ hf download EschaLabs/Qwen3.6-35B-A3B-Escha-W2 --local-dir /home/files/llms/esch
 - Results: tok/s=72.9, LCB=50.7%, tau2=0.38 (5/15 passed), VRAM=9905 MiB
 - User sim: Qwythos-27B on V100 (Gemma ExLlamaV3 needs Ampere+, cannot use V100)
 
-### Phase 2: Q4_K_M on V100 (32GB, sm_70) -- QUEUED
-- File: badtheorylabs_BTL-4-Q4_K_M.gguf (21.4 GB)
-- Full GPU offload, same harness
-- Script: TBD (run_btl4_q4km.py)
+### Phase 2: Q4_K_M on V100 (32GB, sm_70) -- COMPLETE
+- Done (pre-2026-09-07): LCB 0.92, tau2 0.20, 88.8 t/s (progress entry `BTL-4 Q4_K_M`).
+- Also benched: DogukanUrker community Q4_K_M build (91.7 t/s, LCB 0.92, tau2 0.40)
+  - statistically same model, see 2026-09-07 block below.
 
 ---
 
-## Queued: ThumbLLM model (Qwen3.5-4B-MTP Q4_K_M)
+## Queued: ThumbLLM model (Qwen3.5-4B-MTP Q4_K_M) -- COMPLETE
 
-- Source release: https://github.com/TeksEdge/ThumbLLM/releases/tag/thumbllm-qwen3.5-4b-mtp-q4_k_m-cpu-win-x64-v0.1.0
-- Actual model: unsloth/Qwen3.5-4B-MTP-GGUF -> `Qwen3.5-4B-Q4_K_M.gguf` (2.83 GB)
-- Note: the ThumbLLM release itself is a Windows-x64 CPU-only bundle (exe, 252 MB)
-  and does not run on this Linux box. Benchmark the underlying model file instead.
-- Target GPU: V100 or 3060 (fits both; MTP heads are the interesting axis ->
-  benchmark no-spec vs MTP n=3 like the other Qwen MTP models)
-- Harness: tok/s + BenchKit gate + LCB 75; register LCB id `local/qwen35-4b-mtp-q4km`
-- Status: QUEUED (not downloaded, not run)
+- Benched earlier (see progress `Qwen3.5-4B-MTP Q4_K_M (ThumbLLM)`):
+  LCB 0.56, tau2 0.2727 (backfilled via tau2_backfill_3models.py).
 
 ---
 
-## Queued: Qwopus3.8-27B-Flash MTP Q4_K_M (V100)
+## Queued: Qwopus3.8-27B-Flash MTP Q4_K_M (V100) -- COMPLETE
 
-- Source: https://huggingface.co/Jackrong/Qwopus3.8-27B-Flash-GGUF
-- File: `Qwopus3.8-27B-Flash-MTP-Q4_K_M.gguf` (16.81 GB) — Qwen3.8-27B fine-tune
-  with bundled NextN/MTP head; fits V100 32GB with full MTP
-- Target GPU: V100 (CUDA0)
-- **Production-optimal settings** (per model card battery + house findings):
-  - `--flash-attn on`, `--cache-type-k q8_0 --cache-type-v q8_0`
-  - `--spec-type draft-mtp --spec-draft-n-max 3` (self-speculative MTP;
-    model card reports 80.7% weighted draft acceptance, +12.8% decode)
-  - `--ctx-size 65536 --ubatch-size 512 --gpu-layers 99`
-  - thinking disabled (`--reasoning-budget 0` or template flag) for coding runs;
-    LCB rows both thinking-on and thinking-off if time allows
-- Harness: tok/s probe + BenchKit sanity:25 + LCB 75 (thinking off);
-  record MTP acceptance rates (house report column) alongside decode t/s
-- Baselines in progress.json: plain Qwen3.8 Q4_K_M MTP n3 = 35.6 t/s @ 0.674 acc,
-  LCB 0.760; this run tests whether Flash's claimed acceptance gain (+14.6pp)
-  holds at Q4_K_M on V100
-- LCB id to register: `local/qwopus38-flash-q4km-mtp`
-- Status: QUEUED (not downloaded, not run)
+- Benched 2026-09-06/07: sanity 96%, LCB 0.773 (clean rerun), tau2 0.2667
+  (backfill), MTP n3 42.9 t/s. Interesting result: its LCB strength does NOT
+  transfer to agentic tool use (0.267 vs plain Qwen3.8 MTP 0.40).
 
 ---
 
 ## Disk Space
 
-Current: 366 GB free on /home (1.5 TB used of 1.9 TB)
-Required: ~10 GB (IQ2_XXS) + ~21 GB (Q4_K_M) = ~31 GB total
-Status: Sufficient
+Note: the "366 GB free" figure above predates 2026-09-07. Current: ~38 GB free
+(after 20 GB BTL-4 + 2.7 GB MiniCPM + 0.35 GB draft downloads + 37 GB pip cache
+purge). /home sits near capacity; prune before adding >30 GB models.
+
+---
+
+# OPEN ITEMS (2026-09-07 audit)
+
+## Genuinely runnable, needs user decision
+- **MiniCPM5-2B tau2 variance check**: GPU lanes scored 0.571 (3060) vs 0.333
+  (V100); traced to 3 bistable agent-loop tasks, McNemar p=0.42 on LCB (noise).
+  Optional: 3-seed tau2 average for a defensible single number (~45 min).
+
+## Blocked / parked (was: MiniMax-H3, Escha-W2)
+- MiniMax-H3 GGUF repo = multimodal video/VL models, not text-benchmarkable
+  (FL2VA needs ComfyUI; qwen3vl variant needs --mmproj vision path).
+- Escha-W2 = eschamoe safetensors, needs escha/SGLang runtime, sm_80+ minimum;
+  V100 (sm_70) hard-blocked, same class as EXL3. Not benchmarkable here.
+
+## Harness debt (from ECC retest, unresolved)
+- Nail/Ornith 262K cpu-moe serving fails `create_context` on current llama.cpp
+  build (worked originally) - regression worth a bisect if 262K MoE matters.
+- 262K-ctx true-ECC-off tok/s deltas for Nail/Ornith remain unmeasured
+  (all ECC verdicts are from 8K-ctx configs; verdict direction unlikely to change).
 
 ---
 
