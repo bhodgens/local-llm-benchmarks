@@ -122,6 +122,24 @@ def get_tps(name):
     return None
 
 
+# ECC-off retest measurements (bench_results.json [ecc-off] keys), used to fill
+# tok/s cells for rows whose original runs predate the speed_norm convention
+# (e.g. Nail stock, which has no decode_tps of its own). Only used when the
+# entry itself has no recorded decode_tps.
+try:
+    with open('/home/caimlas/llm-benchmarks/bench_results.json') as _f:
+        _ecc_results = json.load(_f)
+except (FileNotFoundError, json.JSONDecodeError):
+    _ecc_results = {}
+
+_ECC_FILL = {
+    # progress entry name -> bench_results.json key (8K-ctx chat probe, ECC-off)
+    'Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL': 'Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf [ecc-off]',
+    'Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL [Sharp]': 'Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf [ecc-off]',
+    'Ornith-1.5-35B-A3B Q4_K_M [Sharp]': 'Ornith-1.5-35B-Q4_K_M.gguf [ecc-off]',
+}
+
+
 # Base-model lineage per entry. Sources:
 #   [gguf] = general.base_model.* from the GGUF header (authoritative)
 #   [hf]   = upstream model card / base_model tag (authoritative)
@@ -390,6 +408,9 @@ for m in progress['models']:
         tau2_time = m['tau2_3060'].get('wall_time_s', 0)
 
     tps = get_tps(name)
+    if tps is None and name in _ECC_FILL:
+        _ecc = (_ecc_results.get(_ECC_FILL[name]) or {}).get('ecc_off') or {}
+        tps = _ecc.get('decode_tps_probe')
     if tps is None:
         tps = m.get('decode_tps_3060')
     if tps is None:
