@@ -140,6 +140,24 @@ purge). /home sits near capacity; prune before adding >30 GB models.
 
 ---
 
+## Queued (2026-09-07): Qwen3.8-27B-OBLITERATED-Mythos-Class-Agentic Q4_K_M
+
+- Source: https://huggingface.co/medismera/Qwen3.8-27B-OBLITERATED-Mythos-Class-Agentic
+- Quant: Q4_K_M (community GGUF when published; otherwise quant from safetensors)
+- Family: Qwen3.8-27B abliteration ("OBLITERATED") x Mythos-class agentic tune.
+  Note the Qwen3.8 family needed the allowlist fix for thinking suppression
+  (qwen38 token now in oai_runner.py); verify enable_thinking:false live before
+  LCB, fall back to --reasoning-budget 0 if the template ignores it.
+- Target: V100 full offload (~16 GB at Q4_K_M)
+- Harness: full lane per house pattern (speed probe -> sanity:25 -> LCB 75
+  thinking-off -> tau2 airline/15/seed42/conc2 w/ LFM user sim on 3060)
+- Context of interest: benchmarks BOTH against the Qwen3.8 family results
+  (0.4667-0.50 tau2, 0.80-0.88 LCB) and against Qwythos-9B-Mythos (the
+  Mythos-trace line, LCB 0.587/tau2 0.40)
+- Status: QUEUED (not downloaded, not run)
+
+---
+
 # OPEN ITEMS (2026-09-07 audit)
 
 ## Genuinely runnable, needs user decision
