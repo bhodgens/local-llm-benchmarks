@@ -178,10 +178,41 @@ purge). /home sits near capacity; prune before adding >30 GB models.
   (all ECC verdicts are from 8K-ctx configs; verdict direction unlikely to change).
 
 ---
+---
 
-# QUEUED (2026-09-06): LCB empty-content audit + ECC tok/s re-tests + new models
+# ACTIVE QUEUE (2026-09-08)
 
-## STATUS: ALL EXECUTED (2026-09-07)
+## 1. Qwen3.8-27B-OBLITERATED-Mythos-Class-Agentic Q4_K_M — READY, needs download
+- Source: https://huggingface.co/medismera/Qwen3.8-27B-OBLITERATED-Mythos-Class-Agentic
+- Check repo for a Q4_K_M GGUF; if only safetensors, quantize locally (disk: ~38 GB
+  free, prune before). ~16 GB target on V100 full offload.
+- Full lane (speed probe -> sanity:25 -> LCB 75 -> tau2). Thinking suppression
+  required: verify enable_thinking:false live pre-LCB (qwen38 already in
+  oai_runner.py allowlist); tau2 agent served with --chat-template-kwargs
+  '{"enable_thinking": false}' per 2026-09-08 empty-turn fix.
+- Compare against: Qwen3.8-27B family (LCB 0.80-0.88, tau2 0.4667-0.50) and
+  Qwythos-9B-Mythos (LCB 0.587, tau2 0.40).
+
+## 2. MiniCPM5-2B tau2 3-seed average — optional, decided-against for now
+- 0.571 (3060) vs 0.333 (V100) traced to bistable agent loops; a 3-seed mean
+  would give one defensible number (~45 min). Parked unless requested.
+
+## Blocked / parked
+- MiniMax-H3: video/VL models, not text-benchmarkable as staged.
+- Escha-W2: eschamoe runtime needs sm_80+; V100 sm_70 hard-blocked.
+
+## Harness debt (non-urgent)
+- Nail/Ornith 262K cpu-moe create_context failure on current llama.cpp build.
+- Remaining 1-2-infra-error tau2 rows: score movement from a sweep would be
+  within noise; skip unless a specific row matters.
+- LFM-empty LCB empties (Tier 3 diagnosis): template-level, needs LCB prompt
+  adaptation, not a rerun. Parked.
+
+---
+
+# ARCHIVE (all items below executed/closed; kept for provenance)
+
+# CLOSED (2026-09-06/07): LCB empty-content audit + ECC tok/s + new models
 
 1. **LCB empty-content remediation** - DONE, commit b0fb999. Qwen3.8 family
    +9-17pp across 7 variants; Heretic-35B and LFM trio diagnosed as REAL
