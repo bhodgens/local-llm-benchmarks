@@ -1,0 +1,42 @@
+# /etc/systemd/system/caimlas-nail.service
+[Unit]
+Description=Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL Coder/Reviewer default (RTX 3060, llama.cpp upstream, --cpu-moe, parallel=2 sweep-optimal, kv-unified)
+After=network.target
+
+[Service]
+Type=simple
+Environment=CUDA_VISIBLE_DEVICES=1
+ExecStartPre=/bin/sleep 3
+ExecStart=/home/caimlas/git/llama.cpp/build/bin/llama-server \
+    --model /home/files/llms/Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf \
+    --flash-attn on \
+    --gpu-layers 99 \
+    --cpu-moe \
+    --ctx-size 262144 \
+    --batch-size 2048 \
+    --ubatch-size 512 \
+    --threads 6 \
+    --threads-batch 6 \
+    --cache-type-k q8_0 \
+    --cache-type-v q8_0 \
+    --reasoning off \
+    --host 0.0.0.0 \
+    --port 8080 \
+    --parallel 2 \
+    --cont-batching \
+    --kv-unified \
+    --temp 0.7 \
+    --top-p 0.95 \
+    --top-k 20 \
+    --repeat-penalty 1.0 \
+    -n -1
+
+Restart=on-failure
+RestartSec=10
+User=caimlas
+Group=caimlas
+WorkingDirectory=/home/caimlas
+LimitMEMLOCK=infinity
+
+[Install]
+WantedBy=multi-user.target

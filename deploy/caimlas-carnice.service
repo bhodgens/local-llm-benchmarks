@@ -1,0 +1,40 @@
+# /etc/systemd/system/caimlas-carnice.service
+[Unit]
+Description=Carnice-V3 Q4_K_M Orchestrator/Agent (V100, llama.cpp upstream, parallel=8, kv-unified; replaces caimlas-qwythos, no MTP variant exists for this finetune)
+After=network.target
+
+[Service]
+Type=simple
+Environment=CUDA_VISIBLE_DEVICES=0
+ExecStartPre=/bin/sleep 3
+ExecStart=/home/caimlas/git/llama.cpp/build/bin/llama-server \
+    --model /home/files/llms/Carnice-V3-Q4_K_M.gguf \
+    --flash-attn on \
+    --gpu-layers 99 \
+    --ctx-size 262144 \
+    --batch-size 2048 \
+    --ubatch-size 512 \
+    --threads 8 \
+    --threads-batch 8 \
+    --cache-type-k q4_0 \
+    --cache-type-v q4_0 \
+    --host 0.0.0.0 \
+    --port 8081 \
+    --parallel 8 \
+    --cont-batching \
+    --kv-unified \
+    --temp 0.7 \
+    --top-p 0.95 \
+    --top-k 20 \
+    --repeat-penalty 1.0 \
+    -n -1
+
+Restart=on-failure
+RestartSec=10
+User=caimlas
+Group=caimlas
+WorkingDirectory=/home/caimlas
+LimitMEMLOCK=infinity
+
+[Install]
+WantedBy=multi-user.target
