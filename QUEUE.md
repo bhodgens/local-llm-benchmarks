@@ -182,6 +182,26 @@ purge). /home sits near capacity; prune before adding >30 GB models.
 
 # ACTIVE QUEUE (2026-09-08)
 
+# ACTIVE (2026-09-09): PROD DEPLOY - Carnice-V3 (V100 orchestrator) + Nail 35B-A3B (3060 coder/reviewer)
+State: LIVE as of 2026-09-09 ~21:05 UTC. Services: caimlas-carnice (V100, :8081, enabled at boot;
+replaced caimlas-qwythos, now disabled) and caimlas-nail (3060, :8080, enabled at boot).
+- Carnice-V3 Q4_K_M: gpu-layers 99, 262k ctx, batch 2048/ubatch 512, t8, kv q4_0, parallel 8,
+  kv-unified, cont-batching, temp 0.7. Lane numbers: tau2 0.5333 (8/15, post-audit), LCB 77.3,
+  31.5 t/s. No MTP variant of this finetune exists.
+- Nail-Qwen3.6-35B-A3B UD-Q4_K_XL: n-cpu-moe 28 + no-mmap, 262k ctx, batch 2048/ubatch 512, t6,
+  kv q8_0, parallel 2, kv-unified, reasoning off. Unit files: deploy/caimlas-{carnice,nail}.service.
+- Batching sweeps (scripts/nail_batch_sweep.py, logs in /tmp/coding-bench/logs/nail_sweep_*):
+  parallel axis at full cpu-moe: agg t/s saturates ~23.3-25.0 for p=2..8 while p95 scales ~linearly
+  (cpu-moe is RAM-bandwidth-bound; single stream 17 t/s). Threads: 6 = 8 > 4. Partial-expert
+  residency (--n-cpu-moe N, first N layers' experts on CPU, REST on GPU): N=40 no-op, 36/32/28 =
+  25.4/27.9/30.3 agg, N=24 OOM (KV cache alloc 2720 MiB failed) -> N=28 is the fit boundary.
+  --no-mmap A/B at N=28: 24.0 single / 31.9 agg (+11%/+5%) -> adopted. Net vs all-CPU baseline:
+  single +41%, aggregate +37%, p95 24s.
+- NOTE: historical "85 t/s" Nail figure was an 8K-ctx full-offload probe (ecc retest config), NOT
+  the prod config; do not compare against prod numbers. See hardware-tok-s-retests.md.
+- NOTE: --n-cpu-moe semantics = first N layers on CPU (not a GPU-pin count). Passing it together
+  with --cpu-moe is a silent no-op of the partial flag (cost one wasted ladder).
+
 ## 1. Qwen3.8-27B-OBLITERATED-Mythos-Class-Agentic Q4_K_M — READY, needs download
 - Source: https://huggingface.co/medismera/Qwen3.8-27B-OBLITERATED-Mythos-Class-Agentic
 - Check repo for a Q4_K_M GGUF; if only safetensors, quantize locally (disk: ~38 GB

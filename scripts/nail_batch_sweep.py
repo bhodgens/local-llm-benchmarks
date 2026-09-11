@@ -13,7 +13,7 @@ BINARY = "/home/caimlas/git/llama.cpp/build/bin/llama-server"
 MODEL = "/home/files/llms/Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf"
 PORT = 18099
 LOGS = "/tmp/coding-bench/logs"
-OUT = os.path.join(LOGS, "nail_batch_sweep.json")
+OUT = os.path.join(LOGS, f"nail_batch_sweep{'_nc' + os.environ.get('NCMOE', '') if os.environ.get('NCMOE') else ''}.json")
 THREADS_CANDIDATES = [int(x) for x in (sys.argv[1].split(",") if len(sys.argv) > 1 else ["6"])]
 PARALLEL_CANDIDATES = [int(x) for x in (sys.argv[2].split(",") if len(sys.argv) > 2 else ["1", "2", "4", "6", "8"])]
 
@@ -43,19 +43,25 @@ def log(m):
 def start_server(threads, parallel):
     env = dict(os.environ)
     env["CUDA_VISIBLE_DEVICES"] = "1"
-    logf = open(os.path.join(LOGS, f"nail_sweep_t{threads}_p{parallel}.log"), "w")
-    cmd = [BINARY, "--model", MODEL, "--flash-attn", "on", "--gpu-layers", "99",
-           "--cpu-moe", "--ctx-size", "262144", "--batch-size", "2048", "--ubatch-size", "512",
-           "--threads", str(threads), "--threads-batch", str(threads),
-           "--cache-type-k", "q8_0", "--cache-type-v", "q8_0", "--reasoning", "off",
-           "--host", "127.0.0.1", "--port", str(PORT), "--parallel", str(parallel),
+    ncmoe = os.environ.get("NCMOE")
+    logf = open(os.path.join(LOGS, f"nail_sweep_t{threads}_p{parallel}{'_nc' + ncmoe if ncmoe else ''}.log"), "w")
+    cmd = [BINARY, "--model", MODEL, "--flash-attn", "on", "--gpu-layers", "99"]
+    # NCMOE set: first N layers' MoE experts on CPU, REST on GPU (partial residency).
+    # NCMOE unset: --cpu-moe = ALL experts on CPU (baseline).
+    cmd += ["--n-cpu-moe", ncmoe] if ncmoe else ["--cpu-moe"]
+    cmd += ["--ctx-size", "262144", "--batch-size", "2048", "--ubatch-size", "512",
+            "--threads", str(threads), "--threads-batch", str(threads),
+            "--cache-type-k", "q8_0", "--cache-type-v", "q8_0", "--reasoning", "off"]
+    if os.environ.get("NO_MMAP"):
+        cmd += ["--no-mmap"]
+    cmd += ["--host", "127.0.0.1", "--port", str(PORT), "--parallel", str(parallel),
            "--cont-batching", "--kv-unified", "--temp", "0.0", "-n", "4096"]
     proc = subprocess.Popen(cmd, env=env, stdout=logf, stderr=subprocess.STDOUT, text=True)
     for _ in range(150):
         time.sleep(2)
         if proc.poll() is not None:
             logf.close()
-            tail = open(os.path.join(LOGS, f"nail_sweep_t{threads}_p{parallel}.log")).read()[-300:]
+            tail = open(os.path.join(LOGS, f"nail_sweep_t{threads}_p{parallel}{'_nc' + ncmoe if ncmoe else ''}.log")).read()[-300:]
             return None, None, f"died: {tail}"
         try:
             urllib.request.urlopen(f"http://127.0.0.1:{PORT}/health", timeout=3)
