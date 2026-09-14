@@ -558,5 +558,54 @@
     "gpu": "GPU0",
     "note": "PrismML + dspark draft n=4, same protocol as original 36.3 t/s",
     "timestamp": "2026-09-07T17:01:17+00:00"
+  },
+  "Swift-Qwen3.8-27B-Q4_K_M.gguf [no-spec]": {
+    "decode_tps_runs": [
+      30.8,
+      29.5
+    ],
+    "decode_tps_avg": 30.1,
+    "acceptance_rates": [],
+    "acceptance_avg": null,
+    "draft_engaged": false,
+    "mtp_log_lines": []
+  },
+  "Swift-Qwen3.8-27B-Q4_K_M.gguf [MTP-n3]": {
+    "decode_tps_runs": [
+      39.1,
+      42.1
+    ],
+    "decode_tps_avg": 40.6,
+    "acceptance_rates": [
+      1.0,
+      0.56338,
+      0.71605
+    ],
+    "acceptance_avg": 0.76,
+    "draft_engaged": true,
+    "mtp_log_lines": [
+      "0.12.077.144 I slot print_timing: id  0 | task 0 | draft acceptance = 1.00000 (   11 accepted /    11 generated), mean len =  3.75",
+      "0.18.621.838 I slot print_timing: id  0 | task 8 | draft acceptance = 0.56338 (  160 accepted /   284 generated), mean len =  2.68",
+      "0.24.705.808 I slot print_timing: id  0 | task 106 | draft acceptance = 0.71605 (  174 accepted /   243 generated), mean len =  3.15"
+    ]
+  },
+  "Swift-Qwen3.8-27B-Q4_K_M.gguf [MTP-n5]": {
+    "decode_tps_runs": [
+      32.9,
+      41.9
+    ],
+    "decode_tps_avg": 37.4,
+    "acceptance_rates": [
+      1.0,
+      0.39765,
+      0.64452
+    ],
+    "acceptance_avg": 0.681,
+    "draft_engaged": true,
+    "mtp_log_lines": [
+      "0.10.875.376 I slot print_timing: id  0 | task 0 | draft acceptance = 1.00000 (   12 accepted /    12 generated), mean len =  5.00",
+      "0.18.663.442 I slot print_timing: id  0 | task 7 | draft acceptance = 0.39765 (  169 accepted /   425 generated), mean len =  2.99",
+      "0.24.770.774 I slot print_timing: id  0 | task 96 | draft acceptance = 0.64452 (  194 accepted /   301 generated), mean len =  4.18"
+    ]
   }
 }
