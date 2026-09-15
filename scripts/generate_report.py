@@ -261,6 +261,9 @@ def build_detail(m):
     if m.get('quant'): settings['Quant'] = m['quant']
     if m.get('bpw'): settings['Bits/weight'] = m['bpw']
     if m.get('file'): settings['File'] = m['file']
+    if m.get('template'): settings['Template'] = m['template']
+    if m.get('quant_source'): settings['Quant source'] = m['quant_source']
+    if m.get('base_model'): settings['Base model'] = m['base_model']
     if settings: detail['settings'] = settings
 
     # VRAM / context
@@ -278,8 +281,16 @@ def build_detail(m):
     if isinstance(bk, dict) and bk:
         bkd = {}
         for suite, d in bk.items():
-            if isinstance(d, dict) and d.get('score_pct') is not None:
-                entry = {'score': f"{d['score_pct']:.0f}% ({d.get('passed','?')}/{d.get('total','?')})"}
+            # lanes write either score_pct/passed/total or sanity_pct/sanity_passed
+            score_pct = d.get('score_pct') if isinstance(d, dict) else None
+            passed = d.get('passed') if isinstance(d, dict) else None
+            total = d.get('total') if isinstance(d, dict) else None
+            if score_pct is None and isinstance(d, dict) and d.get('sanity_pct') is not None:
+                score_pct = d['sanity_pct']
+                passed = d.get('sanity_passed')
+                total = 25
+            if score_pct is not None:
+                entry = {'score': f"{score_pct:.0f}% ({passed if passed is not None else '?'}/{total if total is not None else '?'})"}
                 if d.get('wall_time_s'):
                     entry['wall time'] = f"{d['wall_time_s']/60:.0f} min"
                 bkd[suite] = entry
@@ -314,6 +325,14 @@ def build_detail(m):
                     b['task pass'] = f"{sub_v:.1%}"
                 elif sub_k == 'passed' and sub_v is not None:
                     b['passed'] = sub_v
+                elif sub_k == 'passes' and sub_v is not None:
+                    b['passes'] = sub_v
+                elif sub_k == 'sims_scored' and sub_v is not None:
+                    b['sims scored'] = sub_v
+                elif sub_k == 'infra_errors' and sub_v is not None:
+                    b['infra errors'] = sub_v
+                elif sub_k == 'user_sim' and sub_v is not None:
+                    b['user sim'] = sub_v
                 elif sub_k == 'total' and sub_v is not None:
                     b['total'] = sub_v
                 elif sub_k == 'exit_code' and sub_v is not None and sub_v != 0:
@@ -341,6 +360,22 @@ def build_detail(m):
                     line += f" (plain {ds['plain_baseline']}, {ds.get('delta_pct','?')}%)"
                 throughput[label] = line
     if throughput: detail['throughput'] = throughput
+
+    # MTP acceptance summary (n=3 / n=5 from orchestrator acceptance tests)
+    macc = m.get('mtp_acceptance')
+    if isinstance(macc, dict) and macc:
+        mtpd = {}
+        for cfg in ('MTP-n3', 'MTP-n5'):
+            d = macc.get(cfg)
+            if isinstance(d, dict) and (d.get('acceptance_avg') is not None or d.get('decode_tps')):
+                line = []
+                if d.get('decode_tps'):
+                    line.append(f"{d['decode_tps']} tok/s")
+                if d.get('acceptance_avg') is not None:
+                    line.append(f"acc {d['acceptance_avg']*100:.0f}%")
+                mtpd[cfg] = ' '.join(line)
+        if mtpd:
+            detail['mtp_acceptance'] = mtpd
 
     # Errors
     if m.get('error'): detail['hard_error'] = str(m['error'])[:500]
