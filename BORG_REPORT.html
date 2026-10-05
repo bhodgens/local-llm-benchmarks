@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<title>borg lane report — R9700 + Strix Halo</title>
+<style>
+ body { background:#0d0f13; color:#e8ecf1; margin:0; padding:32px 20px 64px;
+        font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+ .wrap { max-width:1400px; margin:0 auto; }
+ h1 { font-size:22px; margin:0 0 6px; }
+ h2 { font-size:15px; margin:32px 0 10px; color:#93a0b4; text-transform:uppercase; letter-spacing:.08em; }
+ table { width:100%; border-collapse:collapse; font-size:12px; }
+ th,td { text-align:left; padding:6px 8px; border-bottom:1px solid #222933; vertical-align:top; }
+ th { color:#93a0b4; font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
+ td.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+ .note { color:#93a0b4; font-size:12px; }
+ .warn { border-left:3px solid #ff6b6b; padding-left:10px; color:#ffb3b3; font-size:12px; }
+</style></head><body><div class="wrap">
+<h1>borg lane report</h1>
+<div class="note">Serving throughput on the R9700 + Ryzen AI MAX+ 395 (Strix Halo), ROCm 7.2.1.
+Generated 2026-10-05 23:07 by scripts/borg/report_borg.py.
+This is the THROUGHPUT half of the benchmark picture. LiveCodeBench / HumanEval / tau2
+scores — the columns in the repo's main report.html — were not run on this host.</div>
+
+<h2>Lane results</h2>
+<table>
+  <tr>
+    <th>model</th><th>engine/server</th><th>device pinning</th><th class="num">ctx</th><th>KV</th>
+    <th>spec decode</th><th class="num">prefill 1st</th><th class="num">prefill cold</th>
+    <th class="num">prefill 2.5K</th><th class="num">decode sampled</th><th class="num">decode greedy</th>
+    <th class="num">accept</th><th class="num">boot s</th><th class="num">R9700 GB</th><th class="num">RAM GB</th>
+  </tr>
+      <tr>
+        <td>ds4-flash</td><td>luce_server (Lucebox HIP)</td><td>--target-device hip:0 --expert-device hip:1 --peer-access</td>
+        <td class="num">18432</td><td>f16</td><td>DSpark, sampled too</td>
+        <td class="num">214.81</td>
+        <td class="num">256.44</td>
+        <td class="num">372.8</td>
+        <td class="num">50.24</td>
+        <td class="num"><b>53.51</b></td>
+        <td class="num">0.696</td>
+        <td class="num">54.5</td>
+        <td class="num">27.65</td>
+        <td class="num">107.2</td>
+      </tr>
+      <tr>
+        <td>ds41-flash</td><td>luce_server (Lucebox HIP)</td><td>--profile ds41-lucebox (3-tier)</td>
+        <td class="num">131072</td><td>f16</td><td>DSpark</td>
+        <td class="num">—</td>
+        <td class="num">52.58</td>
+        <td class="num">67.27</td>
+        <td class="num">23.86</td>
+        <td class="num"><b>26.56</b></td>
+        <td class="num">0.812</td>
+        <td class="num">46.1</td>
+        <td class="num">27.69</td>
+        <td class="num">118.1</td>
+      </tr>
+      <tr>
+        <td>flashnext</td><td>Strata (HIP)</td><td>R9700 as expert cache</td>
+        <td class="num">131072</td><td>int8 (32768 resident)</td><td>MTP spec 4 (not reported by API)</td>
+        <td class="num">244.95</td>
+        <td class="num">288.61</td>
+        <td class="num">441.6</td>
+        <td class="num">77.05</td>
+        <td class="num"><b>86.31</b></td>
+        <td class="num">0.0</td>
+        <td class="num">22.0</td>
+        <td class="num">31.48</td>
+        <td class="num">115.9</td>
+      </tr>
+      <tr>
+        <td>glm53-flash</td><td>paoai-strix-engine (llama.cpp+Vulkan)</td><td>GGML_VK_VISIBLE_DEVICES=1 (Strix only)</td>
+        <td class="num">65536</td><td>q8_0</td><td>MTP depth 4 launched, never engages</td>
+        <td class="num">67.46</td>
+        <td class="num">73.35</td>
+        <td class="num">75.19</td>
+        <td class="num">15.57</td>
+        <td class="num"><b>14.25</b></td>
+        <td class="num">0.0</td>
+        <td class="num">26.1</td>
+        <td class="num">0.06</td>
+        <td class="num">78.4</td>
+      </tr>
+      <tr>
+        <td>kolibri-1</td><td>llama.cpp-kolibri (patched HIP)</td><td>both GPUs visible</td>
+        <td class="num">32768</td><td>q8_0</td><td>none (no MTP in this path)</td>
+        <td class="num">248.76</td>
+        <td class="num">282.58</td>
+        <td class="num">438.51</td>
+        <td class="num">54.62</td>
+        <td class="num"><b>54.32</b></td>
+        <td class="num">0.0</td>
+        <td class="num">16.0</td>
+        <td class="num">26.93</td>
+        <td class="num">2.7</td>
+      </tr>
+      <tr>
+        <td>laguna-xs21</td><td>luce_server (Lucebox HIP)</td><td>HIP_VISIBLE_DEVICES=0</td>
+        <td class="num">131072</td><td>f16</td><td>DFlash q4; --kvflash auto</td>
+        <td class="num">1451.66</td>
+        <td class="num">2139.81</td>
+        <td class="num">2237.28</td>
+        <td class="num">78.34</td>
+        <td class="num"><b>129.69</b></td>
+        <td class="num">0.629</td>
+        <td class="num">6.0</td>
+        <td class="num">20.05</td>
+        <td class="num">3.3</td>
+      </tr>
+      <tr>
+        <td>qwen38-27b</td><td>luce_server (Lucebox HIP)</td><td>HIP_VISIBLE_DEVICES=0 (R9700)</td>
+        <td class="num">131072</td><td>f16</td><td>DFlash2 b16, greedy only</td>
+        <td class="num">406.79</td>
+        <td class="num">838.89</td>
+        <td class="num">1081.84</td>
+        <td class="num">32.73</td>
+        <td class="num"><b>138.63</b></td>
+        <td class="num">0.517</td>
+        <td class="num">8.0</td>
+        <td class="num">23.41</td>
+        <td class="num">3.9</td>
+      </tr>
+      <tr>
+        <td>qwen38-27b-vision</td><td>luce_server (Lucebox HIP)</td><td>HIP_VISIBLE_DEVICES=0</td>
+        <td class="num">131072</td><td>f16</td><td>DFlash2 b16, greedy only</td>
+        <td class="num">444.97</td>
+        <td class="num">980.92</td>
+        <td class="num">1149.45</td>
+        <td class="num">36.06</td>
+        <td class="num"><b>127.7</b></td>
+        <td class="num">0.433</td>
+        <td class="num">8.0</td>
+        <td class="num">24.25</td>
+        <td class="num">4.1</td>
+      </tr>
+</table>
+
+  <h2>Kyojin lane (own harness — see scripts/bench_kyojin_glm.py)</h2>
+  <table>
+    <tr><th>model</th><th>engine</th><th class="num">prefill t/s</th><th class="num">decode t/s</th><th>note</th></tr>
+    <tr><td>glm-5.3-flash EXL3</td><td>Kyojin (ExLlamaV3 ROCm, gfx1151)</td>
+        <td class="num">409.6 @4493 tok</td>
+        <td class="num">33.73</td>
+        <td>warm run; first start builds a dense-GEMM tune cache for ~13 min</td></tr>
+  </table>
+
+<h2>Caveats that apply to every row</h2>
+<div class="warn">
+  <b>No quality scores here.</b> These are speed measurements. Quality claims in BORG_RESULTS.md come from
+  publisher evaluations of the same quantizations, not from runs on this host. Comparing engines on speed alone
+  is safe; comparing models on capability is not.
+</div>
+<div class="note" style="margin-top:10px">
+  "prefill 1st" is the first request after a load and includes kernel warmup — it reads ~2x low on some engines.
+  "decode greedy" is temperature 0, which is where drafters engage; "decode sampled" is the harness default 0.3.
+  Memory columns are measured with rocm-smi/free while the model was loaded and idle.
+</div>
+</div></body></html>
