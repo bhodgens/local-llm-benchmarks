@@ -58,8 +58,31 @@ starts its own, so two concurrent lane processes kill each other's servers
 | ds41-flash | luce_server | 52.58 | 67.27 | 23.86 | yes | 26.56 | yes | 0.812 | 46.1 |
 | glm53-flash | paoai-strix-engine | 63.50 | 66.59 | 15.33 | no | 15.07 | no | 0.0 | 24.1 |
 | flashnext | Strata | 184.14 | 446.93 | 75.78 | n/a | **88.71** | n/a | n/a | 42.1 |
+| kolibri-1 | llama.cpp-kolibri (patched) | 112.19 | 126.70 | 39.58 | no | **39.19** | no | n/a | 6.5 |
 
 All values are tokens/second.
+
+### Separate lanes with their own harness (not the registry above)
+
+| model | engine | prefill | decode | notes |
+|---|---|---|---|---|
+| glm-5.3-flash EXL3 | Kyojin (ExLlamaV3 ROCm, gfx1151) | 409.60 @4.5K | 33.73 | `scripts/bench_kyojin_glm.py`; first run measured 126 prefill / 27 decode because the engine builds a dense-GEMM tune cache for ~13 min on first start — re-run warm is the number above |
+
+### Prompt-length effect (Strata, Flash Next)
+
+Prefill is chunked, so short prompts are dominated by per-chunk fixed cost and
+throughput *rises* with length:
+
+| prompt tokens | prefill t/s (chunk cap 8192) | prefill t/s (cap 32768) |
+|---|---|---|
+| ~500 | 217.8 | 249.8 |
+| ~2,400 | 458.5 | 446.4 |
+| ~7,700 | 1002.6 | 999.5 |
+| ~27,700 | 953.4 | **1514.9** |
+
+Setting `STRATA_PREFILL_AUTO_MAX=32768` (documented as `--prefill auto:16384` /
+`auto:32768`) is worth +15% at short prompts and +59% at ~28K. It is now set in
+that host's Strata launcher.
 
 ## Reading the table
 
@@ -84,11 +107,25 @@ All values are tokens/second.
 
 ## Pending lanes
 
-- **Kolibri-1** (Aleph Alpha, 78B MoE / 3.46B active): community Q4_K_M GGUF plus
-  a patched llama.cpp (`kolibri1` architecture) built for gfx1201+gfx1151.
-  Community CPU-only reference is 12-15 t/s decode; the GPU result is untested
-  upstream.
-- **GLM-5.3-Flash EXL3 (Kyojin)**: ROCm/ExLlamaV3 engine for gfx1151 with a
-  99.7 GB EXL3 pack. The engine authors publish 26-30 t/s decode and ~580 t/s
-  prefill at that pack; the same model measures 15.1 t/s through the
-  paoai/Vulkan lane above, so this is the direct engine comparison.
+Both previously-pending lanes have now run (see the two tables above).
+
+Notes for whoever repeats them:
+
+- **Kolibri-1** (Aleph Alpha, 78B MoE / 3.46B active): needs a patched llama.cpp
+  for the `kolibri1` architecture. Apply the community patch with
+  `git apply --3way` — `git am` fails without a committer identity, and
+  `git fetch --depth 1 origin <sha>` cannot fetch an arbitrary commit. Verify the
+  patch with `strings build/bin/libllama.so | grep -c kolibri1`, NOT the
+  `llama-server` executable: that is a ~17 KB dispatcher and will show 0 either
+  way. The 47.5 GB Q4_K_M does not fit one 32 GB card, so experts are offloaded
+  (`--n-cpu-moe`); measured 39.2 t/s decode against a community CPU-only
+  reference of 12-15 t/s.
+- **GLM-5.3-Flash EXL3 (Kyojin)**: the engine's MTP path needs an unquantized
+  `eh_proj` sidecar that the EXL3 pack does not contain (it ships the tensor
+  quantized as suh/svh/mul1/trellis). Extract it with the repo's own
+  `tools/glm/mtp_eh_sidecar.py` from the source checkpoint; the tensor lives in
+  `model-00001-of-00062.safetensors` (5 GiB), so only that shard is needed, not
+  the 642 GB checkpoint. On a two-GPU host also set `HIP_VISIBLE_DEVICES=1` and
+  `EXL3_HSA_LIB` to the ROCm SDK's own `libhsa-runtime64.so.1` — the system ROCm
+  7.2 HSA is too old for the 7.13 nightly torch and fails with
+  `hsa_ext_image_create_v2` undefined.

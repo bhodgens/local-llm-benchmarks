@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "host": "borg",
+    "started": "2026-10-05T06:27:55+0000",
+    "model": "/root/models/glm-exl3-yamz",
+    "model_id": "glm-5.3-exl3",
+    "port": 8000,
+    "ctx": 131072,
+    "num_draft": 2,
+    "probe_words": 1200,
+    "code_tokens": 256,
+    "temperature": 0.0,
+    "python": "3.12.3",
+    "hip_visible_devices": "1",
+    "hsa_lib": "/root/kyojin/.venv/lib/python3.12/site-packages/_rocm_sdk_devel/lib/libhsa-runtime64.so.1",
+    "dense_gemm_tune_file": "/root/.cache/exllamav3/dense_gemm_tune.txt",
+    "env_check": "torch 2.12.0a0+rocm7.13.0a20260411  hip 7.13.60980\nRadeon 8060S Graphics / gfx1151 / warp=32 / 118.0 GiB / 20 CUs\nGPU compute: OK\nexllamav3_ext: OK\nexl3_gemv_supported(0): True <- False on gfx1151 => reconstruct+hgemm fallback (expected)\nexllamav3: imported",
+    "server_pid": 111443,
+    "server_log": "/root/bench/kyojin-serve.log",
+    "load_s": 660.1,
+    "finished": "2026-10-05T06:39:26+0000"
+  },
+  "runs": [
+    {
+      "prompt_tokens": 4493,
+      "output_tokens": 32,
+      "wall_s": 12.077,
+      "wall_output_tps": 2.65,
+      "wall_total_tps": 374.67,
+      "server_cache_n": 0,
+      "server_prompt_ms": 10969.294786453247,
+      "server_predicted_ms": 1038.5544300079346,
+      "server_prompt_per_second": 409.59789006205955,
+      "server_predicted_per_second": 30.81205864169827,
+      "text_preview": "",
+      "label": "prompt-eval-probe",
+      "kind": "prompt_eval"
+    },
+    {
+      "prompt_tokens": 48,
+      "output_tokens": 256,
+      "wall_s": 8.235,
+      "wall_output_tps": 31.09,
+      "wall_total_tps": 36.91,
+      "server_cache_n": 0,
+      "server_prompt_ms": 636.1610889434814,
+      "server_predicted_ms": 7574.04637336731,
+      "server_prompt_per_second": 75.45258714222376,
+      "server_predicted_per_second": 33.79963461805241,
+      "text_preview": "",
+      "label": "code-fib-memo",
+      "kind": "code_gen"
+    },
+    {
+      "prompt_tokens": 46,
+      "output_tokens": 256,
+      "wall_s": 8.237,
+      "wall_output_tps": 31.08,
+      "wall_total_tps": 36.67,
+      "server_cache_n": 0,
+      "server_prompt_ms": 586.6649150848389,
+      "server_predicted_ms": 7607.137203216553,
+      "server_prompt_per_second": 78.40932501195822,
+      "server_predicted_per_second": 33.65260717155918,
+      "text_preview": "",
+      "label": "code-lru-cache",
+      "kind": "code_gen"
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "probe_prompt_tokens": 4493,
+    "probe_server_prefill_tps": 409.59789006205955,
+    "code_mean_wall_output_tps": 31.09,
+    "code_mean_server_decode_tps": 33.73,
+    "code_tokens_each": 256
+  }
+}

@@ -39,6 +39,8 @@ MODELS = {
     "ds41-flash":        ("/root/bench/serve_ds41flash.sh",     8902, "R9700+Strix+SSD",  "luce_server (Lucebox HIP)",        "luce", []),
     "glm53-flash":       ("/root/bench/serve_glm53flash.sh",    8902, "Strix",            "paoai-strix-engine (llama.cpp+Vulkan)", "glm", []),
     "flashnext":         ("/root/strata/run-iq3_s.sh",          8080, "R9700+RAM",        "Strata (HIP)",                     "qwen3.8-flash-next-iq3_s", []),
+    # api_model "-" = ask the server: GET /v1/models and use the id it reports
+    "kolibri-1":         ("/root/bench/serve_kolibri.sh",       8902, "R9700+Strix",      "llama.cpp-kolibri (patched HIP)",  "-", []),
 }
 
 # Per-model request extras. Flash Next reasons by default and that costs most of
@@ -71,10 +73,12 @@ def wait_health(port, timeout_s=900):
 
 
 def stop_servers():
-    # never match the bare name: this script's cmdline contains "luce_server"
+    # Match the server BINARY PATHS only. A bare model name is unsafe here: this
+    # script's own cmdline contains "kolibri" / "luce_server" (via --models ...),
+    # and a matching pattern makes the lane kill its own session.
     for pat in ("[b]uild-hip/luce_server", "[b]uild-vk/bin/llama-server",
                 "[e]ngine/strata", "[s]erve/server.py", "[t]ools/glm/serve.py",
-                "[k]olibri"):
+                "[l]lama.cpp-kolibri/build-hip"):
         subprocess.run(f"ps -eo pid,cmd | grep -E '{pat}' | awk '{{print $1}}' | xargs -r kill",
                        shell=True)
     time.sleep(5)
@@ -135,6 +139,15 @@ def run_model(key, n_predict):
             e["error"] = f"not healthy after {boot}s (see lane-{key}.log)"
             print(json.dumps(e)); return e
         e["boot_s"] = boot
+        if api_model == "-":                      # ask the server what it calls itself
+            try:
+                m = json.loads(urllib.request.urlopen(
+                    f"http://127.0.0.1:{port}/v1/models", timeout=5).read())
+                api_model = m["data"][0]["id"]
+                e["model_id_reported"] = api_model
+            except Exception as ex:
+                e["error"] = f"could not read /v1/models: {ex}"
+                print(json.dumps(e)); return e
         xb = EXTRA_BODY.get(key, {})
         ps1 = call(port, api_model, PROMPT_SHORT, 8, 0.3, xb)
         ps2 = call(port, api_model, PROMPT_SHORT, 8, 0.3, xb)
