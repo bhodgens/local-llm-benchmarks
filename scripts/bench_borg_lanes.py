@@ -51,11 +51,19 @@ EXTRA_BODY = {
 }
 
 PROMPT_SHORT = open("/root/bench/prompt_eval_text.txt").read().strip()
-PROMPT_LONG = (PROMPT_SHORT + "\n\n") * 4          # ~2.5K tokens, prefix distinct from PROMPT_SHORT
 DECODE_PROMPTS = [
     "Write a Python function that implements binary search on a sorted list. Include docstring, type hints, and handle edge cases.",
     "Explain how merge sort works step by step. Include pseudocode and analyze the time complexity.",
 ]
+
+
+def unique_prompt(approx_tokens, tag):
+    """Unique random text so a probe cannot be served by the engine's prefix cache.
+    Tags make the intent visible in the engine log if anyone audits it."""
+    import random, string
+    words = ["".join(random.choices(string.ascii_lowercase, k=random.randint(4, 9)))
+             for _ in range(max(8, approx_tokens // 4))]
+    return (f"[probe {tag}] Summarize the following text in one sentence.\n\n" + " ".join(words))
 
 
 def wait_health(port, timeout_s=900):
@@ -149,9 +157,16 @@ def run_model(key, n_predict):
                 e["error"] = f"could not read /v1/models: {ex}"
                 print(json.dumps(e)); return e
         xb = EXTRA_BODY.get(key, {})
-        ps1 = call(port, api_model, PROMPT_SHORT, 8, 0.3, xb)
-        ps2 = call(port, api_model, PROMPT_SHORT, 8, 0.3, xb)
-        pl = call(port, api_model, PROMPT_LONG, 8, 0.3, xb)
+        # Every probe uses unique text: with shared text the engine's prefix cache
+        # answers it and "cold prefill" silently becomes a cache hit (seen once as
+        # 12879 t/s). The first request after load also pays kernel warmup, so it
+        # is measured and discarded.
+        first = call(port, api_model, unique_prompt(500, "warmup"), 8, 0.3, xb)
+        e["prefill_first_request_tps"] = first["prompt_tps"]
+        cold_text = unique_prompt(500, "cold")
+        ps1 = call(port, api_model, cold_text, 8, 0.3, xb)
+        ps2 = call(port, api_model, cold_text, 8, 0.3, xb)      # same text => cache hit
+        pl = call(port, api_model, unique_prompt(2500, "long"), 8, 0.3, xb)
         e["prefill_cold_tps"] = ps1["prompt_tps"]
         e["prefill_cold_tokens"] = ps1["prompt_tokens"]
         e["prefill_warm_tps"] = ps2["prompt_tps"]
@@ -160,7 +175,8 @@ def run_model(key, n_predict):
         e["decode_sampled"] = path_stats(port, api_model, n_predict, 0.3, xb)
         e["decode_greedy"] = path_stats(port, api_model, n_predict, 0.0, xb)
         if xb: e["request_extras"] = xb
-        print(f"{key:20s} engine={engine[:28]:28s} prefill {e['prefill_cold_tps']}/{e['prefill_long_tps']} "
+        print(f"{key:20s} engine={engine[:26]:26s} prefill 1st/2nd/2.5K "
+              f"{e['prefill_first_request_tps']}/{e['prefill_cold_tps']}/{e['prefill_long_tps']} "
               f"sampled {e['decode_sampled']['decode_tps_avg']} (spec={e['decode_sampled']['spec_decode_ran']}) "
               f"greedy {e['decode_greedy']['decode_tps_avg']} (spec={e['decode_greedy']['spec_decode_ran']}, "
               f"acc={e['decode_greedy']['accept_rate_avg']})")
