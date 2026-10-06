@@ -503,7 +503,9 @@ for m in progress['models']:
     detail = build_detail(m)
     detail['name'] = name
     detail['category'] = category
-    detail['gpu'] = m.get('gpu', '3060')
+    gpu_label = {'GPU0': 'V100', 'GPU1': '3060', 'CUDA0': 'V100', 'CUDA1': '3060'}.get(
+        str(m.get('gpu', '3060')), m.get('gpu', '3060'))
+    detail['gpu'] = gpu_label
     base_label, base_note = get_base(name)
     if base_note:
         detail['lineage'] = base_note
@@ -511,7 +513,7 @@ for m in progress['models']:
     models.append({
         'name': name,
         'category': category,
-        'gpu': m.get('gpu', '3060'),
+        'gpu': gpu_label,
         'base_model': base_label,
         'human_eval': he_score,
         'livecodebench': lcb_score,
