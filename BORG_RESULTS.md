@@ -303,8 +303,19 @@ recommended quants and run through the same probe suite on Strata, port 8080:
 | coder | IQ1_M | Strata | 57.3 | **40.5** |
 | (flashnext base, for reference) | IQ3_S | Strata | 441.6 @2.5K | 86.3 |
 
-Both decode slightly faster than one would fear from the deep quants, but they
-are 2x off the base model's decode. No HumanEval score yet for either.
+HumanEval pass@1, same 164-problem execution-scored runner as the table above:
+
+| model | HumanEval pass@1 |
+|---|---|
+| swift (IQ2_XS) | **89.63%** (147/164) |
+| coder (IQ1_M) | **85.37%** (140/164) |
+
+The quality surprise: Swift at IQ2_XS scores 89.63%, well above base Flash
+Next's 82.32% at the *deeper* IQ3_S quant, and Coder at IQ1_M scores 85.37%.
+Both fine-tunes land in the Laguna-XS tier despite 2x-lower decode speed and
+shallow quants. If quality per watt-hour matters more than speed, Swift at
+42 t/s is a legitimate long-context agent model on this box; the base model
+remains the pick when 86 t/s matters more than ~7 points of HumanEval.
 
 **Laguna-S-2.1 does not load.** The luce_server Laguna backend compiled
 `n_head_arr[40]` (XS's exact depth) into `laguna_internal.h`; S is deeper and the
