@@ -1,0 +1,57 @@
+# /etc/systemd/system/caimlas-nail-v100.service
+# Nail-35B on the V100 (GPU 0, port 8082) - SAME model as the 3060 lane (caimlas-nail.service, :8080),
+# running concurrently. Deployed 2026-10-01 at user request ("put the same model running on the 3060
+# on the v100, run them concurrently"). Carnice (:8081) stays on the V100 - the 2026-09-25 32K-ctx
+# staging freed ~5GB specifically for this.
+#
+# Differences from the 3060 config:
+#   - CUDA_VISIBLE_DEVICES=0 (V100) instead of 1, port 8082 instead of 8080
+#   - NO --no-mmap: the 3060 lane already holds ~18.4GB anonymous RAM for its copy. A second
+#     no-mmap copy would need another ~18GB (RAM: 46GB total, ~22GB available, 8GB swap in use).
+#     mmap keeps expert weights in page cache (reclaimable) instead of anonymous RAM.
+#   - --n-cpu-moe 0 (2026-10-01): ALL experts on GPU. Carnice was stopped, freeing ~20GB, so the
+#     full 21GB model + ~2.7GB KV + compute (~24-25GB) fits in the 32GB V100. Same 262K ctx /
+#     q8_0 KV / parallel 1 / kv-unified as the 3060 lane.
+#
+# VRAM: ~24-25GB on V100 (full GPU residency).
+[Unit]
+Description=Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL (V100, port 8082) - same model as 3060 lane :8080, concurrent
+After=network.target
+
+[Service]
+Type=simple
+Environment=CUDA_VISIBLE_DEVICES=0
+ExecStartPre=/bin/sleep 3
+ExecStart=/home/caimlas/git/llama.cpp/build/bin/llama-server \
+    --model /home/files/llms/Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf \
+    --flash-attn on \
+    --gpu-layers 99 \
+    --n-cpu-moe 0 \
+    --ctx-size 262144 \
+    --batch-size 2048 \
+    --ubatch-size 512 \
+    --threads 6 \
+    --threads-batch 6 \
+    --cache-type-k q8_0 \
+    --cache-type-v q8_0 \
+    --reasoning off \
+    --host 0.0.0.0 \
+    --port 8082 \
+    --parallel 1 \
+    --cont-batching \
+    --kv-unified \
+    --temp 0.7 \
+    --top-p 0.95 \
+    --top-k 20 \
+    --repeat-penalty 1.0 \
+    -n -1
+
+Restart=on-failure
+RestartSec=10
+User=caimlas
+Group=caimlas
+WorkingDirectory=/home/caimlas
+LimitMEMLOCK=infinity
+
+[Install]
+WantedBy=multi-user.target

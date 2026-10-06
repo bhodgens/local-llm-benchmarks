@@ -3,16 +3,6 @@
 # (queued control row "gemma-4-12B-it-QAT Q4_0 (3060 128K)"). 2026-09-21: swapped BACK to
 # Nail-35B at user request (gemma config preserved in deploy/caimlas-nail-gemma.service).
 #
-# 2026-09-22 FIX: parallel 2 -> 1. Nail crashed 2x in 26 min post-restore with
-# "cublasSgemm_v2: unsupported value or parameter" (ggml_cuda_mul_mat_cublas_impl),
-# both immediately after LCP-similarity slot-reuse bursts; plus the Sep-20 OOM wedges
-# (262K q8_0 KV reserve + cache churn). Benchmarks never reproduced either mode: bench
-# legs ran fresh servers, <=1.6h, sequential/pipelined clients holding slots for minutes;
-# prod runs multi-hour with 1-2s LCP slot swaps. p=1 removes the dual-slot LCP reuse
-# path (common trigger of both modes). Cost: single stream ~17 t/s (sweep: agg saturated
-# ~24-25 for p=2-8 anyway, RAM-bandwidth-bound); second request queues (HTTP accepted,
-# waits for slot); the surviving slot gets the FULL 262K window instead of 131K each.
-#
 # WEDGE HISTORY (Nail-35B config, pre-2026-09-21): 9 systemd restarts. After deploy-day
 # config iterations (Sep 14), three CUDA-OOM aborts under load (Sep 20 07:01, 07:04,
 # 19:38), all identical: "CUDA error: out of memory" in cudaGraphInstantiate during
@@ -22,7 +12,7 @@
 # first fallback --ctx-size 196608, second 131072 (KV q8_0 at parallel 2); the OOM is
 # marginal (~hours of churn to trigger), so a ctx reduction should clear it.
 [Unit]
-Description=Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL Coder/Reviewer default (RTX 3060, llama.cpp upstream, n-cpu-moe=28 partial residency + no-mmap, parallel=1 after cuBLAS+OOM crash analysis 2026-09-22, kv-unified)
+Description=Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL Coder/Reviewer default (RTX 3060, llama.cpp upstream, n-cpu-moe=28 partial residency + no-mmap sweep-optimal, parallel=2, kv-unified; restored 2026-09-21 after gemma interim; wedge history documented)
 After=network.target
 
 [Service]
@@ -45,7 +35,7 @@ ExecStart=/home/caimlas/git/llama.cpp/build/bin/llama-server \
     --reasoning off \
     --host 0.0.0.0 \
     --port 8080 \
-    --parallel 1 \
+    --parallel 2 \
     --cont-batching \
     --kv-unified \
     --temp 0.7 \

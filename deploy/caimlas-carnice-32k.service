@@ -1,0 +1,48 @@
+# /etc/systemd/system/caimlas-carnice.service
+# TEMPORARY 32K-ctx variant, staged 2026-09-25 at user request (frees V100 VRAM for
+# pending work). Original prod config is preserved in deploy/caimlas-carnice.service
+# (git HEAD version). TO RESTORE: cp deploy/caimlas-carnice.service back over
+# /etc/systemd/system/caimlas-carnice.service && daemon-reload && restart.
+# Expected effect: KV pool shrinks 262K->32K (1/8), VRAM drops from 22.8 GiB to
+# roughly 17-18 GiB (~5+ GiB freed). Active conversations longer than 32K will hit
+# the cap (truncation/context-shift) or fail - the orchestrator client should be
+# quiesced before the restart; in-flight streams are dropped on restart regardless.
+[Unit]
+Description=Carnice-V3 Q4_K_M Orchestrator/Agent (V100, llama.cpp upstream, parallel=8, kv-unified, TEMP ctx=32768 2026-09-25)
+After=network.target
+
+[Service]
+Type=simple
+Environment=CUDA_VISIBLE_DEVICES=0
+ExecStartPre=/bin/sleep 3
+ExecStart=/home/caimlas/git/llama.cpp/build/bin/llama-server \
+    --model /home/files/llms/Carnice-V3-Q4_K_M.gguf \
+    --flash-attn on \
+    --gpu-layers 99 \
+    --ctx-size 32768 \
+    --batch-size 2048 \
+    --ubatch-size 512 \
+    --threads 8 \
+    --threads-batch 8 \
+    --cache-type-k q4_0 \
+    --cache-type-v q4_0 \
+    --host 0.0.0.0 \
+    --port 8081 \
+    --parallel 8 \
+    --cont-batching \
+    --kv-unified \
+    --temp 0.7 \
+    --top-p 0.95 \
+    --top-k 20 \
+    --repeat-penalty 1.0 \
+    -n -1
+
+Restart=on-failure
+RestartSec=10
+User=caimlas
+Group=caimlas
+WorkingDirectory=/home/caimlas
+LimitMEMLOCK=infinity
+
+[Install]
+WantedBy=multi-user.target
