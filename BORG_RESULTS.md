@@ -317,17 +317,36 @@ shallow quants. If quality per watt-hour matters more than speed, Swift at
 42 t/s is a legitimate long-context agent model on this box; the base model
 remains the pick when 86 t/s matters more than ~7 points of HumanEval.
 
-**Laguna-S-2.1 does not load.** The luce_server Laguna backend compiled
-`n_head_arr[40]` (XS's exact depth) into `laguna_internal.h`; S is deeper and the
-loader refuses it: `n_layer exceeds compiled-in n_head_arr capacity (40)` at
-`laguna_target_loader.cpp:295`. Supporting S needs a source patch + rebuild.
+### Source patches applied to lucebox (2026-10-06, host `/root/lucebox`, tree was clean at `cd333a00`)
 
-**Engine portability was tested directly** (logs in `/root/bench/results/luce-archtest/`):
-luce_server rejects kolibri1 and glm5next architectures outright, and it cannot
-read the Strata-format sharded Flash-Next GGUFs — merging with llama.cpp's
-`llama-gguf-split` and a full tensor re-serialization both failed with the same
-tensor-offset mismatch, so the fix would be inside luce_server's GGUF reader.
-Conclusion: match engines to models; do not try to consolidate on one server.
+**Patch 1 — Laguna depth capacity.** The Laguna backend compiled
+`n_head_arr[40]` (XS's exact depth) into `laguna_internal.h`; S is deeper and the
+loader refused it (`n_layer exceeds compiled-in n_head_arr capacity (40)`).
+Raised the array to 64 entries. Result: **Laguna-S-2.1 Q4_K_M loads and answers**,
+split `--target-device hip:1` + drafter on `hip:0` (91 GiB does not fit the card
+alone). First measured numbers, ctx 8K: decode **22.1 t/s**, prefill 270 t/s @3.1K.
+Slower than XS (130 t/s) — S-2.1 is a much larger model — but it runs. Whether a
+faster profile exists (expert placement, DFlash tuning) is unexplored.
+
+**Patch 2 — GGUF reader strictness.** luce_server's vendored `gguf.cpp` required
+every tensor offset to equal the running padded sum. Replaced with a sorted
+disjoint-range check (accepts any self-consistent non-overlapping layout). This
+made the reader more permissive, but the Flash-Next family **still cannot load**
+for a different reason: **GGML type ID 42 is a fork collision.** Strata's tree
+defines 42 as `Q2_0` (64-elem blocks, 18 B); lucebox defines 42 as `TQ3_0`
+(32-elem blocks, 14 B). A Strata-shard tensor declared 42 parses as a different
+byte layout, so byte counts disagree (236 MB vs 367 MB for the same tensor) and
+no offset-checking scheme can reconcile it. Loading Strata GGUFs on luce_server
+would need a format mapping (or a Strata-side re-quantization), which is out of
+scope for this host. The reader patch is kept: it is strictly more correct, and
+it accepts every file the old reader accepted plus non-sequential layouts.
+
+Patch scripts: `/root/bench/patches/apply_patches.py`, `patch_gguf_cpp_v2.py`.
+Verify logs: `/root/bench/results/verify*.log`, `tp-laguna-s21.json`.
+
+**Engine portability summary**: luce_server rejects `kolibri1` and `glm5next`
+architectures outright; the Flash-Next GGUFs hit the type-42 collision above.
+Match engines to models; do not try to consolidate on one server.
 
 ## Pending lanes
 
