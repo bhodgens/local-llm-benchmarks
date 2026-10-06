@@ -15,7 +15,7 @@ Usage:
         [--model-file FILE.gguf --name "Name" --gpu 0 --mtp]
     # or edit MODELS below
 """
-import subprocess, json, time, os, sys, urllib.request, re
+import subprocess, json, time, os, sys, urllib.request, re, shlex
 from datetime import datetime, timezone
 
 BINARY = "/home/caimlas/git/llama.cpp/build/bin/llama-server"
@@ -124,14 +124,23 @@ def main():
     ap.add_argument("--gpu", type=int, default=0)
     ap.add_argument("--mtp", action="store_true")
     ap.add_argument("--benchmarks", default="sanity:25")
+    ap.add_argument("--binary", default=None,
+                    help="llama-server binary override (vendor forks)")
+    ap.add_argument("--args", default=None,
+                    help="extra server args, shlex-split (e.g. '--jinja')")
     ap.add_argument("--stability", action="store_true",
                     help="run a second slice with choice-order perturbation")
     args = ap.parse_args()
 
     models = list(MODELS)
     if args.model_file:
-        models.append({"name": args.name or os.path.basename(args.model_file),
-                       "file": args.model_file, "gpu": args.gpu, "mtp": args.mtp})
+        m = {"name": args.name or os.path.basename(args.model_file),
+             "file": args.model_file, "gpu": args.gpu, "mtp": args.mtp}
+        if args.binary:
+            m["binary"] = args.binary
+        if args.args:
+            m["args"] = shlex.split(args.args)
+        models.append(m)
 
     if not models:
         print("No models specified (edit MODELS or pass --model-file)")
