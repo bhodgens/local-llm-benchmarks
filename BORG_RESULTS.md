@@ -4,6 +4,28 @@ Reference run of `scripts/bench_borg_lanes.py` on a single host with two AMD
 devices: a R9700 (32 GB GDDR6, gfx1201) and a Ryzen AI MAX+ 395 / Strix Halo
 (128 GB unified, gfx1151), ROCm 7.2.1. Measured 2026-10-05.
 
+## Host specifications
+
+| | |
+|---|---|
+| Hostname | borg |
+| APU | AMD Ryzen AI MAX+ 395 w/ Radeon 8060S (Strix Halo, gfx1151), 32 threads |
+| APU memory pool | 124 GB unified (GTT), carved from system RAM — `hip:1` |
+| Discrete GPU | Radeon AI PRO R9700 (gfx1201), 32 GB GDDR6 — `hip:0` |
+| GPU link | PCIe Gen5 x16, full width |
+| System RAM | 124 GB total (the APU pool comes out of this) |
+| OS / kernel | Ubuntu, 6.17.0-1032-oem |
+| ROCm | 7.2.1 (/opt/rocm-7.2.1) |
+| Disk | 1.9 TB NVMe |
+| Engines on host | /root/lucebox (luce_server, HIP), /root/strata (HIP), /root/kyojin (ExLlamaV3), llama.cpp-kolibri (patched HIP) |
+| Benchmark dir | /root/bench (launchers, probes, results) |
+| Repo clone | /root/local-llm-benchmarks |
+
+Device order matters: `hip:0` is the **R9700**, `hip:1` is the **Strix Halo**.
+Every launcher pins devices explicitly because of this. The two pools are not
+equivalent: the R9700's 32 GB of GDDR6 is the fast tier; the 124 GB unified pool
+is the capacity tier (roughly one-third the bandwidth, shared with the OS).
+
 ## Why this lane exists
 
 The other lanes in this repo assume CUDA device names and this repo's own
@@ -208,6 +230,93 @@ model when the workload changes.
    candidates on this host.
 6. **Flash Next requires `reasoning_effort=off`.** With reasoning on it measures
    68 t/s; the lane sends the flag per model and records the extras used.
+
+### Quality: HumanEval pass@1 (2026-10-06, all 164 problems, execution-scored)
+
+Scored by `scripts/borg/run_humaneval_local.py` against each lane's exact server
+configuration. lm-evaluation-harness's `humaneval`/`humaneval_instruct` tasks were
+tried first and returned pass@1 = 0.0 for every model: the prompts arrive at the
+server double-escaped, so the harness executes malformed source (see the script
+header for the full chain of guards). Treat lm-eval API-mode HumanEval numbers from
+this host as invalid until that is fixed upstream; this runner sends real newlines
+and scores by executing the official tests.
+
+| model | engine/server | HumanEval pass@1 |
+|---|---|---|
+| qwen38-27b | luce_server | **95.12%** (156/164) |
+| qwen38-27b-vision | luce_server | **95.12%** (156/164) |
+| laguna-xs21 | luce_server | **89.02%** (146/164) |
+| flashnext (IQ3_S) | Strata | **82.32%** (135/164) |
+| glm53-flash (EXL3) | Kyojin | **76.22%** (125/164) |
+| kolibri-1 (Q4_K_M) | llama.cpp-kolibri | **60.98%** (100/164) |
+
+Facts behind the table:
+
+- The vision variant scores identically to the text model (156/164 each): vision
+  adds no measurable coding cost at this quant.
+- The three luce_server-hosted models hold the top three spots. The gap to the
+  third-party engines is 13-34 points, which is quantization depth, not engine
+  speed (kolibri runs a hard Q4_K_M on a 78B MoE; Kyojin's EXL3 is ~3.5-bit).
+- Verified healthy before believing the low numbers: kolibri decoded at 54 t/s
+  with full-length generations during scoring, so 60.98% is the model, not the
+  harness.
+- Strata's server returns `content: null` on some replies; the first flashnext run
+  crashed on that at problem 11 and was re-scored after the runner learned to
+  fall back to `reasoning_content`.
+
+### Dual-device utilization (2026-10-06)
+
+Can the GPU and the APU's unified pool work at the same time? Measured with one
+model per device, both resident:
+
+| probe | decode t/s | vs alone |
+|---|---|---|
+| Qwen 27B on R9700, alone | 32.5 | — |
+| Qwen 27B with GLM EXL3 resident on Strix | 31.9 | -2% |
+| GLM EXL3 on Strix, alone | 33.7 | — |
+| GLM EXL3 with Qwen 27B resident on R9700 | 30.8 | -9% |
+
+Both pools were in use simultaneously: 26.04 GB GDDR6 + 112.6 GB unified memory.
+So the box runs two models at once at a 2-9% tax, which changes the deployment
+story: one-per-device is a supported layout, not a hack.
+
+Three ways to split work across the two devices, all measured:
+
+| split style | example | verdict |
+|---|---|---|
+| route/expert split (luce_server profiles) | DS4 Flash: `--target-device hip:0 --expert-device hip:1` | good: 53.5 t/s |
+| one model per device | the dual-resident test above | good: 2-9% tax |
+| layer split (`--tensor-split`) | GLM FP4 60,40: 17.5 GB on card | bad: 0.6 t/s decode, 24x slower than single-device |
+
+Layer splits lose because activations cross PCIe at every boundary; expert
+splits cross once per routed expert. GLM cannot use the card at all through the
+paoai engine — its best use is serving a second model.
+
+### New model lanes (2026-10-06)
+
+Swift and Coder are fine-tunes of Qwen 3.8 Flash Next, downloaded at Strata's
+recommended quants and run through the same probe suite on Strata, port 8080:
+
+| model | quant | engine | prefill 8K | decode |
+|---|---|---|---|---|
+| swift | IQ2_XS | Strata | 58.3 | **42.1** |
+| coder | IQ1_M | Strata | 57.3 | **40.5** |
+| (flashnext base, for reference) | IQ3_S | Strata | 441.6 @2.5K | 86.3 |
+
+Both decode slightly faster than one would fear from the deep quants, but they
+are 2x off the base model's decode. No HumanEval score yet for either.
+
+**Laguna-S-2.1 does not load.** The luce_server Laguna backend compiled
+`n_head_arr[40]` (XS's exact depth) into `laguna_internal.h`; S is deeper and the
+loader refuses it: `n_layer exceeds compiled-in n_head_arr capacity (40)` at
+`laguna_target_loader.cpp:295`. Supporting S needs a source patch + rebuild.
+
+**Engine portability was tested directly** (logs in `/root/bench/results/luce-archtest/`):
+luce_server rejects kolibri1 and glm5next architectures outright, and it cannot
+read the Strata-format sharded Flash-Next GGUFs — merging with llama.cpp's
+`llama-gguf-split` and a full tensor re-serialization both failed with the same
+tensor-offset mismatch, so the fix would be inside luce_server's GGUF reader.
+Conclusion: match engines to models; do not try to consolidate on one server.
 
 ## Pending lanes
 

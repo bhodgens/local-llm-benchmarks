@@ -118,6 +118,18 @@ Generated {datetime.now().strftime('%Y-%m-%d %H:%M')} by scripts/borg/report_bor
 This is the THROUGHPUT half of the benchmark picture. LiveCodeBench / HumanEval / tau2
 scores — the columns in the repo's main report.html — were not run on this host.</div>
 
+<h2>Host specifications</h2>
+<table>
+  <tr><th>component</th><th>detail</th></tr>
+  <tr><td>APU</td><td>AMD Ryzen AI MAX+ 395 w/ Radeon 8060S (Strix Halo, gfx1151), 32 threads — pool: 124 GB unified (GTT), <code>hip:1</code></td></tr>
+  <tr><td>GPU</td><td>Radeon AI PRO R9700 (gfx1201), 32 GB GDDR6, PCIe Gen5 x16 — <code>hip:0</code></td></tr>
+  <tr><td>RAM / disk</td><td>124 GB total (APU pool carved from it) &middot; 1.9 TB NVMe</td></tr>
+  <tr><td>OS / ROCm</td><td>Ubuntu, kernel 6.17.0-1032-oem &middot; ROCm 7.2.1</td></tr>
+  <tr><td>Engines</td><td>/root/lucebox (luce_server HIP) &middot; /root/strata (HIP) &middot; /root/kyojin (ExLlamaV3) &middot; llama.cpp-kolibri (patched HIP)</td></tr>
+</table>
+<div class="note">Device order: <code>hip:0</code> = R9700 (fast tier), <code>hip:1</code> = Strix Halo pool
+(capacity tier, ~1/3 the bandwidth, shared with the OS).</div>
+
 <h2>Lane results</h2>
 <table>
   <tr>
