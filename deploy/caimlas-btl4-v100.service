@@ -1,18 +1,26 @@
 # /etc/systemd/system/caimlas-btl4-v100.service
 # BTL-4 Q4_K_M (DogukanUrker community build) on the V100 (GPU 0, port 8082).
-# Deployed 2026-10-06 as prod coder/reviewer, replacing caimlas-nail-v100 (Nail-35B).
-# Rationale: LCB 0.92 / tau2 0.400 at 91.7 t/s (bench lane) vs Nail's 0.92 / 0.20-0.00
-# at 31 t/s. Best combined coding+agentic row in the library, 3x throughput.
+# 2026-10-06 v2: 512K shared context (YaRN 2x over 262K native), q4_0 KV, parallel 3.
 #
-# Serving requirements (from the BTL-4 bench lanes):
-#   --jinja + --reasoning off + --reasoning-format deepseek
-#   NOTE: deepseek reasoning format -> clients must strip reasoning blocks from
-#   old turns. BTL-4 ships 262144 native ctx; served at 131072 for KV headroom
-#   (q8_0 KV at 262K + parallel 2 would exceed the 32G card with compute buffers).
+# VRAM budget (V100 32G):
+#   weights + compute       ~21.1 GiB
+#   KV 524288 tok @ q4_0     ~2.8 GiB  (hybrid arch: only 10/40 layers carry KV)
+#   batch growth (3 slots)   ~0.3 GiB
+#   LFM2.5-8B co-host 32K    ~6.0 GiB  (caimlas-lfm25-v100.service)
+#   total                   ~30.2 / 32 GiB   (TIGHT - watch for cudaMalloc fails)
 #
-# VRAM: ~22GB weights + KV; fits V100 32G full offload.
+# Context scaling: GGUF declares 262144 native. --rope-scale 2 doubles it to 512K
+# (--rope-scaling yarn, --yarn-orig-ctx 262144). Quality past 262K is extrapolated
+# - unaudited for this model.
+#
+# Slots: 3 concurrent sessions share the 524288-token unified pool
+# (e.g. 2x256K, 3x174K, 4x131K). Per-session window = pool/parallel.
+#
+# BTL-4 serving requirements: --jinja --reasoning off --reasoning-format deepseek.
+# Clients MUST strip reasoning_content from old turns (model card: accumulated
+# reasoning in history degrades long agent runs).
 [Unit]
-Description=BTL-4 Q4_K_M (DogukanUrker) coder/reviewer (V100, port 8082)
+Description=BTL-4 Q4_K_M coder (V100, 512K YaRN ctx, q4_0 KV, 3 slots, port 8082)
 After=network.target
 
 [Service]
@@ -23,19 +31,22 @@ ExecStart=/home/caimlas/git/llama.cpp/build/bin/llama-server \
     --model /home/files/llms/dogukanurker-btl4-q4km/BTL-4-Q4_K_M.gguf \
     --flash-attn on \
     --gpu-layers 99 \
-    --ctx-size 131072 \
+    --ctx-size 524288 \
+    --parallel 3 \
+    --rope-scale 2 \
+    --rope-scaling yarn \
+    --yarn-orig-ctx 262144 \
     --batch-size 2048 \
     --ubatch-size 512 \
     --threads 6 \
     --threads-batch 6 \
-    --cache-type-k q8_0 \
-    --cache-type-v q8_0 \
+    --cache-type-k q4_0 \
+    --cache-type-v q4_0 \
     --jinja \
     --reasoning off \
     --reasoning-format deepseek \
     --host 0.0.0.0 \
     --port 8082 \
-    --parallel 1 \
     --cont-batching \
     --kv-unified \
     --temp 0.7 \

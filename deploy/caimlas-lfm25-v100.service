@@ -1,0 +1,50 @@
+# /etc/systemd/system/caimlas-lfm25-v100.service
+# LFM2.5-8B-A1B-Clean-RealWorld-v2 Q4_K_M co-hosted on the V100 (GPU 0, port 8081).
+# 2026-10-06: second service beside BTL-4 (which owns ~24.2G; ~7.8G free).
+# Role: fast orchestrator/planner (tau2 0.533 / 105 t/s solo) - the user-sim lane
+# config (131K ctx) does NOT fit in the remaining VRAM; served at 32K.
+#
+# VRAM: ~6.0 GiB (4.8 weights + 32K KV + compute). Total card ~30.2/32 - TIGHT.
+#
+# NOTE: starts AFTER caimlas-btl4-v100 so BTL-4's larger allocation lands first
+# (avoids fragmentation OOM on load order).
+[Unit]
+Description=LFM2.5-8B-A1B-Clean orchestrator (V100 co-host, 32K ctx, port 8081)
+After=network.target caimlas-btl4-v100.service
+Wants=caimlas-btl4-v100.service
+
+[Service]
+Type=simple
+Environment=CUDA_VISIBLE_DEVICES=0
+ExecStartPre=/bin/sleep 8
+ExecStart=/home/caimlas/git/llama.cpp/build/bin/llama-server \
+    --model /home/files/llms/LFM2.5-8B-A1B-Clean-RealWorld-v2-Q4_K_M.gguf \
+    --flash-attn on \
+    --gpu-layers 99 \
+    --ctx-size 32768 \
+    --batch-size 2048 \
+    --ubatch-size 512 \
+    --threads 4 \
+    --threads-batch 4 \
+    --cache-type-k q8_0 \
+    --cache-type-v q8_0 \
+    --no-mmap \
+    --host 0.0.0.0 \
+    --port 8081 \
+    --parallel 1 \
+    --cont-batching \
+    --kv-unified \
+    --temp 0.7 \
+    --top-p 0.95 \
+    --repeat-penalty 1.0 \
+    -n -1
+
+Restart=on-failure
+RestartSec=10
+User=caimlas
+Group=caimlas
+WorkingDirectory=/home/caimlas
+LimitMEMLOCK=infinity
+
+[Install]
+WantedBy=multi-user.target
