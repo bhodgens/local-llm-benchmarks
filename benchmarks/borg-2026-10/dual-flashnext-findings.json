@@ -1,0 +1,18 @@
+{
+  "question": "can flashnext run concurrently with ds4-flash or glm53-flash?",
+  "date": "2026-10-07",
+  "tests": [
+    {
+      "pair": "flashnext + ds4-flash",
+      "result": "CANNOT co-reside",
+      "cause": "flashnext stages 31.4 of 32 GB on the R9700; DS4-flash then needs 3.6 GB more on the card and fails (cudaMalloc OOM). Both engines demand the same 32 GB VRAM for their hot expert/attention sets."
+    },
+    {
+      "pair": "flashnext + glm53-flash (Kyojin EXL3)",
+      "result": "CANNOT co-reside as configured",
+      "cause": "GLM EXL3 needs ~100 GB of Strix GTT; with flashnext resident, Strata's torch arena had already reserved the pool (torch OOM at 118 GiB capacity). Shrinking one side (GLM ctx < 32K, or capping Strata with --resident-budget-gib) might make it fit but is untested."
+    }
+  ],
+  "flashnext-alone": {"decode_tps": 71.4},
+  "implication": "The only proven dual-resident pairing remains qwen38-27b (R9700) + glm53-flash EXL3 (Strix GTT) at 2-9% mutual cost. flashnext reserves nearly all of the card and cannot share it."
+}
