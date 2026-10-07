@@ -1,0 +1,2644 @@
+{
+  "start_time": "2026-07-06T23:15:50.813897+00:00",
+  "models": [
+    {
+      "name": "LFM2.5-8B-A1B-Clean-RealWorld-v2 Q4_K_M",
+      "file": "LFM2.5-8B-A1B-Clean-RealWorld-v2-Q4_K_M.gguf",
+      "status": "humaneval_done",
+      "start_time": "2026-07-07T12:29:11.054394+00:00",
+      "decode_tps": 105.7,
+      "prompt_tps": 22.3,
+      "humaneval": {
+        "pass_at_1": 0.0
+      },
+      "end_time": "2026-07-07T12:44:31.259776+00:00",
+      "livecodebench": {
+        "pass_at_1": 0.4666666666666667,
+        "wall_time_s": 862.7,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.5333,
+        "task_pass_rate": null,
+        "wall_time_s": 1890.7,
+        "exit_code": 0
+      },
+      "humaneval_chat": {
+        "pass_at_1": 0.0,
+        "wall_time_s": 729.1,
+        "exit_code": 0
+      },
+      "aider_diff": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "total": 10
+      },
+      "gpu": "3060",
+      "template": "stock",
+      "failures": [
+        {
+          "benchmark": "livecodebench (invalidated run)",
+          "attempt": "rerun",
+          "error": "Original LCB 0.4533333333333333 recorded with 23-suspect empty-content rate; rerun with thinking suppression verified: 0.4666666666666667 (empty 23/75). Broken artifacts: LFM2.5-8B-A1B-Clean-RealWorld-v2-Q4_K_M.empty-content-broken",
+          "timestamp": "2026-09-07T05:13:59+00:00"
+        }
+      ]
+    },
+    {
+      "name": "LFM2.5-8B-A1B base Q4_K_M",
+      "file": "LFM2.5-8B-A1B-Q4_K_M.gguf",
+      "status": "humaneval_done",
+      "start_time": "2026-07-07T12:44:34.729423+00:00",
+      "decode_tps": 213.2,
+      "prompt_tps": 319.4,
+      "humaneval": {
+        "pass_at_1": 0.0
+      },
+      "end_time": "2026-07-07T12:59:36.421909+00:00",
+      "livecodebench": {
+        "pass_at_1": 0.4666666666666667,
+        "wall_time_s": 967.5,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.4,
+        "task_pass_rate": null,
+        "wall_time_s": 19474.9,
+        "exit_code": 0,
+        "reward_pre_correction": 0.4615,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.4615 was scored-only (13/15 sims); corrected to all-15 mean 0.4 (tau2_LFM2.5-8B-A1B_base_Q4_K_M, 2 unscored sims counted as 0)."
+      },
+      "humaneval_chat": {
+        "pass_at_1": 0.0,
+        "wall_time_s": 726.0,
+        "exit_code": 0
+      },
+      "gpu": "3060",
+      "template": "stock",
+      "failures": [
+        {
+          "benchmark": "livecodebench (invalidated run)",
+          "attempt": "rerun",
+          "error": "Original LCB 0.4533333333333333 recorded with 30-suspect empty-content rate; rerun with thinking suppression verified: 0.4666666666666667 (empty 30/75). Broken artifacts: LFM2.5-8B-A1B-Q4_K_M.empty-content-broken",
+          "timestamp": "2026-09-07T05:13:59+00:00"
+        }
+      ]
+    },
+    {
+      "name": "LFM2.5-8B-A1B Q6_K",
+      "file": "LFM2.5-8B-A1B-Q6_K.gguf",
+      "status": "humaneval_done",
+      "start_time": "2026-07-07T12:59:39.844542+00:00",
+      "decode_tps": 168.4,
+      "prompt_tps": 292.1,
+      "humaneval": {
+        "pass_at_1": 0.0
+      },
+      "end_time": "2026-07-07T13:19:19.440172+00:00",
+      "livecodebench": {
+        "pass_at_1": 0.49333333333333335,
+        "wall_time_s": 1081.3,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.4615,
+        "task_pass_rate": null,
+        "wall_time_s": 19571.2,
+        "exit_code": 0
+      },
+      "humaneval_chat": {
+        "pass_at_1": 0.0,
+        "wall_time_s": 813.5,
+        "exit_code": 0
+      },
+      "aider_diff": {
+        "pass_rate": 0.1,
+        "passed": 1,
+        "total": 10
+      },
+      "gpu": "3060",
+      "template": "stock",
+      "failures": [
+        {
+          "benchmark": "livecodebench (invalidated run)",
+          "attempt": "rerun",
+          "error": "Original LCB 0.4533333333333333 recorded with 28-suspect empty-content rate; rerun with thinking suppression verified: 0.49333333333333335 (empty 28/75). Broken artifacts: LFM2.5-8B-A1B-Q6_K.empty-content-broken",
+          "timestamp": "2026-09-07T05:13:59+00:00"
+        }
+      ]
+    },
+    {
+      "name": "qwen2.5-coder-14b-instruct Q4_K_M",
+      "file": "qwen2.5-coder-14b-instruct-q4_k_m.gguf",
+      "status": "humaneval_done",
+      "start_time": "2026-07-07T13:19:23.010050+00:00",
+      "decode_tps": 34.6,
+      "prompt_tps": 137.5,
+      "humaneval": {
+        "pass_at_1": 0.8536585365853658,
+        "wall_time_s": 403.1,
+        "exit_code": 0
+      },
+      "end_time": "2026-07-07T13:27:02.082069+00:00",
+      "livecodebench": {
+        "pass_at_1": 0.8,
+        "wall_time_s": 86.2,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.1333,
+        "task_pass_rate": null,
+        "wall_time_s": 1728.5,
+        "exit_code": 0
+      },
+      "aider_diff": {
+        "pass_rate": 0.2,
+        "passed": 2,
+        "total": 10
+      },
+      "gpu": "3060",
+      "template": "stock"
+    },
+    {
+      "name": "Qwopus3.6-35B-A3B-Coder-MTP Q4_K_M",
+      "file": "Qwopus3.6-35B-A3B-Coder-MTP-Q4_K_M.gguf",
+      "status": "humaneval_done",
+      "start_time": "2026-07-07T13:27:05.656350+00:00",
+      "decode_tps": 27.2,
+      "prompt_tps": 20.3,
+      "humaneval": {
+        "pass_at_1": 0.006097560975609756
+      },
+      "end_time": "2026-07-07T15:12:42.574900+00:00",
+      "livecodebench": {
+        "pass_at_1": 0.8,
+        "wall_time_s": 119.9,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.3333333333333333,
+        "task_pass_rate": null,
+        "user_sim": "LFM2.5-8B-A1B-Clean-RealWorld-v2",
+        "canonical": true,
+        "sims_scored": "15/15",
+        "passes": 5,
+        "infra_errors": 0,
+        "serving": "enable_thinking:false via chat-template-kwargs"
+      },
+      "humaneval_chat": {
+        "pass_at_1": 0.006097560975609756,
+        "wall_time_s": 660.2,
+        "exit_code": 0
+      },
+      "aider_diff": {
+        "pass_rate": 0.1,
+        "passed": 1,
+        "total": 10
+      },
+      "gpu": "3060",
+      "mtp_acceptance": {
+        "MTP-n3": {
+          "decode_tps": 16.9,
+          "acceptance_avg": 0.539,
+          "acceptance_rates": [
+            0.3,
+            0.42105,
+            0.74786,
+            0.68675
+          ]
+        }
+      },
+      "template": "stock",
+      "failures": [
+        {
+          "benchmark": "tau2 (service-outage rerun)",
+          "error": "2026-07-09 run invalid: model server stopped answering ~90 min in (10/15 sims infrastructure_error, 0s duration). Rerun 2026-09-07 canonical protocol: 0.3333 (passes=5/15, infra_errors=4). Superseded 0.1333 (denominator audit) and 0.40 (original scored-only). Raw: [1.0, 1.0, None, 0.0, 0.0, None, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, None, 1.0, None]",
+          "timestamp": "2026-09-08T18:04:28+00:00"
+        },
+        {
+          "benchmark": "tau2 (no-MTP canonical rerun)",
+          "error": "Option-1 rerun: MTP+parallel>1 unsupported per Unsloth/maker guidance; served without speculative decoding, protocol unchanged. Result 0.2000 (passes=3/15, infra_errors=5). Superseded: 0.1333 (July outage), 0.3333 (MTP rerun, 4 infra errors). Raw: [1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, None, None, 0.0, None, None, None, 0.0]",
+          "timestamp": "2026-09-08T20:16:16+00:00"
+        },
+        {
+          "benchmark": "tau2 (parallel-1 rerun)",
+          "error": "parallel1 still had infra_errors=7, scored=8/15. result=0.2667",
+          "timestamp": "2026-09-08T20:52:07+00:00"
+        },
+        {
+          "benchmark": "tau2 (thinking-off rerun)",
+          "error": "Served with enable_thinking:false (empty-turn fix). Result 0.3333 (passes=5/15, infra_errors=0). Superseded 0.26666666666666666. Raw: [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 0.0]",
+          "timestamp": "2026-09-09T03:26:14+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Qwen3.6-35B-A3B IQ3_K_R4",
+      "file": "Qwen3.6-35B-A3B-IQ3_K_R4.gguf",
+      "status": "failed",
+      "start_time": "2026-07-07T15:12:47.752498+00:00",
+      "error": "Server died: del '/home/files/llms/Qwen3.6-35B-A3B-IQ3_K_R4.gguf'\n0.00.464.245 E srv    load_model: failed to load model, '/home/files/llms/Qwen3.6-35B-A3B-IQ3_K_R4.gguf'\n0.00.464.248 I srv    operator(): operator(): cleaning up before exit...\n0.00.465.183 E srv  llama_server: exiting due to model loading error\n",
+      "end_time": "2026-07-07T15:12:53.791207+00:00",
+      "livecodebench": {
+        "pass_at_1": 0.14666666666666667
+      },
+      "failures": [
+        {
+          "benchmark": "tau2",
+          "attempt": 1,
+          "error": "Server died",
+          "settings": {
+            "ctx": "current",
+            "steps": 30
+          },
+          "timestamp": "2026-07-11T19:49:45.300187+00:00"
+        },
+        {
+          "benchmark": "tau2",
+          "attempt": 2,
+          "error": "Server died",
+          "settings": {
+            "ctx": "current",
+            "steps": 15
+          },
+          "timestamp": "2026-07-11T19:49:47.304552+00:00"
+        },
+        {
+          "benchmark": "tau2",
+          "attempt": 3,
+          "error": "Server died",
+          "settings": {
+            "ctx": "current",
+            "steps": 10
+          },
+          "timestamp": "2026-07-11T19:49:49.308736+00:00"
+        },
+        {
+          "benchmark": "all",
+          "attempt": "final",
+          "error": "Unsupported quantization format: ggml type 138 (IQ3_K_R4) not in [0, 42). Requires newer llama.cpp build or different quant.",
+          "settings": "N/A",
+          "timestamp": "2026-07-11T00:00:00Z"
+        },
+        {
+          "benchmark": "livecodebench",
+          "error": "Server died: del '/home/files/llms/Qwen3.6-35B-A3B-IQ3_K_R4.gguf'\n0.00.461.325 E srv    load_model: failed to load model, '/home/files/llms/Qwen3.6-35B-A3B-IQ3_K_R4.gguf'\n0.00.461.327 I srv    operator(): operator(): cleaning up before exit...\n0.00.462.405 E srv  llama_server: exiting due to model loading error\n",
+          "settings": [
+            "--gpu-layers",
+            "99",
+            "--cpu-moe",
+            "--ctx-size",
+            "262144",
+            "--ubatch-size",
+            "512",
+            "--threads",
+            "6",
+            "--threads-batch",
+            "6",
+            "--cache-type-k",
+            "q8_0",
+            "--cache-type-v",
+            "q8_0"
+          ],
+          "timestamp": "2026-07-12T18:21:09.495230+00:00"
+        }
+      ],
+      "tau2_error": "Unsupported quant format (type 138)",
+      "lcb_error": "Server died: del '/home/files/llms/Qwen3.6-35B-A3B-IQ3_K_R4.gguf'\n0.00.461.325 E srv    load_model: failed to load model, '/home/files/llms/Qwen3.6-35B-A3B-IQ3_K_R4.gguf'\n0.00.461.327 I srv    operator(): operator(): cleaning up before exit...\n0.00.462.405 E srv  llama_server: exiting due to model loading error\n",
+      "gpu": "3060",
+      "tau2": {},
+      "template": "stock"
+    },
+    {
+      "name": "Qwen3.6-35B-A3B-Abliterated-Heretic Q4_K_M",
+      "file": "Qwen3.6-35B-A3B-Abliterated-Heretic-Q4_K_M.gguf",
+      "status": "humaneval_done",
+      "start_time": "2026-07-07T15:13:02.842250+00:00",
+      "decode_tps": 27.8,
+      "prompt_tps": 28.2,
+      "humaneval": {
+        "pass_at_1": 0.4268292682926829
+      },
+      "end_time": "2026-07-07T16:46:55.632663+00:00",
+      "livecodebench": {
+        "pass_at_1": 0.14666666666666667,
+        "wall_time_s": 3151.2,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.3333333333333333,
+        "task_pass_rate": null,
+        "user_sim": "LFM2.5-8B-A1B-Clean-RealWorld-v2",
+        "canonical": true,
+        "sims_scored": "15/15",
+        "passes": 5,
+        "infra_errors": 0,
+        "serving": "enable_thinking:false via chat-template-kwargs"
+      },
+      "humaneval_chat": {
+        "pass_at_1": 0.4268292682926829,
+        "wall_time_s": 754.4,
+        "exit_code": 0
+      },
+      "gpu": "3060",
+      "template": "stock",
+      "failures": [
+        {
+          "benchmark": "livecodebench (invalidated run)",
+          "attempt": "rerun",
+          "error": "Original LCB 0.14666666666666667 recorded with 64-suspect empty-content rate; rerun with thinking suppression verified: 0.14666666666666667 (empty 64/75). Broken artifacts: Qwen3.6-35B-A3B-Abliterated-Heretic-Q4_K_M.empty-content-broken",
+          "timestamp": "2026-09-07T05:13:59+00:00"
+        },
+        {
+          "benchmark": "tau2 (thinking-off rerun)",
+          "error": "Served with enable_thinking:false (empty-turn fix). Result 0.3333 (passes=5/15, infra_errors=0). Superseded 0.0667. Raw: [0.0, 1.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0]",
+          "timestamp": "2026-09-09T03:26:14+00:00"
+        }
+      ]
+    },
+    {
+      "name": "RavenX-OpenFable-Holo3 Q4_K_M",
+      "file": "RavenX-OpenFable-Qwopus-Coder-Holo3-Qwen3.6-35B-A3B-MTP-Q4_K_M.gguf",
+      "status": "partial",
+      "start_time": "2026-07-07T16:47:00.614504+00:00",
+      "decode_tps": 26.8,
+      "prompt_tps": 29.9,
+      "humaneval": {
+        "pass_at_1": 0.006097560975609756
+      },
+      "end_time": "2026-07-07T18:34:48.473428+00:00",
+      "livecodebench": {
+        "pass_at_1": 0.8533333333333334,
+        "wall_time_s": 117.4,
+        "exit_code": 0
+      },
+      "tau2": {},
+      "humaneval_chat": {
+        "pass_at_1": 0.006097560975609756,
+        "wall_time_s": 639.2,
+        "exit_code": 0
+      },
+      "aider_diff": {
+        "pass_rate": 0.2,
+        "passed": 2,
+        "total": 10
+      },
+      "gpu": "3060",
+      "tok_s": {
+        "code": 30.6,
+        "essay": 30.5,
+        "factual": 30.5
+      },
+      "lcb": null,
+      "template": "stock"
+    },
+    {
+      "name": "DeepSeek-R1-0528-Qwen3-8B Q8_0",
+      "file": "DeepSeek-R1-0528-Qwen3-8B-Q8_0.gguf",
+      "livecodebench": {
+        "pass_at_1": 0.17333333333333334
+      },
+      "tau2": {
+        "reward": 0.1333,
+        "wall_time_s": 4680,
+        "rerun": true,
+        "reward_pre_correction": 0.1429,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.1429 was scored-only (14/15 sims); corrected to all-15 mean 0.1333 (tau2_rerun_DeepSeek-R1-0528-Qwen3-8B_Q8_0, 1 unscored sims counted as 0)."
+      },
+      "humaneval": {
+        "pass_at_1": null
+      },
+      "humaneval_chat": {
+        "pass_at_1": null,
+        "wall_time_s": 463.5,
+        "exit_code": 1
+      },
+      "gpu": "3060",
+      "template": "stock"
+    },
+    {
+      "name": "DeepSeek-R1-0528-Qwen3-8B Q4_K_M",
+      "file": "DeepSeek-R1-0528-Qwen3-8B-Q4_K_M.gguf",
+      "livecodebench": {
+        "pass_at_1": 0.17333333333333334,
+        "wall_time_s": 5282.8,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.2667,
+        "wall_time_s": 10440,
+        "rerun": true,
+        "reward_pre_correction": 0.2857,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.2857 was scored-only (14/15 sims); corrected to all-15 mean 0.2667 (tau2_rerun_DeepSeek-R1-0528-Qwen3-8B_Q4_K_M, 1 unscored sims counted as 0)."
+      },
+      "humaneval": {
+        "pass_at_1": null
+      },
+      "humaneval_chat": {
+        "pass_at_1": null,
+        "wall_time_s": 518.3,
+        "exit_code": 1
+      },
+      "gpu": "3060",
+      "template": "stock"
+    },
+    {
+      "name": "gemma4-coding Q4_K_M",
+      "file": "gemma4-coding-Q4_K_M.gguf",
+      "livecodebench": {
+        "pass_at_1": 0.5466666666666666,
+        "wall_time_s": 993.0,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.4,
+        "task_pass_rate": null,
+        "wall_time_s": 37274.5,
+        "exit_code": 0,
+        "reward_pre_correction": 0.5,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.5 was scored-only (12/15 sims); corrected to all-15 mean 0.4 (tau2_gemma4-coding_Q4_K_M, 3 unscored sims counted as 0)."
+      },
+      "humaneval": {
+        "pass_at_1": 0.036585365853658534
+      },
+      "humaneval_chat": {
+        "pass_at_1": 0.036585365853658534,
+        "wall_time_s": 308.4,
+        "exit_code": 0
+      },
+      "gpu": "3060",
+      "template": "stock"
+    },
+    {
+      "name": "gemma4-v2 Q4_K_M",
+      "file": "gemma4-v2-Q4_K_M.gguf",
+      "livecodebench": {
+        "pass_at_1": 0.5866666666666667,
+        "wall_time_s": 755.2,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.1333,
+        "task_pass_rate": null,
+        "wall_time_s": 5289.1,
+        "exit_code": 0
+      },
+      "humaneval": {
+        "pass_at_1": 0.018292682926829267
+      },
+      "humaneval_chat": {
+        "pass_at_1": 0.018292682926829267,
+        "wall_time_s": 301.6,
+        "exit_code": 0
+      },
+      "aider_diff": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "total": 10
+      },
+      "gpu": "3060",
+      "template": "stock"
+    },
+    {
+      "name": "DeepSeek-Coder-V2-Lite IQ4_XS",
+      "file": "DeepSeek-Coder-V2-Lite-Instruct-IQ4_XS.gguf",
+      "tau2": {
+        "reward": 0.2,
+        "task_pass_rate": null,
+        "wall_time_s": 3494.5,
+        "exit_code": 0,
+        "reward_pre_correction": 0.5,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.5 was scored-only (6/15 sims); corrected to all-15 mean 0.2 (tau2_DeepSeek-Coder-V2-Lite_IQ4_XS, 9 unscored sims counted as 0)."
+      },
+      "livecodebench": {
+        "pass_at_1": null,
+        "wall_time_s": 990.5,
+        "exit_code": 0
+      },
+      "humaneval": {
+        "pass_at_1": 0.04878048780487805
+      },
+      "humaneval_chat": {
+        "pass_at_1": 0.04878048780487805,
+        "wall_time_s": 141.2,
+        "exit_code": 0
+      },
+      "gpu": "3060",
+      "template": "stock"
+    },
+    {
+      "name": "RavenX-OpenFable-Coderagent gemma4 Q4_K_M",
+      "file": "RavenX-OpenFable-Coderagent-gemma4-fable5-Q4_K_M.gguf",
+      "livecodebench": {
+        "pass_at_1": 0.5466666666666666,
+        "wall_time_s": 815.5,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.1333,
+        "task_pass_rate": null,
+        "wall_time_s": 39209.9,
+        "exit_code": 0,
+        "reward_pre_correction": 0.1538,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.1538 was scored-only (13/15 sims); corrected to all-15 mean 0.1333 (tau2_RavenX-OpenFable-Coderagent_gemma4_Q4_K_M, 2 unscored sims counted as 0)."
+      },
+      "humaneval": {
+        "pass_at_1": 0.03048780487804878
+      },
+      "humaneval_chat": {
+        "pass_at_1": 0.03048780487804878,
+        "wall_time_s": 315.7,
+        "exit_code": 0
+      },
+      "gpu": "3060",
+      "template": "stock"
+    },
+    {
+      "name": "Qwen3.5-9B-DeepSeek-V4-Flash Q4_K_M",
+      "file": "Qwen3.5-9B-DeepSeek-V4-Flash-Q4_K_M.gguf",
+      "category": "9B",
+      "dspark": false,
+      "decode_tps": 80.7,
+      "livecodebench": {
+        "pass_at_1": 0.18666666666666668,
+        "wall_time_s": 3509.2,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.4667,
+        "task_pass_rate": null,
+        "wall_time_s": 1447.9,
+        "exit_code": 0
+      },
+      "gpu": "V100",
+      "template": "stock"
+    },
+    {
+      "name": "gemma-4-12B-it-QAT Q4_0",
+      "file": "gemma-4-12B-it-QAT-Q4_0.gguf",
+      "category": "12-14B",
+      "dspark": false,
+      "decode_tps": 56.3,
+      "livecodebench": {
+        "pass_at_1": 0.8666666666666667,
+        "wall_time_s": 1426.8,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.4667,
+        "task_pass_rate": null,
+        "wall_time_s": 1025.3,
+        "exit_code": 0
+      },
+      "gpu": "V100",
+      "template": "stock"
+    },
+    {
+      "name": "gemma-4-26B-A4B-it-QAT Q4_0",
+      "file": "gemma-4-26B-A4B-it-QAT-Q4_0.gguf",
+      "category": "26B MoE",
+      "dspark": false,
+      "decode_tps": 83.3,
+      "livecodebench": {
+        "pass_at_1": 0.8933333333333333,
+        "wall_time_s": 1240.9,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.4,
+        "task_pass_rate": null,
+        "wall_time_s": 1394.3,
+        "exit_code": 0
+      },
+      "gpu": "V100",
+      "template": "stock"
+    },
+    {
+      "name": "Ternary-Bonsai-27B Q2_0 (dspark)",
+      "file": "Ternary-Bonsai-27B-Q2_0.gguf",
+      "category": "27B Ternary",
+      "dspark": true,
+      "decode_tps": 36.3,
+      "livecodebench": {
+        "pass_at_1": 0.6266666666666667,
+        "wall_time_s": 1847.1,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.26666666666666666,
+        "task_pass_rate": null,
+        "user_sim": "LFM2.5-8B-A1B-Clean-RealWorld-v2",
+        "canonical": true,
+        "sims_scored": "15/15",
+        "passes": 4,
+        "infra_errors": 0,
+        "serving": "enable_thinking:false via chat-template-kwargs"
+      },
+      "gpu": "V100",
+      "template": "stock",
+      "ecc_dspark_retry": {
+        "decode_tps": 37.69,
+        "timestamp": "2026-09-07T18:51:14+00:00"
+      },
+      "failures": [
+        {
+          "benchmark": "tau2 (denominator correction)",
+          "error": "reward corrected 0.8 -> 0.5333 (8/15; 5 sims errored/None). User simulator was Qwythos-27B (non-canonical), not LFM2.5. 0.800 vs field is NOT comparable; 0.5333 is.",
+          "timestamp": "2026-09-08T01:15:30+00:00"
+        },
+        {
+          "benchmark": "tau2 (canonical rerun)",
+          "error": "Rerun with canonical protocol (LFM2.5 user sim, seed 42, all 15 scored): 0.5455. Superseded values: 0.800 (10-task scored-only denominator, Qwythos user sim) and 0.5333 (8/15 recount of that same run). Raw per-task rewards: [1.0, 1.0, 1.0, None, 1.0, 1.0, 0.0, None, 0.0, 0.0, 0.0, None, 1.0, 0.0, None]",
+          "timestamp": "2026-09-08T03:42:46+00:00"
+        },
+        {
+          "benchmark": "tau2 (thinking-off rerun)",
+          "error": "Served with enable_thinking:false (empty-turn fix). Result 0.2667 (passes=4/15, infra_errors=0). Superseded 0.4. Raw: [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0]",
+          "timestamp": "2026-09-09T03:26:14+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Qwen3.6-27B-MTP Q4_K_M",
+      "file": "Qwen3.6-27B-MTP-Q4_K_M.gguf",
+      "category": "27B",
+      "dspark": false,
+      "decode_tps": 30.1,
+      "livecodebench": {
+        "pass_at_1": 0.5333333333333333,
+        "wall_time_s": 5141.4,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.4,
+        "task_pass_rate": null,
+        "wall_time_s": 2206.5,
+        "exit_code": 0
+      },
+      "gpu": "V100",
+      "template": "stock"
+    },
+    {
+      "name": "Ternary-Bonsai-27B Q2_0 (3060)",
+      "file": "Ternary-Bonsai-27B-Q2_0.gguf",
+      "category": "27B Ternary",
+      "max_ctx_3060_nodraft": 200000,
+      "max_ctx_3060_dspark": 100000,
+      "vram_200k_mb": 11381,
+      "vram_100k_mb": 9133,
+      "decode_tps_3060": 26.6,
+      "gpu": "3060",
+      "tau2": {},
+      "livecodebench": {}
+    },
+    {
+      "name": "Ternary-Bonsai-27B Q2_0 (3060+dspark)",
+      "file": "Ternary-Bonsai-27B-Q2_0.gguf",
+      "category": "27B Ternary",
+      "dspark": true,
+      "decode_tps_3060_dspark": 25.0,
+      "livecodebench_3060_dspark": {
+        "pass_at_1": 0.64,
+        "wall_time_s": 2633.8,
+        "exit_code": 0
+      },
+      "tau2_3060_dspark": {
+        "reward": 0.4545,
+        "task_pass_rate": null,
+        "wall_time_s": 5843.1,
+        "exit_code": 0
+      },
+      "gpu": "3060",
+      "tau2": {},
+      "livecodebench": {}
+    },
+    {
+      "name": "gemma-4-12B-it-QAT Q4_0 (3060 128K)",
+      "file": "gemma-4-12B-it-QAT-Q4_0.gguf",
+      "category": "12-14B",
+      "gpu": "3060",
+      "decode_tps": 38.2,
+      "mtp_enabled": false,
+      "livecodebench": {
+        "pass_at_1": 0.9066666666666666,
+        "wall_time_s": 2091.3,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.4,
+        "task_pass_rate": null,
+        "wall_time_s": 2993.5,
+        "exit_code": 0,
+        "reward_pre_correction": 0.4286,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.4286 was scored-only (14/15 sims); corrected to all-15 mean 0.4 (tau2_gemma-4-12B-it-QAT_Q4_0_3060_128K, 1 unscored sims counted as 0)."
+      },
+      "template": "stock"
+    },
+    {
+      "name": "gemma4-v2-agentic Q3_K_M (3060+MTP)",
+      "file": "gemma4-v2-agentic-Q3_K_M.gguf",
+      "category": "12-14B",
+      "gpu": "3060",
+      "decode_tps": 34.5,
+      "mtp_enabled": true,
+      "livecodebench": {
+        "pass_at_1": 0.5066666666666667,
+        "wall_time_s": 796.6,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.0667,
+        "task_pass_rate": null,
+        "wall_time_s": 877.5,
+        "exit_code": 0
+      },
+      "template": "stock"
+    },
+    {
+      "name": "gemma4-v2-agentic Q4_K_M (3060+MTP)",
+      "file": "gemma4-v2-agentic-Q4_K_M.gguf",
+      "category": "12-14B",
+      "gpu": "3060",
+      "decode_tps": 38.0,
+      "mtp_enabled": true,
+      "livecodebench": {
+        "pass_at_1": 0.5066666666666667,
+        "wall_time_s": 678.3,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.0667,
+        "task_pass_rate": null,
+        "wall_time_s": 1126.4,
+        "exit_code": 0
+      },
+      "template": "stock"
+    },
+    {
+      "name": "Nanbeige4-3B-Thinking Q8_0",
+      "file": "Nanbeige4-3B-Thinking-Q8_0.gguf",
+      "category": "3B",
+      "gpu": "3060",
+      "thinking": true,
+      "decode_tps": null,
+      "livecodebench": {
+        "pass_at_1": 0.13333333333333333,
+        "empty_outputs": 0,
+        "wall_time_s": 4324.3,
+        "exit_code": 0,
+        "note": "Thinking not suppressible, skipping"
+      },
+      "tau2": {
+        "reward": 0.1333,
+        "task_pass_rate": null,
+        "wall_time_s": 5382.3,
+        "exit_code": 0,
+        "reward_pre_correction": 0.1667,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.1667 was scored-only (12/15 sims); corrected to all-15 mean 0.1333 (tau2_3060_Nanbeige4-3B-Thinking_Q8_0, 3 unscored sims counted as 0)."
+      },
+      "template": "stock"
+    },
+    {
+      "name": "Nanbeige4-3B-Thinking Q4_K_M",
+      "file": "Nanbeige4-3B-Thinking-Q4_K_M.gguf",
+      "category": "3B",
+      "gpu": "3060",
+      "thinking": true,
+      "decode_tps": 10.0,
+      "livecodebench": {
+        "pass_at_1": 0.0,
+        "error": "CUDA init failed - ran on CPU at 9.6 tok/s. Aborted.",
+        "note": "Thinking not suppressible, skipping"
+      },
+      "tau2": {
+        "reward": 0.1333,
+        "wall_time_s": 5621.6,
+        "exit_code": 0,
+        "note": "--reasoning off on server"
+      },
+      "failures": [
+        {
+          "benchmark": "server_start",
+          "error": "CUDA forward compatibility error after long run - GPU not detected. Ran on CPU.",
+          "timestamp": "2026-07-24T09:10:40.481652+00:00"
+        }
+      ],
+      "template": "stock"
+    },
+    {
+      "name": "BTL-3-Compact AVQ2",
+      "file": "BTL-3-Compact-AVQ2.gguf",
+      "category": "27B",
+      "gpu": "3060",
+      "thinking": true,
+      "lcb_error": "Server died: Compact-AVQ2.gguf'\n0.00.839.655 E llama_model_load: error loading model: missing tensor 'token_embd.weight'\n0.00.839.715 E llama_model_load_from_file_impl: failed to load model\n0.00.839.773 E common_fit_params: encountered an error while trying to fit params to free device memory: failed to load model\n0.01.463.147 E llama_model_load: error loading model: missing tensor 'token_embd.weight'\n0.01.463.196 E llama_model_load_from_file_impl: failed to load model\n0.01.463.203 E cmn  common_init_: failed to load model '/home/files/llms/BTL-3-Compact-AVQ2.gguf'\n0.01.463.209 E srv    load_model: failed to load model, '/home/files/llms/BTL-3-Compact-AVQ2.gguf'\n0.01.463.211 I srv    operator(): operator(): cleaning up before exit...\n0.01.464.376 E srv  llama_server: exiting due to model loading error\n",
+      "livecodebench": {
+        "pass_at_1": null
+      },
+      "binary": "btl-3-fork",
+      "tau2": {},
+      "template": "stock"
+    },
+    {
+      "name": "Laguna-S-2.1 UD-IQ3_S",
+      "file": "Laguna-S-2.1-UD-IQ3_S.gguf",
+      "category": "118B MoE",
+      "gpu": "3060",
+      "thinking": true,
+      "decode_tps": null,
+      "livecodebench": {
+        "pass_at_1": null,
+        "empty_outputs": 0,
+        "wall_time_s": 253.3,
+        "exit_code": -15
+      },
+      "tau2": {
+        "reward": null,
+        "task_pass_rate": null,
+        "wall_time_s": 177.1,
+        "exit_code": -9
+      },
+      "template": "stock"
+    },
+    {
+      "name": "Hermes3.6-35B-A3B Genesis V5 APEX-Compact",
+      "file": "Hermes3.6-35B-A3B-Uncensored-Genesis-V5-APEX-Compact.gguf",
+      "category": "35B MoE",
+      "gpu": "3060",
+      "thinking": true,
+      "decode_tps": 26.5,
+      "livecodebench": {
+        "pass_at_1": 0.8266666666666667,
+        "empty_outputs": 0,
+        "wall_time_s": 3578.6,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.0,
+        "task_pass_rate": null,
+        "wall_time_s": 4491.8,
+        "exit_code": 0
+      },
+      "template": "stock"
+    },
+    {
+      "name": "BTL-3-Compact AVQ2 (V100)",
+      "file": "BTL-3-Compact-AVQ2.gguf",
+      "category": "27B",
+      "gpu": "V100",
+      "thinking": true,
+      "lcb_error": "Server died: Compact-AVQ2.gguf'\n0.00.790.633 E llama_model_load: error loading model: missing tensor 'token_embd.weight'\n0.00.790.690 E llama_model_load_from_file_impl: failed to load model\n0.00.790.740 E common_fit_params: encountered an error while trying to fit params to free device memory: failed to load model\n0.01.406.619 E llama_model_load: error loading model: missing tensor 'token_embd.weight'\n0.01.406.671 E llama_model_load_from_file_impl: failed to load model\n0.01.406.677 E cmn  common_init_: failed to load model '/home/files/llms/BTL-3-Compact-AVQ2.gguf'\n0.01.406.683 E srv    load_model: failed to load model, '/home/files/llms/BTL-3-Compact-AVQ2.gguf'\n0.01.406.685 I srv    operator(): operator(): cleaning up before exit...\n0.01.407.477 E srv  llama_server: exiting due to model loading error\n",
+      "livecodebench": {
+        "pass_at_1": null,
+        "wall_time_s": 12713.9,
+        "exit_code": 0
+      },
+      "binary": "btl-3-fork (--reasoning off)",
+      "decode_tps": 12.2,
+      "tau2": {
+        "reward": 0.0,
+        "wall_time_s": 2721.6,
+        "exit_code": 0
+      },
+      "template": "stock"
+    },
+    {
+      "name": "Laguna-S-2.1 UD-IQ3_S (V100)",
+      "file": "Laguna-S-2.1-UD-IQ3_S.gguf",
+      "category": "118B MoE",
+      "gpu": "V100",
+      "thinking": true,
+      "decode_tps": 3.0,
+      "livecodebench": {
+        "pass_at_1": 0.8133333333333334,
+        "empty_outputs": 0,
+        "wall_time_s": 8433.5,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": null,
+        "task_pass_rate": null,
+        "wall_time_s": 958.2,
+        "exit_code": -9
+      },
+      "template": "stock"
+    },
+    {
+      "name": "ThinkingCap-Qwen3.6-27B Q4_K_M (V100)",
+      "file": "ThinkingCap-Qwen3.6-27B-Q4_K_M.gguf",
+      "category": "27B",
+      "gpu": "V100",
+      "thinking": true,
+      "decode_tps": 29.8,
+      "livecodebench": {
+        "pass_at_1": 0.8666666666666667,
+        "empty_outputs": 0,
+        "wall_time_s": 2952.7,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.4667,
+        "task_pass_rate": null,
+        "wall_time_s": 1838.6,
+        "exit_code": 0
+      },
+      "template": "stock"
+    },
+    {
+      "name": "BTL-3 Full Q4_K_M (V100)",
+      "file": "BTL-3-merged-Q4_K_M.gguf",
+      "category": "27B",
+      "gpu": "V100",
+      "thinking": true,
+      "binary": "upstream llama.cpp (--reasoning off)",
+      "decode_tps": 29.6,
+      "livecodebench": {
+        "pass_at_1": 0.8666666666666667,
+        "wall_time_s": 3552.6,
+        "exit_code": 0,
+        "note": "68/75 with code. --reasoning off. Merged LoRA (rank 32) + Qwen3.6-27B base."
+      },
+      "tau2": {
+        "reward": 0.4,
+        "wall_time_s": 1064.3,
+        "exit_code": 0
+      },
+      "template": "stock"
+    },
+    {
+      "name": "Qwen3.6-27B-FableFusion-MTP Q4_K_M",
+      "file": "Qwen3.6-27B-FableFusion-MTP-Q4_K_M.gguf",
+      "category": "27B",
+      "gpu": "V100",
+      "start_time": "2026-07-26T06:12:46.264248+00:00",
+      "decode_tps": 30.2,
+      "livecodebench": {
+        "pass_at_1": 0.6533333333333333,
+        "wall_time_s": 2760,
+        "exit_code": 0,
+        "note": "Score parsed from LCB log output (0.6533), eval JSON not found by parser"
+      },
+      "tau2": {
+        "reward": 0.0667,
+        "task_pass_rate": null,
+        "wall_time_s": 3118.7,
+        "exit_code": 0,
+        "reward_pre_correction": 0.1,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.1 was scored-only (10/15 sims); corrected to all-15 mean 0.0667 (tau2_v100_Qwen3.6-27B-FableFusion-MTP_Q4_K_M, 5 unscored sims counted as 0)."
+      },
+      "status": "completed",
+      "end_time": "2026-07-26T07:52:27.605264+00:00",
+      "template": "stock"
+    },
+    {
+      "name": "Bonsai-27B Q1_0 (3060)",
+      "file": "Bonsai-27B-Q1_0.gguf",
+      "category": "27B Ternary",
+      "gpu": "3060",
+      "quant": "Q1_0",
+      "bpw": 1.13,
+      "start_time": "2026-07-26T18:39:25.480784+00:00",
+      "max_ctx_3060": 262144,
+      "vram_262k_mb": 9719,
+      "vram_131k_mb": 6775,
+      "decode_tps_3060": 28.3,
+      "livecodebench_3060": {
+        "pass_at_1": 0.4667,
+        "wall_time_s": 2677.3,
+        "exit_code": 0
+      },
+      "tau2_3060": {
+        "reward": 0.1429,
+        "task_pass_rate": null,
+        "wall_time_s": 4487.6,
+        "exit_code": 0
+      },
+      "status": "completed",
+      "end_time": "2026-07-26T20:39:31.500762+00:00",
+      "tau2": {},
+      "livecodebench": {}
+    },
+    {
+      "name": "Neutrino-8B (FV5 ternary)",
+      "file": "neutrino-8b-fv5.gguf",
+      "status": "done",
+      "category": "8B Ternary",
+      "decode_tps": 41.3,
+      "livecodebench": {
+        "pass_at_1": 0.08,
+        "wall_time_s": 1714.3,
+        "status": "complete"
+      },
+      "tau2": {
+        "status": "failed",
+        "wall_time_s": 8.7,
+        "exit_code": 1,
+        "reward": null
+      },
+      "binary": "/home/caimlas/git/llama.cpp-fermion/build/bin/llama-server",
+      "thinking": false,
+      "dspark": false,
+      "quant": "FV5 (5-valued ternary, sub-2bpw)",
+      "bpw": "~1.6",
+      "spec_details": {
+        "draft_model": "Neutrino-0.6B (FV5 ternary, 328MB)",
+        "draft_tps": 7.3,
+        "draft_acceptance": "6-37% (mean ~22%)",
+        "draft_speedup": "0.18x (5.4x REGRESSION)",
+        "note": "Base container without distillation. Fixed-k speculative decoding harmful on V100 -- draft model likely CPU-bound in fermion fork"
+      },
+      "vram_note": "~5.4 GB on V100 at 8K context (f16 KV cache)",
+      "tok_s_detail": {
+        "code": 41.2,
+        "essay": 41.3,
+        "factual": 41.6
+      },
+      "draft_tps_detail": {
+        "code": 7.5,
+        "essay": 7.3,
+        "factual": 7.2
+      },
+      "failure_reason": "Draft head SLOWS inference (7.3 vs 41.3 tok/s). LCB very low (0.08). tau2 runner exit 1.",
+      "template": "stock"
+    },
+    {
+      "name": "Qwythos-27B-v1 Q4_K_M",
+      "file": "Qwythos-27B-Q4_K_M.gguf",
+      "status": "in_progress",
+      "gpu": "V100",
+      "quant": "Q4_K_M",
+      "start_time": "2026-07-31T00:12:57.371269+00:00",
+      "size_gb": 16.1,
+      "tok_s": {
+        "code": 30.3,
+        "essay": 29.7,
+        "factual": 29.3
+      },
+      "lcb": "running (LCB 75)",
+      "livecodebench_prev": {
+        "pass_at_1": 0.827,
+        "problems": 75,
+        "status": "complete"
+      },
+      "tau2_prev": {
+        "reward": 0.833,
+        "tasks": 12,
+        "infra_errors": 3,
+        "db_match": "10/10 (100%)",
+        "read_actions": "19/19 (100%)",
+        "write_actions": "2/2 (100%)",
+        "normal_stop": 10,
+        "max_steps": 2,
+        "status": "complete"
+      },
+      "dspark": false,
+      "thinking": true,
+      "decode_tps": 30.6,
+      "livecodebench": {
+        "pass_at_1": 0.92,
+        "wall_time_s": 3752.0,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.2667,
+        "task_pass_rate": null,
+        "wall_time_s": 2013.6,
+        "exit_code": 0
+      },
+      "template": "stock"
+    },
+    {
+      "name": "Qwen3.6-27B-FableFusion-711 Q4_K_M MTP",
+      "file": "Qwen3.6-27B-Fable-Fus-711-UnHeretic-NM-DAU-NEO-MAX-NEO-MTP-Q4_K_M.gguf",
+      "gpu": "V100",
+      "quant": "Q4_K_M",
+      "decode_tps": 30.1,
+      "tok_s_detail": {
+        "code": 29.5,
+        "essay": 30.4,
+        "factual": 30.5
+      },
+      "livecodebench": {
+        "pass_at_1": 0.587,
+        "problems": 75,
+        "status": "complete",
+        "note": "max_tokens=2048, reasoning off"
+      },
+      "tau2": {
+        "status": "failed",
+        "wall_time_s": 0.0,
+        "failure_reason": "LCB runner crashed before tau2 phase",
+        "reward": null
+      },
+      "timestamp": "2026-07-30T23:46:40+00:00",
+      "template": "stock"
+    },
+    {
+      "name": "Instella-MoE-16B-A3B-SFT INT4 (bitsandbytes NF4)",
+      "file": "amd-instella-sft/ (6 safetensors shards, 29.5 GB bf16)",
+      "gpu": "3060",
+      "quant": "INT4 NF4 (bitsandbytes, expert weights manually fused + quantized)",
+      "decode_tps": 1.08,
+      "tok_s_detail": {
+        "generation": 1.08
+      },
+      "livecodebench": {
+        "pass_at_1": null,
+        "status": "not_run",
+        "note": "1.08 tok/s too slow for LCB (75 * 2048 tokens * ~1s/token = ~42 hrs)"
+      },
+      "tau2": {
+        "status": "skipped"
+      },
+      "vram": "11.55 GB peak (3060 12 GB)",
+      "failure_reason": null,
+      "notes": "First-ever Instella-MoE inference on NVIDIA consumer GPU. Required 6 patches for transformers 5.13 compat + custom expert weight fusion + INT4 quantization. Output is coherent.",
+      "timestamp": "2026-07-31T05:15:00+00:00",
+      "template": "stock"
+    },
+    {
+      "name": "BTL-4 IQ2_XXS (3060)",
+      "file": "badtheorylabs_BTL-4-IQ2_XXS.gguf",
+      "category": "35B-MoE",
+      "gpu": "3060",
+      "thinking": true,
+      "binary": "upstream llama.cpp (--reasoning off)",
+      "vram_mib": 9905,
+      "decode_tps": 72.9,
+      "livecodebench": {
+        "pass_at_1": 0.5067,
+        "wall_time_s": 1860,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.3333,
+        "task_pass_rate": 0.333,
+        "wall_time_s": 1015,
+        "exit_code": 0,
+        "reward_pre_correction": 0.38,
+        "note": " | 2026-09-09 late denominator audit: recorded 0.38 was scored-only harness mean (5 passes / 13 scored); raw results.json rewards give 5/15 = 0.3333 all-15. Row missed the 2026-09-07 sweep."
+      },
+      "template": "stock"
+    },
+    {
+      "name": "Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL",
+      "file": "Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf",
+      "gpu": "3060",
+      "tau2": {
+        "reward": 0.4667,
+        "task_pass_rate": null,
+        "wall_time_s": 1445.3,
+        "exit_code": 0
+      },
+      "failures": [
+        {
+          "benchmark": "tau2 (original run)",
+          "attempt": "backfill",
+          "error": "Server timeout (240s)",
+          "settings": "cold mmap load, 240s health timeout",
+          "timestamp": "2026-09-06T21:30:39+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Qwopus3.6-27B-v2-MTP Q4_K_M",
+      "file": "Qwopus3.6-27B-v2-MTP-Q4_K_M.gguf",
+      "category": "27B Dense",
+      "gpu": "V100",
+      "dspark": false,
+      "thinking": true,
+      "decode_tps": 30.4,
+      "livecodebench": {
+        "pass_at_1": 0.7066666666666667,
+        "wall_time_s": 3323.0,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.4,
+        "task_pass_rate": null,
+        "wall_time_s": 2381.5,
+        "exit_code": 0,
+        "reward_pre_correction": 0.5455,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.5455 was scored-only (11/15 sims); corrected to all-15 mean 0.4 (tau2_v100_Qwopus3.6-27B-v2-MTP_Q4_K_M, 4 unscored sims counted as 0)."
+      },
+      "mtp_acceptance": {
+        "MTP-n3": {
+          "decode_tps": 36.9,
+          "acceptance_avg": 0.631,
+          "acceptance_rates": [
+            0.83333,
+            0.6,
+            0.4625,
+            0.62879
+          ]
+        }
+      },
+      "template": "stock"
+    },
+    {
+      "name": "Muse-Glimmer-30B-UD-Q4_K_XL",
+      "file": "Muse-Glimmer-30B-UD-Q4_K_XL.gguf",
+      "category": "30B Dense",
+      "gpu": "V100",
+      "dspark": false,
+      "thinking": false,
+      "decode_tps": 37.7,
+      "livecodebench": {
+        "pass_at_1": 0.7466666666666667,
+        "wall_time_s": 5108.2,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.3333,
+        "task_pass_rate": null,
+        "wall_time_s": 1381.0,
+        "exit_code": 0
+      },
+      "template": "stock",
+      "failures": [
+        {
+          "benchmark": "livecodebench (invalidated run)",
+          "attempt": "rerun",
+          "error": "Original LCB 0.7466666666666667 recorded with 15-suspect empty-content rate; rerun with thinking suppression verified: 0.7466666666666667 (empty 15/75). Broken artifacts: Muse-Glimmer-30B-UD-Q4_K_XL.empty-content-broken",
+          "timestamp": "2026-09-07T05:13:59+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Qwythos-27B-MTP Q4_K_M",
+      "file": "Qwythos-27B-MTP-Q4_K_M.gguf",
+      "category": "27B Dense",
+      "gpu": "V100",
+      "mtp_acceptance": {
+        "MTP-n3": {
+          "decode_tps": 40.3,
+          "acceptance_avg": 0.598,
+          "acceptance_rates": [
+            0.5625,
+            0.59489,
+            0.6374
+          ]
+        }
+      },
+      "thinking": true,
+      "decode_tps": 30.9,
+      "livecodebench": {
+        "pass_at_1": 0.92,
+        "wall_time_s": 3806.7,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.2667,
+        "task_pass_rate": null,
+        "wall_time_s": 2158.5,
+        "exit_code": 0,
+        "reward_pre_correction": 0.2857,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.2857 was scored-only (14/15 sims); corrected to all-15 mean 0.2667 (tau2_v100_Qwythos-27B-MTP_Q4_K_M, 1 unscored sims counted as 0)."
+      },
+      "template": "stock"
+    },
+    {
+      "name": "Qwythos-9B-Claude-Mythos-5-1M MTP Q4_K_M",
+      "file": "Qwythos-9B-Claude-Mythos-5-1M-MTP-Q4_K_M.gguf",
+      "category": "9B",
+      "gpu": "V100",
+      "mtp_acceptance": {
+        "MTP-n3": {
+          "decode_tps": 89.8,
+          "acceptance_avg": 0.694,
+          "acceptance_rates": [
+            0.90909,
+            0.67194,
+            0.50165
+          ]
+        }
+      },
+      "thinking": true,
+      "decode_tps": 83.9,
+      "livecodebench": {
+        "pass_at_1": 0.5866666666666667,
+        "wall_time_s": 855.9,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.4,
+        "task_pass_rate": null,
+        "wall_time_s": 1007.0,
+        "exit_code": 0
+      },
+      "template": "stock",
+      "failures": [
+        {
+          "benchmark": "livecodebench rerun attempt 1 (aborted)",
+          "attempt": "1",
+          "error": "Rerun script port collided with the concurrent Qwopus3.8 tau2 backfill on :18099; health check passed against the wrong server, LCB benchmarked Qwopus3.8-Flash for 23 min until that server was torn down -> APIConnectionError -> crash, no artifacts. Original 0.40 restored from preserved artifacts (thinking-artifact-broken). Fixed script: dedicated port 18096 + /props identity check + never overwrite a score with None.",
+          "timestamp": "2026-09-06T23:40:00+00:00"
+        },
+        {
+          "benchmark": "livecodebench (invalidated run)",
+          "attempt": "1",
+          "error": "First run scored 0.40 as artifact: LCB_DISABLE_THINKING allowlist lacked 'qwythos'/'mythos', model thought by default, 39/75 outputs empty (4096-token budget consumed by reasoning). Answered problems went 30/36. Rerun with thinking off: 0.5866666666666667.",
+          "timestamp": "2026-09-06T23:49:55+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Qwen3.8-27B Q4_K_S",
+      "file": "Qwen3.8-27B-Q4_K_S.gguf",
+      "category": "27B Dense",
+      "gpu": "V100",
+      "thinking": true,
+      "decode_tps": 33.6,
+      "livecodebench": {
+        "pass_at_1": 0.7466666666666667,
+        "wall_time_s": 4669.1,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.2667,
+        "task_pass_rate": null,
+        "wall_time_s": 1735.3,
+        "exit_code": 0,
+        "reward_pre_correction": 0.2857,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.2857 was scored-only (14/15 sims); corrected to all-15 mean 0.2667 (tau2_v100_Qwen3.8-27B_Q4_K_S, 1 unscored sims counted as 0)."
+      },
+      "template": "stock"
+    },
+    {
+      "name": "Qwen3.8-27B Q4_K_M",
+      "file": "Qwen3.8-27B-Q4_K_M.gguf",
+      "category": "27B Dense",
+      "gpu": "V100",
+      "thinking": true,
+      "decode_tps": 31.4,
+      "livecodebench": {
+        "pass_at_1": 0.84,
+        "wall_time_s": 3541.5,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.5,
+        "task_pass_rate": null,
+        "wall_time_s": 2037.3,
+        "exit_code": 0
+      },
+      "mtp_acceptance": {
+        "MTP-n3": {
+          "decode_tps": 35.6,
+          "acceptance_avg": 0.674,
+          "acceptance_rates": [
+            1.0,
+            0.52703,
+            0.49351
+          ]
+        }
+      },
+      "template": "stock",
+      "failures": [
+        {
+          "benchmark": "livecodebench (invalidated run)",
+          "attempt": "rerun",
+          "error": "Original LCB 0.7466666666666667 recorded with 0-suspect empty-content rate; rerun with thinking suppression verified: 0.84 (empty 0/75). Broken artifacts: Qwen3.8-27B Q4_K_M.empty-content-broken",
+          "timestamp": "2026-09-07T05:13:59+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Qwen3.8-27B UD-IQ2_XXS",
+      "file": "Qwen3.8-27B-UD-IQ2_XXS.gguf",
+      "category": "27B Dense",
+      "gpu": "3060",
+      "failures": [
+        {
+          "benchmark": "all",
+          "error": "Server died:  cache\n0.56.218.837 E cmn  common_init_: failed to create context with model '/home/files/llms/Qwen3.8-27B-UD-IQ2_XXS.gguf'\n0.56.218.841 E cmn  common_init_: failed to create context with model '/home/files/llms/Qwen3.8-27B-UD-IQ2_XXS.gguf'\n0.56.218.845 E srv    load_model: failed to create_context with model '/home/files/llms/Qwen3.8-27B-UD-IQ2_XXS.gguf'\n0.56.218.847 I srv    operator(): operator(): cleaning up before exit...\n0.56.219.533 E srv  llama_server: exiting due to model l",
+          "timestamp": "2026-08-15T03:48:18.616362+00:00"
+        }
+      ],
+      "lcb_error": "Server died:  cache\n0.56.218.837 E cmn  common_init_: failed to create context with model '/home/files/llms/Qwen3.8-27B-UD-IQ2_XXS.gguf'\n0.56.218.841 E cmn  common_init_: failed to create context with model '/home/files/llms/Qwen3.8-27B-UD-IQ2_XXS.gguf'\n0.56.218.845 E srv    load_model: failed to create_context with model '/home/files/llms/Qwen3.8-27B-UD-IQ2_XXS.gguf'\n0.56.218.847 I srv    operator(): operator(): cleaning up before exit...\n0.56.219.533 E srv  llama_server: exiting due to model loading error\n",
+      "decode_tps_3060": 20.6,
+      "status": "cancelled",
+      "note": "User cancelled mid-LCB: 20.6 tok/s on 3060, too slow to be useful"
+    },
+    {
+      "name": "Qwen3.8-27B Q4_K_M MTP",
+      "file": "Qwen3.8-27B-Q4_K_M.gguf",
+      "category": "27B Dense",
+      "gpu": "V100",
+      "mtp_acceptance": {
+        "no-spec": {
+          "decode_tps": 30.6,
+          "acceptance_rates": [],
+          "acceptance_avg": null
+        },
+        "MTP-n3": {
+          "decode_tps": 35.6,
+          "acceptance_rates": [
+            1.0,
+            0.52703,
+            0.49351
+          ],
+          "acceptance_avg": 0.674
+        },
+        "MTP-n5": {
+          "decode_tps": 35.0,
+          "acceptance_rates": [
+            1.0,
+            0.35903,
+            0.60063
+          ],
+          "acceptance_avg": 0.653
+        }
+      },
+      "thinking": true,
+      "decode_tps": 35.4,
+      "livecodebench": {
+        "pass_at_1": 0.8666666666666667,
+        "wall_time_s": 2374.6,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.4667,
+        "task_pass_rate": null,
+        "wall_time_s": 1778.5,
+        "exit_code": 0,
+        "reward_pre_correction": 0.5,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.5 was scored-only (14/15 sims); corrected to all-15 mean 0.4667 (tau2_v100_Qwen3.8-27B_Q4_K_M_MTP, 1 unscored sims counted as 0)."
+      },
+      "template": "stock",
+      "failures": [
+        {
+          "benchmark": "livecodebench (invalidated run)",
+          "attempt": "rerun",
+          "error": "Original LCB 0.76 recorded with 0-suspect empty-content rate; rerun with thinking suppression verified: 0.8666666666666667 (empty 0/75). Broken artifacts: Qwen3.8-27B Q4_K_M MTP.empty-content-broken",
+          "timestamp": "2026-09-07T05:13:59+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Qwopus3.6-27B-Coder-MTP Q5_K_S (speed-only)",
+      "file": "Qwopus3.6-27B-Coder-MTP-Q5_K_S.gguf",
+      "gpu": "V100",
+      "category": "27B Dense",
+      "mtp_acceptance": {
+        "MTP-n3": {
+          "decode_tps": 36.9,
+          "acceptance_avg": 0.665,
+          "acceptance_rates": [
+            0.83333,
+            0.6,
+            0.52703,
+            0.69919
+          ]
+        }
+      },
+      "template": "stock"
+    },
+    {
+      "name": "Qwopus3.6-27B-Coder-Compat-MTP Q4_K_M (speed-only)",
+      "file": "Qwopus3.6-27B-Coder-Compat-MTP-Q4_K_M.gguf",
+      "gpu": "V100",
+      "category": "27B Dense",
+      "mtp_acceptance": {
+        "MTP-n3": {
+          "decode_tps": 40.3,
+          "acceptance_avg": 0.676,
+          "acceptance_rates": [
+            0.83333,
+            0.6,
+            0.54296,
+            0.72917
+          ]
+        }
+      },
+      "template": "stock"
+    },
+    {
+      "name": "Qwen3.8-27B Heretic Q4_K_M",
+      "file": "Qwen3.8-27B-Heretic-Q4_K_M.gguf",
+      "category": "27B Dense",
+      "gpu": "V100",
+      "thinking": true,
+      "decode_tps": 31.7,
+      "livecodebench": {
+        "pass_at_1": 0.8533333333333334,
+        "wall_time_s": 3560.8,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.3333,
+        "task_pass_rate": null,
+        "wall_time_s": 2379.3,
+        "exit_code": 0
+      },
+      "template": "stock",
+      "failures": [
+        {
+          "benchmark": "livecodebench (invalidated run)",
+          "attempt": "rerun",
+          "error": "Original LCB 0.7333333333333333 recorded with 0-suspect empty-content rate; rerun with thinking suppression verified: 0.8533333333333334 (empty 0/75). Broken artifacts: Qwen3.8-27B Heretic Q4_K_M MTP.empty-content-broken",
+          "timestamp": "2026-09-07T05:13:59+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Qwen3.8-27B Uncensored Q4_K_M MTP",
+      "file": "Qwen3.8-27B-Uncensored-Q4_K_M.gguf",
+      "category": "27B Dense",
+      "gpu": "V100",
+      "mtp_acceptance": {
+        "no-spec": {
+          "decode_tps": 30.8,
+          "acceptance_rates": [],
+          "acceptance_avg": null
+        },
+        "MTP-n3": {
+          "decode_tps": 37.9,
+          "acceptance_rates": [
+            0.6,
+            0.60517,
+            0.51333
+          ],
+          "acceptance_avg": 0.573
+        },
+        "MTP-n5": {
+          "decode_tps": 37.9,
+          "acceptance_rates": [
+            0.47619,
+            0.4397,
+            0.63279
+          ],
+          "acceptance_avg": 0.516
+        }
+      },
+      "thinking": true,
+      "decode_tps": 33.4,
+      "livecodebench": {
+        "pass_at_1": 0.88,
+        "wall_time_s": 2360.4,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.2667,
+        "task_pass_rate": null,
+        "wall_time_s": 2326.0,
+        "exit_code": 0
+      },
+      "template": "stock",
+      "failures": [
+        {
+          "benchmark": "livecodebench (invalidated run)",
+          "attempt": "rerun",
+          "error": "Original LCB 0.7066666666666667 recorded with 0-suspect empty-content rate; rerun with thinking suppression verified: 0.88 (empty 0/75). Broken artifacts: Qwen3.8-27B Uncensored Q4_K_M MTP.empty-content-broken",
+          "timestamp": "2026-09-07T05:13:59+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Qwen3.8-27B AEON Ultimate Uncensored Q4_K_M MTP",
+      "file": "Qwen3.8-27B-AEON-Ultimate-Uncensored-Q4_K_M.gguf",
+      "category": "27B Dense",
+      "gpu": "V100",
+      "mtp_acceptance": {
+        "no-spec": {
+          "decode_tps": 30.7,
+          "acceptance_rates": [],
+          "acceptance_avg": null
+        },
+        "MTP-n3": {
+          "decode_tps": 39.2,
+          "acceptance_rates": [
+            0.69231,
+            0.53584,
+            0.65116
+          ],
+          "acceptance_avg": 0.626
+        },
+        "MTP-n5": {
+          "decode_tps": 31.0,
+          "acceptance_rates": [
+            0.55556,
+            0.38303,
+            0.37162
+          ],
+          "acceptance_avg": 0.437
+        }
+      },
+      "thinking": true,
+      "decode_tps": 37.2,
+      "livecodebench": {
+        "pass_at_1": 0.84,
+        "wall_time_s": 2551.6,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.3333,
+        "task_pass_rate": null,
+        "wall_time_s": 2773.9,
+        "exit_code": 0
+      },
+      "template": "stock",
+      "failures": [
+        {
+          "benchmark": "livecodebench (invalidated run)",
+          "attempt": "rerun",
+          "error": "Original LCB 0.6933333333333334 recorded with 0-suspect empty-content rate; rerun with thinking suppression verified: 0.84 (empty 0/75). Broken artifacts: Qwen3.8-27B AEON Ultimate Uncensored Q4_K_M MTP.empty-content-broken",
+          "timestamp": "2026-09-07T05:13:59+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Ternary-Bonsai-27B Q2_0 (dspark) [Sharp]",
+      "file": "Ternary-Bonsai-27B-Q2_0.gguf",
+      "category": "27B Ternary",
+      "gpu": "V100",
+      "template": "sharp",
+      "thinking": true,
+      "dspark": true,
+      "mtp_enabled": false,
+      "decode_tps": 37.8,
+      "livecodebench": {
+        "pass_at_1": 0.64,
+        "wall_time_s": 1060.9,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.2667,
+        "task_pass_rate": null,
+        "wall_time_s": 4498.6,
+        "exit_code": 0,
+        "reward_pre_correction": 0.4,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.4 was scored-only (10/15 sims); corrected to all-15 mean 0.2667 (tau2_sharp_Ternary-Bonsai-27B_Q2_0_dspark_Sharp, 5 unscored sims counted as 0)."
+      }
+    },
+    {
+      "name": "Qwythos-27B-MTP Q4_K_M [Sharp]",
+      "file": "Qwythos-27B-MTP-Q4_K_M.gguf",
+      "category": "27B Dense",
+      "gpu": "V100",
+      "template": "sharp",
+      "thinking": true,
+      "dspark": false,
+      "mtp_enabled": true,
+      "decode_tps": 38.2,
+      "livecodebench": {
+        "pass_at_1": 0.88,
+        "wall_time_s": 2776.6,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.2667,
+        "task_pass_rate": null,
+        "wall_time_s": 2033.9,
+        "exit_code": 0
+      }
+    },
+    {
+      "name": "Qwen3.8-27B Q4_K_M MTP [Sharp]",
+      "file": "Qwen3.8-27B-Q4_K_M.gguf",
+      "category": "27B Dense",
+      "gpu": "V100",
+      "template": "sharp",
+      "thinking": true,
+      "dspark": false,
+      "mtp_enabled": true,
+      "decode_tps": 39.0,
+      "livecodebench": {
+        "pass_at_1": 0.72,
+        "wall_time_s": 3859.8,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.4667,
+        "task_pass_rate": null,
+        "wall_time_s": 1770.7,
+        "exit_code": 0
+      }
+    },
+    {
+      "name": "Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL [Sharp]",
+      "file": "Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf",
+      "category": "MoE 35B",
+      "gpu": "V100",
+      "template": "sharp",
+      "thinking": true,
+      "dspark": false,
+      "mtp_enabled": false,
+      "decode_tps": 24.3,
+      "livecodebench": {
+        "pass_at_1": 0.92,
+        "wall_time_s": 2825.1,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.0,
+        "task_pass_rate": null,
+        "wall_time_s": 3065.2,
+        "exit_code": 0
+      }
+    },
+    {
+      "name": "ThinkingCap-Qwen3.6-27B Q4_K_M [Sharp]",
+      "file": "ThinkingCap-Qwen3.6-27B-Q4_K_M.gguf",
+      "category": "27B Dense",
+      "gpu": "V100",
+      "template": "sharp",
+      "thinking": true,
+      "dspark": false,
+      "mtp_enabled": false,
+      "decode_tps": 30.5,
+      "livecodebench": {
+        "pass_at_1": 0.88,
+        "wall_time_s": 1787.7,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.4667,
+        "task_pass_rate": null,
+        "wall_time_s": 1824.5,
+        "exit_code": 0,
+        "reward_pre_correction": 0.5,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.5 was scored-only (14/15 sims); corrected to all-15 mean 0.4667 (tau2_sharp_ThinkingCap-Qwen3.6-27B_Q4_K_M_Sharp, 1 unscored sims counted as 0)."
+      }
+    },
+    {
+      "name": "Ornith-1.5-35B-A3B Q4_K_M",
+      "file": "Ornith-1.5-35B-Q4_K_M.gguf",
+      "category": "MoE 35B",
+      "gpu": "V100",
+      "template": "stock",
+      "thinking": true,
+      "dspark": false,
+      "mtp_enabled": false,
+      "decode_tps": 24.6,
+      "livecodebench": {
+        "pass_at_1": 0.84,
+        "wall_time_s": 6123.9,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.2,
+        "task_pass_rate": null,
+        "wall_time_s": 2868.4,
+        "exit_code": 0
+      }
+    },
+    {
+      "name": "RavenX-OpenFable-Holo3 Q4_K_M [Sharp]",
+      "file": "RavenX-OpenFable-Qwopus-Coder-Holo3-Qwen3.6-35B-A3B-MTP-Q4_K_M.gguf",
+      "category": "MoE 35B",
+      "gpu": "V100",
+      "template": "sharp",
+      "thinking": true,
+      "dspark": false,
+      "mtp_enabled": false,
+      "decode_tps": 24.6,
+      "livecodebench": {
+        "pass_at_1": 0.76,
+        "wall_time_s": 1889.1,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.0667,
+        "task_pass_rate": null,
+        "wall_time_s": 3425.9,
+        "exit_code": 0,
+        "reward_pre_correction": 0.0833,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.0833 was scored-only (12/15 sims); corrected to all-15 mean 0.0667 (tau2_sharp_RavenX-OpenFable-Holo3_Q4_K_M_Sharp, 3 unscored sims counted as 0)."
+      }
+    },
+    {
+      "name": "Ornith-1.5-35B-A3B Q4_K_M [Sharp]",
+      "file": "Ornith-1.5-35B-Q4_K_M.gguf",
+      "category": "MoE 35B",
+      "gpu": "V100",
+      "template": "sharp",
+      "thinking": true,
+      "dspark": false,
+      "mtp_enabled": false,
+      "decode_tps": 25.1,
+      "livecodebench": {
+        "pass_at_1": 0.9066666666666666,
+        "wall_time_s": 4528.9,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.0,
+        "task_pass_rate": null,
+        "wall_time_s": 2859.7,
+        "exit_code": 0
+      }
+    },
+    {
+      "name": "gemma-4-12B-it-QAT w4a16 [FreeToken]",
+      "file": "gemma-4-12B-it-qat-w4a16/",
+      "category": "12-14B",
+      "gpu": "3060",
+      "engine": "freetoken",
+      "template": "stock",
+      "thinking": false,
+      "lcb_error": "FreeToken KeyError: model.layers.0.self_attn.qkv_proj.weight \u2014 google w4a16-ct checkpoint uses unfused q/k/v naming; FreeToken gemma4 loader expects fused qkv_proj",
+      "status": "failed"
+    },
+    {
+      "name": "Ornith-1.5-35B-A3B NVFP4 [FreeToken]",
+      "file": "ornith-15-35b-nvfp4/",
+      "category": "MoE 35B",
+      "gpu": "3060",
+      "engine": "freetoken",
+      "template": "stock",
+      "thinking": true,
+      "lcb_error": "FreeToken custom kernel sm_86 mismatch: prebuilt NVFP4 kernels lack RTX 3060 image ('no kernel image available'); FREETOKEN_ALLOW_CUDA_MISMATCH=1 got past nvcc check but kernels still lack sm_86 SASS. Docs claim RTX 30 support but this build (0.1.2) doesn't ship it.",
+      "status": "failed"
+    },
+    {
+      "name": "Mythos-9B-MTP Q4_K_M",
+      "file": "Qwythos-9B-Claude-Mythos-5-1M-MTP-Q4_K_M.gguf",
+      "gpu": "3060",
+      "benchkit": {
+        "sanity": {
+          "score_pct": 100.0,
+          "passed": 5,
+          "total": 5,
+          "wall_time_s": 49.8,
+          "results_dir": "/home/caimlas/git/BenchKit/results/2026-08-23_22-46-05"
+        }
+      }
+    },
+    {
+      "name": "Carnice-V3 Q4_K_M",
+      "file": "Carnice-V3-Q4_K_M.gguf",
+      "gpu": "V100",
+      "benchkit": {
+        "sanity": {
+          "score_pct": 84.0,
+          "passed": 21,
+          "total": 25,
+          "wall_time_s": 583.6,
+          "results_dir": "/home/caimlas/git/BenchKit/results/2026-08-24_04-09-02"
+        }
+      },
+      "template": "stock",
+      "thinking": true,
+      "dspark": false,
+      "mtp_enabled": false,
+      "decode_tps": 31.6,
+      "livecodebench": {
+        "pass_at_1": 0.7733333333333333,
+        "wall_time_s": 4960.0,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.5333,
+        "task_pass_rate": null,
+        "wall_time_s": 1980.5,
+        "exit_code": 0,
+        "reward_pre_correction": 0.5714,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.5714 was scored-only (14/15 sims); corrected to all-15 mean 0.5333 (tau2_sharp_Carnice-V3_Q4_K_M, 1 unscored sims counted as 0)."
+      },
+      "failures": [
+        {
+          "benchmark": "livecodebench (invalidated run)",
+          "attempt": "rerun",
+          "error": "Original LCB 0.6933333333333334 recorded with 16-suspect empty-content rate; rerun with thinking suppression verified: 0.7733333333333333 (empty 16/75). Broken artifacts: Carnice-V3 Q4_K_M.empty-content-broken",
+          "timestamp": "2026-09-07T05:13:59+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Carnice-V3 Q4_K_M [Sharp]",
+      "file": "Carnice-V3-Q4_K_M.gguf",
+      "category": "27B Dense",
+      "gpu": "V100",
+      "template": "sharp",
+      "thinking": true,
+      "dspark": false,
+      "mtp_enabled": false,
+      "decode_tps": 31.5,
+      "livecodebench": {
+        "pass_at_1": 0.8133333333333334,
+        "wall_time_s": 4549.5,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.3333,
+        "task_pass_rate": null,
+        "wall_time_s": 1573.6,
+        "exit_code": 0,
+        "reward_pre_correction": 0.3571,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.3571 was scored-only (14/15 sims); corrected to all-15 mean 0.3333 (tau2_sharp_Carnice-V3_Q4_K_M_Sharp, 1 unscored sims counted as 0)."
+      }
+    },
+    {
+      "name": "Whittle-MoE-27B-A18B v2.1 Q4_K_M",
+      "file": "Whittle-MoE-27B-A18B-v2.1-Q4_K_M.gguf",
+      "category": "MoE 27B",
+      "gpu": "V100",
+      "template": "stock",
+      "decode_tps": 33.1,
+      "tau2": {
+        "reward": null,
+        "task_pass_rate": null,
+        "wall_time_s": 3.5,
+        "exit_code": 1
+      },
+      "lcb_error": "Server died: odel_load: error loading model: unable to allocate CUDA0 buffer\n0.03.377.124 E llama_model_load_from_file_impl: failed to load model\n0.03.377.130 E cmn  common_init_: failed to load model '/home/files/llms/Whittle-MoE-27B-A18B-v2.1-Q4_K_M.gguf'\n0.03.377.135 E srv    load_model: failed to load model, '/home/files/llms/Whittle-MoE-27B-A18B-v2.1-Q4_K_M.gguf'\n0.03.377.137 I srv    operator(): operator(): cleaning up before exit...\n0.03.378.381 E srv  llama_server: exiting due to model loading error\n",
+      "failures": [
+        {
+          "benchmark": "all",
+          "error": "Server died: odel_load: error loading model: unable to allocate CUDA0 buffer\n0.03.377.124 E llama_model_load_from_file_impl: failed to load model\n0.03.377.130 E cmn  common_init_: failed to load model '/home/files/llms/Whittle-MoE-27B-A18B-v2.1-Q4_K_M.gguf'\n0.03.377.135 E srv    load_model: failed to load model, '/home/files/llms/Whittle-MoE-27B-A18B-v2.1-Q4_K_M.gguf'\n0.03.377.137 I srv    operator(): operator(): cleaning up before exit...\n0.03.378.381 E srv  llama_server: exiting due to model l",
+          "timestamp": "2026-08-25T04:41:27.539692+00:00"
+        }
+      ],
+      "livecodebench": {
+        "pass_at_1": 0.13333333333333333,
+        "wall_time_s": 7663.1,
+        "exit_code": 0
+      }
+    },
+    {
+      "name": "Whittle-MoE-27B-A18B v2.1 Q4_K_M (3060)",
+      "file": "Whittle-MoE-27B-A18B-v2.1-Q4_K_M.gguf",
+      "category": "MoE 27B",
+      "gpu": "3060",
+      "template": "stock",
+      "lcb_error": "Server died: odel_load: error loading model: unable to allocate CUDA0 buffer\n0.26.769.575 E llama_model_load_from_file_impl: failed to load model\n0.26.769.581 E cmn  common_init_: failed to load model '/home/files/llms/Whittle-MoE-27B-A18B-v2.1-Q4_K_M.gguf'\n0.26.769.586 E srv    load_model: failed to load model, '/home/files/llms/Whittle-MoE-27B-A18B-v2.1-Q4_K_M.gguf'\n0.26.769.589 I srv    operator(): operator(): cleaning up before exit...\n0.26.770.768 E srv  llama_server: exiting due to model loading error\n",
+      "failures": [
+        {
+          "benchmark": "all",
+          "error": "Server died: odel_load: error loading model: unable to allocate CUDA0 buffer\n0.26.769.575 E llama_model_load_from_file_impl: failed to load model\n0.26.769.581 E cmn  common_init_: failed to load model '/home/files/llms/Whittle-MoE-27B-A18B-v2.1-Q4_K_M.gguf'\n0.26.769.586 E srv    load_model: failed to load model, '/home/files/llms/Whittle-MoE-27B-A18B-v2.1-Q4_K_M.gguf'\n0.26.769.589 I srv    operator(): operator(): cleaning up before exit...\n0.26.770.768 E srv  llama_server: exiting due to model l",
+          "timestamp": "2026-08-25T04:38:49.860282+00:00"
+        }
+      ],
+      "decode_tps_3060": 7.5,
+      "livecodebench_3060": {
+        "pass_at_1": null,
+        "error": "LCB assert: 4096-token generations at 7.5 tok/s exceed the 600s per-request timeout; model too slow for this benchmark on 3060"
+      },
+      "tau2_3060": {
+        "reward": 0.0,
+        "task_pass_rate": null,
+        "wall_time_s": 8415.9,
+        "exit_code": 0
+      }
+    },
+    {
+      "name": "Whittle-MoE-27B-A18B v2.1 BF16",
+      "file": "Whittle-MoE-27B-A18B-v2.1-BF16.gguf",
+      "category": "MoE 27B",
+      "gpu": "V100",
+      "template": "stock",
+      "decode_tps": 2.9
+    },
+    {
+      "name": "Qwen3.8-27B UD-IQ3_S (GGUF, ~3.5bpw)",
+      "gpu": "V100",
+      "engine": "llama.cpp-upstream",
+      "bpw": 3.52,
+      "speed": {
+        "pp512": 578.8,
+        "tg128": 29.05,
+        "actual_bpw": 3.4375,
+        "size_GiB": 11.2
+      },
+      "benchkit": {
+        "sanity": {
+          "score_pct": 84.0,
+          "passed": 21,
+          "total": 25,
+          "wall_time_s": 780
+        }
+      },
+      "lcb": {
+        "lcb_pass1": 0.7066666666666667
+      },
+      "file": "Qwen3.8-27B-UD-IQ3_S.gguf",
+      "decode_tps": 29.05,
+      "prompt_tps": 578.8,
+      "livecodebench": {
+        "pass_at_1": 0.8,
+        "wall_time_s": 4883.9,
+        "exit_code": 0
+      },
+      "thinking": true,
+      "category": "27B Dense",
+      "failures": [
+        {
+          "benchmark": "livecodebench (invalidated run)",
+          "attempt": "rerun",
+          "error": "Original LCB 0.7066666666666667 recorded with 0-suspect empty-content rate; rerun with thinking suppression verified: 0.8 (empty 0/75). Broken artifacts: Qwen3.8-27B UD-IQ3_S.empty-content-broken",
+          "timestamp": "2026-09-07T05:13:59+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Qwen3.8-27B UD-Q4_K_S (GGUF, ~4.5bpw)",
+      "gpu": "V100",
+      "engine": "llama.cpp-upstream",
+      "bpw": 4.49,
+      "speed": {
+        "pp512": 649.79,
+        "tg128": 33.11,
+        "size_GiB": 14.29
+      },
+      "benchkit": {
+        "sanity": {
+          "score_pct": 84.0,
+          "passed": 21,
+          "total": 25,
+          "wall_time_s": 600
+        }
+      },
+      "lcb": {
+        "lcb_pass1": 0.6933333333333334
+      },
+      "file": "Qwen3.8-27B-UD-Q4_K_S.gguf",
+      "decode_tps": 33.11,
+      "prompt_tps": 649.79,
+      "livecodebench": {
+        "pass_at_1": 0.8133333333333334,
+        "wall_time_s": 3742.7,
+        "exit_code": 0
+      },
+      "thinking": true,
+      "category": "27B Dense",
+      "failures": [
+        {
+          "benchmark": "livecodebench (invalidated run)",
+          "attempt": "rerun",
+          "error": "Original LCB 0.6933333333333334 recorded with 0-suspect empty-content rate; rerun with thinking suppression verified: 0.8133333333333334 (empty 0/75). Broken artifacts: Qwen3.8-27B UD-Q4_K_S.empty-content-broken",
+          "timestamp": "2026-09-07T05:13:59+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Qwen3.8-27B EXL3 3.5bpw [Mia-AiLab]",
+      "file": "Qwen3.8-27B-EXL3-3.5bpw-Mia",
+      "category": "27B Dense",
+      "gpu": "V100",
+      "engine": "exllamav3",
+      "bpw": 3.5,
+      "failures": [
+        {
+          "benchmark": "all",
+          "error": "EXL3 cannot execute on V100 (sm_70): exllamav3 GEMM/GEMV kernels require cp.async + mma.m16n8k16 (Ampere sm_80+ ISA). Verified: official wheels built 8.0-12.0 only; nvcc -arch=sm_70 ptxas rejects both instructions; runtime torch op fails with cudaErrorNoKernelImageForDevice. No alternative engine (vLLM/SGLang: no EXL3; GPTQModel EXL3: sm_75+). Downloaded anyway; 3060 12GB cannot fit 15-18GB weights fully-resident.",
+          "timestamp": "2026-09-04T00:00:00+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Qwen3.8-27B EXL3 4.0bpw [turboderp]",
+      "file": "Qwen3.8-27B-exl3-4.00bpw-turboderp",
+      "category": "27B Dense",
+      "gpu": "V100",
+      "engine": "exllamav3",
+      "bpw": 4.0,
+      "failures": [
+        {
+          "benchmark": "all",
+          "error": "EXL3 cannot execute on V100 (sm_70): exllamav3 GEMM/GEMV kernels require cp.async + mma.m16n8k16 (Ampere sm_80+ ISA). Verified: official wheels built 8.0-12.0 only; nvcc -arch=sm_70 ptxas rejects both instructions; runtime torch op fails with cudaErrorNoKernelImageForDevice. No alternative engine (vLLM/SGLang: no EXL3; GPTQModel EXL3: sm_75+). Downloaded anyway; 3060 12GB cannot fit 15-18GB weights fully-resident.",
+          "timestamp": "2026-09-04T00:00:00+00:00"
+        }
+      ]
+    },
+    {
+      "name": "Qwen3.8-27B EXL3 4.5bpw [darkbit1001]",
+      "file": "Qwen-3.8-27B-exl3-4.500bpw-hb6",
+      "category": "27B Dense",
+      "gpu": "V100",
+      "engine": "exllamav3",
+      "bpw": 4.5,
+      "failures": [
+        {
+          "benchmark": "all",
+          "error": "EXL3 cannot execute on V100 (sm_70): exllamav3 GEMM/GEMV kernels require cp.async + mma.m16n8k16 (Ampere sm_80+ ISA). Verified: official wheels built 8.0-12.0 only; nvcc -arch=sm_70 ptxas rejects both instructions; runtime torch op fails with cudaErrorNoKernelImageForDevice. No alternative engine (vLLM/SGLang: no EXL3; GPTQModel EXL3: sm_75+). Downloaded anyway; 3060 12GB cannot fit 15-18GB weights fully-resident.",
+          "timestamp": "2026-09-04T00:00:00+00:00"
+        }
+      ]
+    },
+    {
+      "name": "gemma4-coding fable5-composer2.5 Q4_K_M",
+      "file": "gemma4-coding-Q4_K_M.gguf",
+      "category": "12-14B",
+      "gpu": "3060",
+      "engine": "llama.cpp",
+      "decode_tps": 35.83,
+      "prompt_tps": 995.29,
+      "speed_norm": {
+        "pp512": 995.29,
+        "tg128": 35.83
+      },
+      "benchkit": {
+        "sanity": {
+          "score_pct": 80.0,
+          "passed": 20,
+          "total": 25
+        }
+      },
+      "livecodebench": {
+        "pass_at_1": 0.5466666666666666,
+        "exit_code": 0
+      },
+      "thinking": false
+    },
+    {
+      "name": "Qwen3.5-4B-MTP Q4_K_M (ThumbLLM)",
+      "file": "Qwen3.5-4B-Q4_K_M.gguf",
+      "category": "4B",
+      "gpu": "V100",
+      "engine": "llama.cpp",
+      "thinking": true,
+      "speed_norm": {
+        "pp512": 3024.24,
+        "tg128": 108.98
+      },
+      "decode_tps": 108.98,
+      "prompt_tps": 3024.24,
+      "mtp_modes": {
+        "no-spec": {
+          "decode_tps": 105.05,
+          "gen_tokens": 256
+        },
+        "MTP-n3": {
+          "decode_tps": 130.64,
+          "gen_tokens": 256
+        }
+      },
+      "benchkit": {
+        "sanity": {
+          "score_pct": 60.0,
+          "passed": 15,
+          "total": 25
+        }
+      },
+      "livecodebench": {
+        "pass_at_1": 0.56,
+        "exit_code": 0
+      },
+      "mtp_acceptance": {
+        "MTP-n3": {
+          "decode_tps": 130.64,
+          "acceptance_avg": null
+        }
+      },
+      "tau2": {
+        "reward": 0.2,
+        "task_pass_rate": null,
+        "wall_time_s": 1785.0,
+        "exit_code": 0,
+        "reward_pre_correction": 0.2727,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.2727 was scored-only (11/15 sims); corrected to all-15 mean 0.2 (tau2_Qwen3.5-4B-MTP_Q4_K_M_ThumbLLM, 4 unscored sims counted as 0)."
+      }
+    },
+    {
+      "name": "Qwopus3.8-27B-Flash MTP Q4_K_M",
+      "file": "Qwopus3.8-27B-Flash-MTP-Q4_K_M.gguf",
+      "category": "27B Dense",
+      "gpu": "V100",
+      "engine": "llama.cpp",
+      "thinking": true,
+      "mtp_enabled": true,
+      "template": "stock",
+      "speed_norm": {
+        "pp512": 654.42,
+        "tg128": 32.31
+      },
+      "decode_tps": 32.31,
+      "prompt_tps": 654.42,
+      "mtp_modes": {
+        "MTP-n3": {
+          "decode_tps": 42.87,
+          "gen_tokens": 256
+        }
+      },
+      "benchkit": {
+        "sanity": {
+          "score_pct": 96.0,
+          "passed": 24,
+          "total": 25
+        }
+      },
+      "livecodebench": {
+        "pass_at_1": 0.773,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.2667,
+        "task_pass_rate": null,
+        "wall_time_s": 2297.5,
+        "exit_code": 0
+      }
+    },
+    {
+      "name": "BTL-4 Q4_K_M",
+      "file": "badtheorylabs_BTL-4-Q4_K_M.gguf",
+      "category": "35B-MoE",
+      "gpu": "V100",
+      "engine": "llama.cpp",
+      "thinking": false,
+      "template": "stock",
+      "prompt_tps": 150.88,
+      "decode_tps": 88.85,
+      "speed_norm": {
+        "pp512": 150.88,
+        "tg128": 88.85
+      },
+      "benchkit": {
+        "sanity": {
+          "score_pct": 100.0,
+          "passed": 25,
+          "total": 25
+        }
+      },
+      "livecodebench": {
+        "pass_at_1": 0.92,
+        "exit_code": 0
+      },
+      "tau2": {
+        "reward": 0.2,
+        "task_pass_rate": null,
+        "wall_time_s": 1025.7,
+        "exit_code": 0
+      }
+    },
+    {
+      "file": "dogukanurker-btl4-q4km/BTL-4-Q4_K_M.gguf",
+      "category": "35B-MoE",
+      "gpu": "V100",
+      "engine": "llama.cpp",
+      "thinking": false,
+      "template": "stock",
+      "name": "DogukanUrker-BTL-4 Q4_K_M",
+      "decode_tps": 91.69,
+      "benchkit": {
+        "sanity": {
+          "sanity_passed": 23,
+          "sanity_pct": 92.0
+        }
+      },
+      "livecodebench": {
+        "pass_at_1": 0.92,
+        "empty": 0,
+        "of": 75,
+        "wall_time_s": 712.1
+      },
+      "tau2": {
+        "reward": 0.4,
+        "task_pass_rate": null,
+        "wall_time_s": 1365.9
+      }
+    },
+    {
+      "file": "MiniCPM5-2B-Q8_0.gguf",
+      "category": "2B-dense",
+      "gpu": "3060",
+      "engine": "llama.cpp",
+      "thinking": false,
+      "template": "stock",
+      "name": "MiniCPM5-2B Q8_0 (3060)",
+      "decode_tps": 112.66,
+      "benchkit": {
+        "sanity": {
+          "sanity_passed": 18,
+          "sanity_pct": 72.0
+        }
+      },
+      "livecodebench": {
+        "pass_at_1": 0.5733333333333334,
+        "empty": 0,
+        "of": 75,
+        "wall_time_s": 764.9
+      },
+      "tau2": {
+        "reward": 0.5333,
+        "task_pass_rate": null,
+        "wall_time_s": 893.6,
+        "reward_pre_correction": 0.5714,
+        "note": " | 2026-09-07 denominator audit: harness mean 0.5714 was scored-only (14/15 sims); corrected to all-15 mean 0.5333 (tau2_MiniCPM5-2B_Q8_0_3060, 1 unscored sims counted as 0)."
+      },
+      "dspark_draft": {
+        "dspark_decode_tps": 112.89,
+        "plain_baseline": 112.66,
+        "delta_pct": 0.2
+      }
+    },
+    {
+      "name": "MiniCPM5-2B Q8_0 (V100)",
+      "file": "MiniCPM5-2B-Q8_0.gguf",
+      "category": "2B-dense",
+      "gpu": "V100",
+      "engine": "llama.cpp",
+      "thinking": false,
+      "template": "stock",
+      "decode_tps": 166.04,
+      "benchkit": {
+        "sanity": {
+          "sanity_passed": 16,
+          "sanity_pct": 64.0
+        }
+      },
+      "livecodebench": {
+        "pass_at_1": 0.52,
+        "empty": 0,
+        "of": 75,
+        "wall_time_s": 599.3
+      },
+      "tau2": {
+        "reward": 0.3333,
+        "task_pass_rate": null,
+        "wall_time_s": 699.9
+      },
+      "dspark_draft": {
+        "dspark_decode_tps": 166.42,
+        "plain_baseline": 166.04,
+        "delta_pct": 0.2
+      }
+    },
+    {
+      "name": "Qwen3.8-27B-OBLITERATED-Mythos-Class-Agentic Q4_K_M",
+      "file": "Qwen3.8-27B-OBLITERATED-Mythos-Class-Agentic.Q4_K_M.gguf",
+      "category": "27B-dense",
+      "gpu": "V100",
+      "engine": "llama.cpp",
+      "thinking": false,
+      "template": "stock",
+      "decode_tps": 29.84,
+      "quant_source": "mradermacher GGUF (medismera safetensors upstream)",
+      "benchkit": {
+        "sanity": {
+          "sanity_passed": 22,
+          "sanity_pct": 88.0
+        }
+      },
+      "livecodebench": {
+        "pass_at_1": 0.3466666666666667,
+        "empty": 0,
+        "of": 75,
+        "wall_time_s": 6056.2
+      },
+      "tau2": {
+        "reward": 0.13333333333333333,
+        "task_pass_rate": null,
+        "wall_time_s": 671.1,
+        "user_sim": "LFM2.5-8B-A1B-Clean-RealWorld-v2",
+        "canonical": true,
+        "sims_scored": "15/15",
+        "passes": 2,
+        "infra_errors": 0,
+        "serving": "enable_thinking:false via chat-template-kwargs"
+      }
+    },
+    {
+      "name": "Swift-Qwen3.8-27B Q4_K_M",
+      "file": "/var/tmp/llms/Swift-Qwen3.8-27B-Q4_K_M.gguf",
+      "category": "27B-dense",
+      "gpu": "V100",
+      "engine": "llama.cpp",
+      "thinking": true,
+      "template": "stock (reasoning_effort xhigh default)",
+      "quant_source": "ukisai/Swift-Qwen3.8-27B-GGUF (maker)",
+      "base_model": "Qwen/Qwen3.8-27B (LoRA finetune, merged)",
+      "mtp_head_in_gguf": true,
+      "staged_path": "/var/tmp (home disk full)",
+      "decode_tps": 30.03,
+      "benchkit": {
+        "sanity": {
+          "sanity_passed": 24,
+          "sanity_pct": 96.0
+        }
+      },
+      "livecodebench": {
+        "pass_at_1": 0.88,
+        "empty": 0,
+        "of": 75,
+        "wall_time_s": 3279.7
+      },
+      "tau2": {
+        "reward": 0.4666666666666667,
+        "task_pass_rate": null,
+        "wall_time_s": 1169.1,
+        "user_sim": "LFM2.5-8B-A1B-Clean-RealWorld-v2",
+        "canonical": true,
+        "sims_scored": "15/15",
+        "passes": 7,
+        "infra_errors": 0,
+        "serving": "enable_thinking:false via chat-template-kwargs"
+      },
+      "mtp_acceptance": {
+        "no-spec": {
+          "decode_tps": 30.1,
+          "acceptance_avg": null,
+          "acceptance_rates": []
+        },
+        "MTP-n3": {
+          "decode_tps": 40.6,
+          "acceptance_avg": 0.64,
+          "acceptance_rates": [
+            0.56338,
+            0.71605
+          ],
+          "acceptance_rates_raw": [
+            1.0,
+            0.56338,
+            0.71605
+          ],
+          "note": "warmup 1.0 excluded from avg"
+        },
+        "MTP-n5": {
+          "decode_tps": 37.4,
+          "acceptance_avg": 0.521,
+          "acceptance_rates": [
+            0.39765,
+            0.64452
+          ],
+          "acceptance_rates_raw": [
+            1.0,
+            0.39765,
+            0.64452
+          ],
+          "note": "warmup 1.0 excluded from avg"
+        }
+      }
+    },
+    {
+      "name": "Bonsai-2-27B PTQ1_0 (V100)",
+      "file": "/var/tmp/llms/bench-0918/bonsai2/Ternary-Bonsai-2-27B-PTQ1_0.gguf",
+      "gpu": "V100",
+      "benchkit": {
+        "sanity": {
+          "score_pct": 84.0,
+          "passed": 21,
+          "total": 25,
+          "wall_time_s": 287.9,
+          "results_dir": "/home/caimlas/git/BenchKit/results/2026-10-06_09-18-49"
+        }
+      },
+      "decode_tps": 43.39,
+      "livecodebench": {
+        "pass_at_1": 0.7333,
+        "empty": 0,
+        "of": 75,
+        "wall_time_s": null
+      },
+      "tau2": {
+        "reward": 0.4667,
+        "user_sim": "LFM2.5-8B-A1B-Clean-RealWorld-v2",
+        "canonical": true,
+        "sims_scored": "15/15",
+        "passes": 7,
+        "wall_time_s": null,
+        "note": "2026-10-06 bench-0918 batch"
+      }
+    },
+    {
+      "name": "Bonsai-2-27B PTQ1_0 + MTP n1 (V100)",
+      "file": "/var/tmp/llms/bench-0918/bonsai2/Ternary-Bonsai-2-27B-PTQ1_0-mtp.gguf",
+      "gpu": "V100",
+      "benchkit": {
+        "sanity": {
+          "score_pct": 84.0,
+          "passed": 21,
+          "total": 25,
+          "wall_time_s": 285.0,
+          "results_dir": "/home/caimlas/git/BenchKit/results/2026-10-06_10-12-48"
+        }
+      },
+      "decode_tps": 54.38,
+      "livecodebench": {
+        "pass_at_1": null,
+        "empty": 0,
+        "of": 75,
+        "wall_time_s": null
+      }
+    },
+    {
+      "name": "Xing4.0-29B-A4B IQ4_NL (V100)",
+      "file": "/var/tmp/llms/bench-0918/xing/xing4_0-29b-IQ4_NL-00001-of-00003.gguf",
+      "gpu": "V100",
+      "benchkit": {
+        "sanity": {
+          "score_pct": 80.0,
+          "passed": 20,
+          "total": 25,
+          "wall_time_s": 610.3,
+          "results_dir": "/home/caimlas/git/BenchKit/results/2026-10-06_15-16-21"
+        }
+      },
+      "decode_tps": 50.76,
+      "livecodebench": {
+        "pass_at_1": 0.48,
+        "empty": 0,
+        "of": 75,
+        "wall_time_s": 2948.9
+      },
+      "tau2": {
+        "reward": 0.26666666666666666,
+        "user_sim": "LFM2.5-8B-A1B-Clean-RealWorld-v2",
+        "canonical": true,
+        "sims_scored": "15/15",
+        "passes": 4,
+        "wall_time_s": 1694.4,
+        "note": "2026-10-06 bench-0918 batch"
+      }
+    },
+    {
+      "name": "Bonsai-2-27B Ternary CRACK PQ2_0 (V100)",
+      "file": "/var/tmp/llms/bench-0918/crack/Bonsai-2-27B-PQ2_0-CRACK.gguf",
+      "gpu": "V100",
+      "benchkit": {
+        "sanity": {
+          "score_pct": 84.0,
+          "passed": 21,
+          "total": 25,
+          "wall_time_s": 332.5,
+          "results_dir": "/home/caimlas/git/BenchKit/results/2026-10-06_13-00-57"
+        }
+      },
+      "decode_tps": 43.39,
+      "livecodebench": {
+        "pass_at_1": 0.7333333333333333,
+        "empty": 0,
+        "of": 75,
+        "wall_time_s": 1621.8
+      },
+      "tau2": {
+        "reward": 0.13333333333333333,
+        "user_sim": "LFM2.5-8B-A1B-Clean-RealWorld-v2",
+        "canonical": true,
+        "sims_scored": "12/15",
+        "passes": 2,
+        "wall_time_s": 2666.2,
+        "note": "2026-10-06 bench-0918 batch"
+      }
+    },
+    {
+      "name": "Ternary-Bonsai-2-27B PQ2_0 (V100)",
+      "file": "/var/tmp/llms/bench-0918/bonsai2/Ternary-Bonsai-2-27B-PQ2_0.gguf",
+      "gpu": "V100",
+      "benchkit": {
+        "sanity": {
+          "score_pct": 84.0,
+          "passed": 21,
+          "total": 25,
+          "wall_time_s": 346.0,
+          "results_dir": "/home/caimlas/git/BenchKit/results/2026-10-06_14-19-44"
+        }
+      },
+      "decode_tps": 44.35,
+      "livecodebench": {
+        "pass_at_1": 0.76,
+        "empty": 0,
+        "of": 75,
+        "wall_time_s": 1282.1
+      },
+      "tau2": {
+        "reward": 0.5333333333333333,
+        "user_sim": "LFM2.5-8B-A1B-Clean-RealWorld-v2",
+        "canonical": true,
+        "sims_scored": "15/15",
+        "passes": 8,
+        "wall_time_s": 1399.3,
+        "note": "2026-10-06 bench-0918 batch"
+      }
+    },
+    {
+      "name": "K2-Horizon-7B-Uno Q4_K_M (3060)",
+      "file": "/var/tmp/llms/bench-0918/k2-uno-q4km/K2-Horizon-7B-Uno-Q4_K_M.gguf",
+      "gpu": "3060",
+      "benchkit": {
+        "sanity": {
+          "score_pct": 0.0,
+          "passed": 0,
+          "total": 25,
+          "wall_time_s": 419.9,
+          "results_dir": "/home/caimlas/git/BenchKit/results/2026-10-06_16-42-36"
+        }
+      },
+      "decode_tps": 53.93,
+      "livecodebench": {
+        "pass_at_1": 0.0,
+        "empty": 0,
+        "of": 75,
+        "wall_time_s": 6431.2
+      },
+      "tau2": {
+        "reward": 0.0,
+        "user_sim": "LFM2.5-8B-A1B-Clean-RealWorld-v2",
+        "canonical": true,
+        "sims_scored": "1/15",
+        "passes": 0,
+        "wall_time_s": 3731.9,
+        "note": "2026-10-06 bench-0918 batch"
+      },
+      "invalid": true,
+      "invalid_reason": "Uno = conditional diffusion-pathway adapter; merged-AR serving = comma soup (LCB 75/75 all-comma, tau2 14/15 infra). AR rows invalid; root cause settled 2026-10-06.",
+      "status": "INVALID ROW - not a real score. Uno adapter is a diffusion-pathway LoRA; merged-AR serving produces comma soup (75/75 all-comma LCB gens, 14/15 tau2 infra errors). Root cause settled 2026-10-06; do not compare or retry. See llm-benchmarks QUEUE."
+    },
+    {
+      "name": "Xing4.0-29B-A4B IQ4_NL (3060)",
+      "file": "",
+      "category": "bench-0918"
+    }
+  ],
+  "last_updated": "2026-07-31T03:41:40.435557"
+}
