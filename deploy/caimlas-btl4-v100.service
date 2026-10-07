@@ -16,9 +16,9 @@
 # Slots: 3 concurrent sessions share the 524288-token unified pool
 # (e.g. 2x256K, 3x174K, 4x131K). Per-session window = pool/parallel.
 #
-# BTL-4 serving requirements: --jinja --reasoning off --reasoning-format deepseek.
-# Clients MUST strip reasoning_content from old turns (model card: accumulated
-# reasoning in history degrades long agent runs).
+# BTL-4 serving requirements: --jinja --reasoning-format deepseek (reasoning arrives at
+# the wire as reasoning_content; clients like Hermes strip it from replayed history
+# automatically - model card: accumulated reasoning in history degrades long agent runs).
 [Unit]
 Description=BTL-4 Q4_K_M coder (V100, 512K YaRN ctx, q4_0 KV, 3 slots, port 8082)
 After=network.target
@@ -43,7 +43,6 @@ ExecStart=/home/caimlas/git/llama.cpp/build/bin/llama-server \
     --cache-type-k q4_0 \
     --cache-type-v q4_0 \
     --jinja \
-    --reasoning off \
     --reasoning-format deepseek \
     --host 0.0.0.0 \
     --port 8082 \
