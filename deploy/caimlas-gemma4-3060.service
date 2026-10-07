@@ -1,0 +1,47 @@
+# /etc/systemd/system/caimlas-gemma4-3060.service
+# gemma-4-12B-it-QAT Q4_0 on the RTX 3060 (GPU 1, port 8080).
+# Deployed 2026-10-06 as prod orchestrator/planner, replacing caimlas-nail (Nail-35B
+# cpu-moe config). Rationale: LCB 0.91 / tau2 0.400 at 38.2 t/s fully in VRAM vs
+# Nail's cpu-moe tax (~17 t/s single, RAM-bound) with tau2 evidence of 0.20-0.00.
+# Same 128K ctx lane as the bench row "gemma-4-12B-it-QAT Q4_0 (3060 128K)".
+#
+# VRAM: ~10-11GB full offload; no expert streaming, no co-tenancy needed.
+[Unit]
+Description=gemma-4-12B-it-QAT Q4_0 orchestrator/planner (RTX 3060, port 8080)
+After=network.target
+
+[Service]
+Type=simple
+Environment=CUDA_VISIBLE_DEVICES=1
+ExecStartPre=/bin/sleep 3
+ExecStart=/home/caimlas/git/llama.cpp/build/bin/llama-server \
+    --model /home/files/llms/gemma-4-12B-it-QAT-Q4_0.gguf \
+    --flash-attn on \
+    --gpu-layers 99 \
+    --ctx-size 131072 \
+    --batch-size 2048 \
+    --ubatch-size 512 \
+    --threads 6 \
+    --threads-batch 6 \
+    --cache-type-k q8_0 \
+    --cache-type-v q8_0 \
+    --host 0.0.0.0 \
+    --port 8080 \
+    --parallel 1 \
+    --cont-batching \
+    --kv-unified \
+    --temp 0.7 \
+    --top-p 0.95 \
+    --top-k 20 \
+    --repeat-penalty 1.0 \
+    -n -1
+
+Restart=on-failure
+RestartSec=10
+User=caimlas
+Group=caimlas
+WorkingDirectory=/home/caimlas
+LimitMEMLOCK=infinity
+
+[Install]
+WantedBy=multi-user.target
