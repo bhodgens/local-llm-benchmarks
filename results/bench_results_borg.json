@@ -1,0 +1,221 @@
+{
+  "qwen38-27b": {
+    "model": "qwen38-27b",
+    "engine": "luce_server (Lucebox HIP)",
+    "gpu": "R9700",
+    "port": 8901,
+    "protocol": "local-llm-benchmarks: prompt-eval cold(short+long) + 2 decode prompts x2 runs",
+    "timestamp": "2026-10-05T08:24:53",
+    "boot_s": 8.0,
+    "prefill_first_request_tps": 406.79,
+    "prefill_cold_tps": 838.89,
+    "prefill_cold_tokens": 478,
+    "prefill_warm_tps": 10368.76,
+    "prefill_long_tps": 1081.84,
+    "prefill_long_tokens": 2312,
+    "decode_sampled": {
+      "decode_tps_avg": 32.73,
+      "accept_rate_avg": 0.0,
+      "spec_decode_ran": false,
+      "wall_s_avg": 7.9
+    },
+    "decode_greedy": {
+      "decode_tps_avg": 138.63,
+      "accept_rate_avg": 0.517,
+      "spec_decode_ran": true,
+      "wall_s_avg": 1.91
+    }
+  },
+  "laguna-xs21": {
+    "model": "laguna-xs21",
+    "engine": "luce_server (Lucebox HIP)",
+    "gpu": "R9700",
+    "port": 8902,
+    "protocol": "local-llm-benchmarks: prompt-eval cold(short+long) + 2 decode prompts x2 runs",
+    "timestamp": "2026-10-05T08:26:55",
+    "boot_s": 6.0,
+    "prefill_first_request_tps": 1451.66,
+    "prefill_cold_tps": 2139.81,
+    "prefill_cold_tokens": 502,
+    "prefill_warm_tps": 2128.02,
+    "prefill_long_tps": 2237.28,
+    "prefill_long_tokens": 2378,
+    "decode_sampled": {
+      "decode_tps_avg": 78.34,
+      "accept_rate_avg": 0.0,
+      "spec_decode_ran": false,
+      "wall_s_avg": 3.45
+    },
+    "decode_greedy": {
+      "decode_tps_avg": 129.69,
+      "accept_rate_avg": 0.629,
+      "spec_decode_ran": true,
+      "wall_s_avg": 2.16
+    }
+  },
+  "qwen38-27b-vision": {
+    "model": "qwen38-27b-vision",
+    "engine": "luce_server (Lucebox HIP)",
+    "gpu": "R9700",
+    "port": 8902,
+    "protocol": "local-llm-benchmarks: prompt-eval cold(short+long) + 2 decode prompts x2 runs",
+    "timestamp": "2026-10-05T08:25:55",
+    "boot_s": 8.0,
+    "prefill_first_request_tps": 444.97,
+    "prefill_cold_tps": 980.92,
+    "prefill_cold_tokens": 473,
+    "prefill_warm_tps": 12097.19,
+    "prefill_long_tps": 1149.45,
+    "prefill_long_tokens": 2272,
+    "decode_sampled": {
+      "decode_tps_avg": 36.06,
+      "accept_rate_avg": 0.0,
+      "spec_decode_ran": false,
+      "wall_s_avg": 7.17
+    },
+    "decode_greedy": {
+      "decode_tps_avg": 127.7,
+      "accept_rate_avg": 0.433,
+      "spec_decode_ran": true,
+      "wall_s_avg": 2.05
+    }
+  },
+  "ds4-flash": {
+    "model": "ds4-flash",
+    "engine": "luce_server (Lucebox HIP)",
+    "gpu": "R9700+Strix",
+    "port": 8902,
+    "protocol": "local-llm-benchmarks: prompt-eval cold(short+long) + 2 decode prompts x2 runs",
+    "timestamp": "2026-10-05T08:27:37",
+    "boot_s": 54.5,
+    "prefill_first_request_tps": 214.81,
+    "prefill_cold_tps": 256.44,
+    "prefill_cold_tokens": 483,
+    "prefill_warm_tps": 255.27,
+    "prefill_long_tps": 372.8,
+    "prefill_long_tokens": 2381,
+    "decode_sampled": {
+      "decode_tps_avg": 50.24,
+      "accept_rate_avg": 0.703,
+      "spec_decode_ran": true,
+      "wall_s_avg": 5.6
+    },
+    "decode_greedy": {
+      "decode_tps_avg": 53.51,
+      "accept_rate_avg": 0.696,
+      "spec_decode_ran": true,
+      "wall_s_avg": 5.28
+    }
+  },
+  "ds41-flash": {
+    "model": "ds41-flash",
+    "engine": "luce_server (Lucebox HIP)",
+    "gpu": "R9700+Strix+SSD",
+    "port": 8902,
+    "protocol": "local-llm-benchmarks: prompt-eval cold(short+long) + 2 decode prompts x2 runs",
+    "timestamp": "2026-10-05T05:34:08",
+    "boot_s": 46.1,
+    "prefill_cold_tps": 52.58,
+    "prefill_cold_tokens": 490,
+    "prefill_warm_tps": 55.18,
+    "prefill_long_tps": 67.27,
+    "prefill_long_tokens": 1948,
+    "decode_sampled": {
+      "decode_tps_avg": 23.86,
+      "accept_rate_avg": 0.784,
+      "spec_decode_ran": true,
+      "wall_s_avg": 11.48
+    },
+    "decode_greedy": {
+      "decode_tps_avg": 26.56,
+      "accept_rate_avg": 0.812,
+      "spec_decode_ran": true,
+      "wall_s_avg": 10.23
+    }
+  },
+  "glm53-flash": {
+    "model": "glm53-flash",
+    "engine": "paoai-strix-engine (llama.cpp+Vulkan)",
+    "gpu": "Strix",
+    "port": 8902,
+    "protocol": "local-llm-benchmarks: prompt-eval cold(short+long) + 2 decode prompts x2 runs",
+    "timestamp": "2026-10-05T08:44:54",
+    "boot_s": 26.1,
+    "prefill_first_request_tps": 67.46,
+    "prefill_cold_tps": 73.35,
+    "prefill_cold_tokens": 481,
+    "prefill_warm_tps": 16.99,
+    "prefill_long_tps": 75.19,
+    "prefill_long_tokens": 2266,
+    "decode_sampled": {
+      "decode_tps_avg": 15.57,
+      "accept_rate_avg": 0.0,
+      "spec_decode_ran": false,
+      "wall_s_avg": 17.57
+    },
+    "decode_greedy": {
+      "decode_tps_avg": 14.25,
+      "accept_rate_avg": 0.0,
+      "spec_decode_ran": false,
+      "wall_s_avg": 18.98
+    }
+  },
+  "flashnext": {
+    "model": "flashnext",
+    "engine": "Strata (HIP)",
+    "gpu": "R9700+RAM",
+    "port": 8080,
+    "protocol": "local-llm-benchmarks: prompt-eval cold(short+long) + 2 decode prompts x2 runs",
+    "timestamp": "2026-10-05T09:00:31",
+    "boot_s": 22.0,
+    "prefill_first_request_tps": 244.95,
+    "prefill_cold_tps": 288.61,
+    "prefill_cold_tokens": 489,
+    "prefill_warm_tps": 122.38,
+    "prefill_long_tps": 441.6,
+    "prefill_long_tokens": 2324,
+    "decode_sampled": {
+      "decode_tps_avg": 77.05,
+      "accept_rate_avg": 0.0,
+      "spec_decode_ran": false,
+      "wall_s_avg": 3.52
+    },
+    "decode_greedy": {
+      "decode_tps_avg": 86.31,
+      "accept_rate_avg": 0.0,
+      "spec_decode_ran": false,
+      "wall_s_avg": 3.15
+    },
+    "request_extras": {
+      "reasoning_effort": "off"
+    }
+  },
+  "kolibri-1": {
+    "model": "kolibri-1",
+    "engine": "llama.cpp-kolibri (patched HIP)",
+    "gpu": "R9700+Strix",
+    "port": 8902,
+    "protocol": "local-llm-benchmarks: prompt-eval cold(short+long) + 2 decode prompts x2 runs",
+    "timestamp": "2026-10-05T08:23:36",
+    "boot_s": 16.0,
+    "model_id_reported": "/root/models/kolibri/Kolibri-1-Q4_K_M.gguf",
+    "prefill_first_request_tps": 248.76,
+    "prefill_cold_tps": 282.58,
+    "prefill_cold_tokens": 550,
+    "prefill_warm_tps": 33.69,
+    "prefill_long_tps": 438.51,
+    "prefill_long_tokens": 2513,
+    "decode_sampled": {
+      "decode_tps_avg": 54.62,
+      "accept_rate_avg": 0.0,
+      "spec_decode_ran": false,
+      "wall_s_avg": 4.82
+    },
+    "decode_greedy": {
+      "decode_tps_avg": 54.32,
+      "accept_rate_avg": 0.0,
+      "spec_decode_ran": false,
+      "wall_s_avg": 4.84
+    }
+  }
+}

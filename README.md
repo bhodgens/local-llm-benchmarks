@@ -103,3 +103,16 @@ Each entry is `(filename, device, is_moe, has_mtp)`.
 
 All tests run at 8K context with flash attention to isolate model+arch performance.
 Production context sizes (128K-200K) are configured separately in systemd services.
+
+
+## Reproducibility
+
+- `PROTOCOLS.md` is the benchmark contract: engines, sampling, question sets,
+  scoring, and per-host device conventions. Numbers are only comparable when
+  the protocol was followed.
+- `benchmarks/<host>-<date>/` holds raw run evidence (question id sets,
+  progress.json files) for each campaign. `benchmarks/v100-2026-09/` and
+  `benchmarks/borg-2026-10/` are the first two.
+- borg tooling: `scripts/borg/` (launchers, probes, coding-eval orchestrator,
+  reporting pipeline). Host layout and caveats: `scripts/borg/README.md`,
+  `BORG_RESULTS.md`.

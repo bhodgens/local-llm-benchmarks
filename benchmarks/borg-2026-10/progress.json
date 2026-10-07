@@ -1,0 +1,117 @@
+{
+  "start_time": "2026-10-06T20:24:57.841869+00:00",
+  "models": [
+    {
+      "name": "qwen38-27b",
+      "tau2": {
+        "reward": null,
+        "wall_time_s": 1.8,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg"
+      },
+      "status": "done",
+      "livecodebench": {
+        "pass_at_1": 0.88,
+        "wall_time_s": 1358.2,
+        "num_problems": 75,
+        "host": "borg"
+      }
+    },
+    {
+      "name": "qwen38-27b-vision",
+      "tau2": {
+        "reward": 0.6,
+        "wall_time_s": 1.8,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg",
+        "num_tasks_scored": 5
+      },
+      "status": "pending-lcb75-rerun"
+    },
+    {
+      "name": "laguna-xs21",
+      "tau2": {
+        "reward": 0.6,
+        "wall_time_s": 1.8,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg",
+        "num_tasks_scored": 5
+      },
+      "status": "pending-lcb75-rerun"
+    },
+    {
+      "name": "laguna-s21",
+      "tau2": {
+        "reward": null,
+        "wall_time_s": 59.6,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg",
+        "note": "all 15 sims infrastructure_error: litellm ContextWindowExceeded at max_steps=15"
+      },
+      "status": "pending-lcb75-rerun"
+    },
+    {
+      "name": "flashnext",
+      "tau2": {
+        "reward": 0.7333,
+        "wall_time_s": 2.1,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg",
+        "num_tasks_scored": 15
+      },
+      "status": "pending-lcb75-rerun"
+    },
+    {
+      "name": "swift",
+      "tau2": {
+        "reward": 0.8,
+        "wall_time_s": 1.8,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg",
+        "num_tasks_scored": 15
+      },
+      "status": "pending-lcb75-rerun"
+    },
+    {
+      "name": "coder",
+      "tau2": {
+        "reward": 1.0,
+        "wall_time_s": 1.9,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg",
+        "num_tasks_scored": 5
+      },
+      "status": "pending-lcb75-rerun"
+    },
+    {
+      "name": "glm53-flash",
+      "tau2": {
+        "reward": null,
+        "wall_time_s": 2.1,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg"
+      },
+      "status": "pending-lcb75-rerun"
+    },
+    {
+      "name": "kolibri-1",
+      "tau2": {
+        "reward": 0.2857,
+        "wall_time_s": 1.7,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg",
+        "num_tasks_scored": 7
+      },
+      "status": "pending-lcb75-rerun"
+    }
+  ]
+}

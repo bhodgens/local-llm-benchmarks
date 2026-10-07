@@ -1,0 +1,168 @@
+{
+  "start_time": "2026-10-06T20:24:57.841869+00:00",
+  "models": [
+    {
+      "name": "qwen38-27b",
+      "livecodebench": {
+        "pass_at_1": 0.25,
+        "wall_time_s": 583.5,
+        "num_problems": 50,
+        "host": "borg"
+      },
+      "tau2": {
+        "reward": 0.6,
+        "wall_time_s": 1.7,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg",
+        "num_tasks_scored": 10
+      },
+      "status": "done"
+    },
+    {
+      "name": "qwen38-27b-vision",
+      "livecodebench": {
+        "pass_at_1": 0.3333333333333333,
+        "wall_time_s": 477.3,
+        "num_problems": 50,
+        "host": "borg"
+      },
+      "tau2": {
+        "reward": 0.6,
+        "wall_time_s": 1.8,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg",
+        "num_tasks_scored": 5
+      },
+      "status": "done"
+    },
+    {
+      "name": "laguna-xs21",
+      "livecodebench": {
+        "pass_at_1": 0.25,
+        "wall_time_s": 233.6,
+        "num_problems": 50,
+        "host": "borg",
+        "backfilled": true
+      },
+      "tau2": {
+        "reward": 0.6,
+        "wall_time_s": 1.8,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg",
+        "num_tasks_scored": 5
+      },
+      "status": "done"
+    },
+    {
+      "name": "laguna-s21",
+      "livecodebench": {
+        "pass_at_1": 0.3333333333333333,
+        "wall_time_s": 1062.7,
+        "num_problems": 50,
+        "host": "borg",
+        "backfilled": true
+      },
+      "tau2": {
+        "reward": null,
+        "wall_time_s": 59.6,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg",
+        "note": "all 15 sims infrastructure_error: litellm ContextWindowExceeded at max_steps=15"
+      },
+      "status": "done"
+    },
+    {
+      "name": "flashnext",
+      "livecodebench": {
+        "pass_at_1": 0.5,
+        "wall_time_s": 547.9,
+        "num_problems": 50,
+        "host": "borg"
+      },
+      "tau2": {
+        "reward": 0.7333,
+        "wall_time_s": 2.1,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg",
+        "num_tasks_scored": 15
+      },
+      "status": "done"
+    },
+    {
+      "name": "swift",
+      "livecodebench": {
+        "pass_at_1": 0.4166666666666667,
+        "wall_time_s": 376.6,
+        "num_problems": 50,
+        "host": "borg"
+      },
+      "tau2": {
+        "reward": 0.8,
+        "wall_time_s": 1.8,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg",
+        "num_tasks_scored": 15
+      },
+      "status": "done"
+    },
+    {
+      "name": "coder",
+      "livecodebench": {
+        "pass_at_1": 0.25,
+        "wall_time_s": 998.5,
+        "num_problems": 50,
+        "host": "borg"
+      },
+      "tau2": {
+        "reward": 1.0,
+        "wall_time_s": 1.9,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg",
+        "num_tasks_scored": 5
+      },
+      "status": "done"
+    },
+    {
+      "name": "glm53-flash",
+      "tau2": {
+        "reward": null,
+        "wall_time_s": 2.1,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg"
+      },
+      "status": "done",
+      "livecodebench": {
+        "pass_at_1": 0.25,
+        "wall_time_s": 41.3,
+        "num_problems": 50,
+        "host": "borg"
+      }
+    },
+    {
+      "name": "kolibri-1",
+      "livecodebench": {
+        "pass_at_1": 0.4166666666666667,
+        "wall_time_s": 39.4,
+        "num_problems": 50,
+        "host": "borg"
+      },
+      "tau2": {
+        "reward": 0.2857,
+        "wall_time_s": 1.7,
+        "num_tasks": 15,
+        "domain": "airline",
+        "host": "borg",
+        "num_tasks_scored": 7
+      },
+      "status": "done"
+    }
+  ]
+}
