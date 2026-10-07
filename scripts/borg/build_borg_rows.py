@@ -22,9 +22,9 @@ LANE_META = {
     "qwen38-27b-vision": ("Qwen3.8-27B Vision UD-IQ4_XS (borg)", "Qwen3.8-27B",       "27B Dense", "luce_server", "R9700"),
     "laguna-xs21":       ("Laguna-XS-2.1 Q4_K_M (borg)",         "Laguna-XS-2.1",     "33B Dense", "luce_server", "R9700"),
     "laguna-s21":        ("Laguna-S-2.1 Q4_K_M (borg, split)",   "Laguna-S-2.1",      "70B Dense", "luce_server", "R9700+Strix"),
-    "flashnext":         ("Qwen3.8-Flash-Next IQ3_S (borg)",     "Qwen3.8-Flash-Next","MoE 35B",   "Strata",      "Strix"),
-    "swift":             ("Swift-Flash-Next IQ2_XS (borg)",      "Qwen3.8-Flash-Next","MoE 35B",   "Strata",      "Strix"),
-    "coder":             ("Coder-Flash-Next IQ1_M (borg)",       "Qwen3.8-Flash-Next","MoE 35B",   "Strata",      "Strix"),
+    "flashnext":         ("Qwen3.8-Flash-Next IQ3_S (borg)",     "Qwen3.8-Flash-Next","MoE 35B",   "Strata",      "R9700"),
+    "swift":             ("Swift-Flash-Next IQ2_XS (borg)",      "Qwen3.8-Flash-Next","MoE 35B",   "Strata",      "R9700"),
+    "coder":             ("Coder-Flash-Next IQ1_M (borg)",       "Qwen3.8-Flash-Next","MoE 35B",   "Strata",      "R9700"),
     "glm53-flash":       ("GLM-5.3-Flash EXL3 (borg)",           "GLM-5.3-Flash",     "Other",     "Kyojin EXL3", "Strix"),
     "kolibri-1":         ("Kolibri-1 Q4_K_M (borg)",             "Kolibri-1",         "MoE 35B",   "llama.cpp",   "R9700+Strix"),
 }
