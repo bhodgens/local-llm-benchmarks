@@ -51,7 +51,7 @@ MODELS = [
     ("kolibri-1",         "/root/bench/serve_kolibri.sh",     "Kolibri-1-Q4_K_M.gguf",           15),
 ]
 
-NUM_LCB_PROBLEMS = 50     # release_latest codegeneration; keeps wall time ~1h/model at borg speeds
+NUM_LCB_PROBLEMS = 75     # V100 protocol: first 75 release_latest (2023-05..2023-10), replicated via question_ids_file
 NUM_TAU2_TASKS = 15
 
 
@@ -137,8 +137,7 @@ def run_lcb(entry, key, api_model):
         "--n", "1",
         "--temperature", "0.0",
         "--max_tokens", "4096",
-        "--start_date", "2025-04-01",
-        "--end_date", "2025-05-01",
+        "--question_ids_file", "/tmp/v100_lcb_ids.json",
         "--openai_timeout", "600",
         "--evaluate",
         "--use_cache",
