@@ -182,13 +182,14 @@ def sanity(name, binary, model, gpu, extra):
     return None
 
 def lcb(name, lcb_model, port, max_tokens=12288):
+    out_name = DISPLAY.get(lcb_model, name)
     """Thinking-ON LCB: no LCB_DISABLE_THINKING. Bigger budget for reasoning."""
     lenv = dict(os.environ)
     lenv.update({"OPENAI_KEY": "none",
                  "OPENAI_BASE_URL": f"http://127.0.0.1:{port}/v1",
                  "HF_ALLOW_CODE_EVAL": "1"})
     # LCB_DISABLE_THINKING deliberately NOT set
-    out_dir = os.path.join(LCB_DIR, "output", name)
+    out_dir = os.path.join(LCB_DIR, "output", out_name)
     if os.path.isdir(out_dir):
         subprocess.run(["rm", "-rf", out_dir])
     t0 = time.time()
@@ -219,7 +220,7 @@ def lcb(name, lcb_model, port, max_tokens=12288):
     if pass1 is None:
         txt = open(llog).read().strip()
         if txt:
-            m = re.findall(r"pass@1[:= ]+([0-9.]+)", txt[-3000:])
+            m = re.findall(r"pass@1[:= ]+([0-9.]+)", txt[-3000:]) or re.findall(r"^([01]\.\d+)$", txt[-200:], re.M)
             if m:
                 pass1 = float(m[-1])
     return {"pass@1": pass1, "empty_outputs": empty, "wall_s": wall} if pass1 is not None \
@@ -237,17 +238,18 @@ def tau2(name, agent_port, usersim_port=8081):
                "temperature": 0.0}),
            "--user-llm", f"openai/{USER_SIM_NAME}",
            "--user-llm-args", json.dumps({"api_key": "none",
-               "api_base": f"http://127.0.0.1:{usersim_port}/v1",
-               "temperature": 0.0}),
-           "--num-tasks", "15", "--seed", "42", "--max-steps", "30",
-           "--concurrency", "2"]
+               "api_base": f"http://127.0.0.1:{usersim_port}/v1"}),
+           "--num-tasks", "15", "--num-trials", "1", "--max-concurrency", "2",
+           "--max-steps", "30", "--max-errors", "5", "--timeout", "300",
+           "--seed", "42", "--save-to", f"tau2_{safe}"]
     env = dict(os.environ)
+    env["OPENAI_API_KEY"] = "none"
     env["NO_PROXY"] = "*"; env["no_proxy"] = "*"
-    tlog = os.path.join(LOGS, f"tau2_{safe}.log")
+    tlog = os.path.join(LOGS, f"tau2_{re.sub(r'[^A-Za-z0-9]+', '_', safe)}.log")
     try:
         with open(tlog, "w") as lf:
             subprocess.run(cmd, stdout=lf, stderr=subprocess.STDOUT,
-                           cwd=TAU2_DIR, env=env, timeout=3 * 3600)
+                           cwd=TAU2_DIR, env=env, timeout=8 * 3600)
     except subprocess.TimeoutExpired:
         log("  tau2 timeout")
     return parse_tau2(sdir, tlog)
