@@ -1,0 +1,16 @@
+{
+  "question": "exllamav3 autosplit across R9700 (gfx1201) + Strix Halo iGPU (gfx1151) for GLM EXL3",
+  "date": "2026-10-09",
+  "result": "BLOCKED - per-arch ROCm wheels are mutually exclusive in one process",
+  "evidence": [
+    "Kyojin venv ships _rocm_sdk_libraries_gfx1151 (7.13) only: no gfx1201 TensileLibrary/Kernels.so",
+    "torch from that wheel inits BOTH devices, but the first rocBLAS call for gfx1201 fails: Cannot read TensileLibrary.dat for GPU arch gfx1201",
+    "the _rocm_sdk_devel (7.14) libhsa required for gfx1151 boot (Trap 1) conflicts with the gfx1201 libs the card needs"
+  ],
+  "single-device-works": "serve.py pins cuda:0 (R9700) with the full 7.14 devel SDK - proven at 33.7 t/s (or iGPU-only per README.strix-halo.md)",
+  "paths": [
+    "system-ROCm exllamav3 build (needs pip-free compile against /opt/rocm 7.2.1, which has both archs - untested, likely a day of build fixing)",
+    "AMD unified wheel including gfx1201 Tensile libs alongside gfx1151 (watch ROCm releases)",
+    "two-process split (no shared KV - not a real hybrid)"
+  ]
+}
