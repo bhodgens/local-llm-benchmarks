@@ -1,0 +1,107 @@
+{
+  "btl4": {
+    "engine": "/home/caimlas/git/llama.cpp/build/bin",
+    "gpu": "GPU0",
+    "thinking": true,
+    "ts": "2026-10-08T17:20:51+00:00",
+    "speed": {
+      "decode_tps": 96.76,
+      "reasoning_est_tokens": 1008,
+      "reasoning_share_pct": 98.4
+    },
+    "sanity": 1.0,
+    "lcb": {
+      "pass@1": null,
+      "wall_s": 4689.3,
+      "log": "/tmp/coding-bench/logs/bench0918_think/lcb_local_btl4_q4km_think.log"
+    },
+    "tau2": {
+      "reward": null,
+      "infra_errors": 0
+    }
+  },
+  "muse": {
+    "engine": "/home/caimlas/git/llama.cpp/build/bin",
+    "gpu": "GPU0",
+    "thinking": true,
+    "ts": "2026-10-08T18:47:49+00:00",
+    "speed": {
+      "decode_tps": 37.81,
+      "reasoning_est_tokens": 613,
+      "reasoning_share_pct": 59.9
+    },
+    "sanity": 1.0,
+    "lcb": {
+      "pass@1": null,
+      "wall_s": 6991.6,
+      "log": "/tmp/coding-bench/logs/bench0918_think/lcb_local_muse_glimmer_think.log"
+    },
+    "tau2": {
+      "reward": null,
+      "infra_errors": 0
+    }
+  },
+  "gemma": {
+    "engine": "/home/caimlas/git/llama.cpp/build/bin",
+    "gpu": "GPU0",
+    "thinking": true,
+    "ts": "2026-10-08T20:54:44+00:00",
+    "speed": {
+      "decode_tps": 58.48,
+      "reasoning_est_tokens": 802,
+      "reasoning_share_pct": 78.3
+    },
+    "sanity": 0.64,
+    "lcb": {
+      "pass@1": null,
+      "wall_s": 16001.9,
+      "log": "/tmp/coding-bench/logs/bench0918_think/lcb_local_gemma4_12b_think.log"
+    },
+    "tau2": {
+      "reward": null,
+      "infra_errors": 0
+    }
+  },
+  "bonsai2": {
+    "engine": "/var/tmp/llms/bench-0918/prismml-bin/llama-prism-b10685-7dffb15",
+    "gpu": "GPU0",
+    "thinking": true,
+    "ts": "2026-10-09T01:36:39+00:00",
+    "speed": {
+      "decode_tps": 45.14,
+      "reasoning_est_tokens": 810,
+      "reasoning_share_pct": 79.1
+    },
+    "sanity": null,
+    "lcb": {
+      "pass@1": null,
+      "wall_s": 6991.8,
+      "log": "/tmp/coding-bench/logs/bench0918_think/lcb_local_bonsai2_27b_pq20_think.log"
+    },
+    "tau2": {
+      "reward": null,
+      "infra_errors": 0
+    }
+  },
+  "crack": {
+    "engine": "/var/tmp/llms/bench-0918/prismml-bin/llama-prism-b10685-7dffb15",
+    "gpu": "GPU0",
+    "thinking": true,
+    "ts": "2026-10-09T03:34:55+00:00",
+    "speed": {
+      "decode_tps": 45.14,
+      "reasoning_est_tokens": 800,
+      "reasoning_share_pct": 78.1
+    },
+    "sanity": null,
+    "lcb": {
+      "pass@1": null,
+      "wall_s": 6711.3,
+      "log": "/tmp/coding-bench/logs/bench0918_think/lcb_local_bonsai2_crack_pq20_think.log"
+    },
+    "tau2": {
+      "reward": null,
+      "infra_errors": 0
+    }
+  }
+}
