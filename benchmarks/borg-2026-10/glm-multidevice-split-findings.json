@@ -1,0 +1,13 @@
+{
+  "question": "can GLM-5.3-flash run layer/row-split across R9700 + Strix iGPU in llama.cpp?",
+  "date": "2026-10-09",
+  "build": "dual-arch gfx1151+gfx1201, -DGGML_CUDA_NO_PEER_COPY=ON, @8a1a9b5",
+  "result": "NO on current master - the CUDA backend does not implement ggml_backend_split_buffer_type at all (0 references in ggml-cuda.cu; only SYCL and Hexagon backends implement it). llama.cpp throws device ROCm0 does not support split buffers with -sm row or -sm layer regardless of tensor-split ratios or -ngl.",
+  "also": "-sm none with -ngl 99 tries to fit the whole 101 GiB Q2_K_XL in the R9700 32 GB and OOMs; -ngl 0 (CPU) works but is 6.95 tok/s.",
+  "paths": [
+    "stock master: not supported (this finding)",
+    "implement CUDA split_buffer_type in ggml-cuda.cu (real engine patch - the SYCL impl at ggml-sycl.cpp:7429 is the template)",
+    "Kyojin EXL3 single-device (works today: yamz EXL3 at 26-32 t/s)",
+    "luce_server route/expert split (lucebox already does this for DS4-style models)"
+  ]
+}
