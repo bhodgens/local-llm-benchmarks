@@ -16,7 +16,9 @@
       "log": "/tmp/coding-bench/logs/bench0918_think/lcb_local_btl4_q4km_think.log"
     },
     "tau2": {
-      "reward": null,
+      "reward": 0.2,
+      "sims_scored": "15/15",
+      "passes": 3,
       "infra_errors": 0
     }
   },
@@ -37,7 +39,9 @@
       "log": "/tmp/coding-bench/logs/bench0918_think/lcb_local_muse_glimmer_think.log"
     },
     "tau2": {
-      "reward": null,
+      "reward": 0.4,
+      "sims_scored": "15/15",
+      "passes": 6,
       "infra_errors": 0
     }
   },
@@ -58,8 +62,10 @@
       "log": "/tmp/coding-bench/logs/bench0918_think/lcb_local_gemma4_12b_think.log"
     },
     "tau2": {
-      "reward": null,
-      "infra_errors": 0
+      "reward": 0.3333,
+      "sims_scored": "14/15",
+      "passes": 5,
+      "infra_errors": 1
     }
   },
   "bonsai2": {
@@ -72,15 +78,17 @@
       "reasoning_est_tokens": 810,
       "reasoning_share_pct": 79.1
     },
-    "sanity": null,
+    "sanity": 0.84,
     "lcb": {
       "pass@1": null,
       "wall_s": 6991.8,
       "log": "/tmp/coding-bench/logs/bench0918_think/lcb_local_bonsai2_27b_pq20_think.log"
     },
     "tau2": {
-      "reward": null,
-      "infra_errors": 0
+      "reward": 0.4667,
+      "sims_scored": "13/15",
+      "passes": 7,
+      "infra_errors": 2
     }
   },
   "crack": {
@@ -93,14 +101,62 @@
       "reasoning_est_tokens": 800,
       "reasoning_share_pct": 78.1
     },
-    "sanity": null,
+    "sanity": 0.84,
     "lcb": {
       "pass@1": null,
       "wall_s": 6711.3,
       "log": "/tmp/coding-bench/logs/bench0918_think/lcb_local_bonsai2_crack_pq20_think.log"
     },
     "tau2": {
-      "reward": null,
+      "reward": 0.3333,
+      "sims_scored": "14/15",
+      "passes": 5,
+      "infra_errors": 1
+    }
+  },
+  "ptq10": {
+    "engine": "/home/caimlas/git/llama.cpp-sudoingx/build/bin",
+    "gpu": "GPU0",
+    "thinking": true,
+    "ts": "2026-10-09T05:29:07+00:00",
+    "speed": {
+      "decode_tps": 37.93,
+      "reasoning_est_tokens": 781,
+      "reasoning_share_pct": 76.3
+    },
+    "sanity": 0.84,
+    "lcb": {
+      "pass@1": null,
+      "wall_s": 8350.3,
+      "log": "/tmp/coding-bench/logs/bench0918_think/lcb_local_bonsai2_crack_1bit_think.log"
+    },
+    "tau2": {
+      "reward": 0.2667,
+      "sims_scored": "15/15",
+      "passes": 4,
+      "infra_errors": 0
+    }
+  },
+  "xing": {
+    "engine": "/home/caimlas/git/llama.cpp-xing4/build/bin",
+    "gpu": "GPU0",
+    "thinking": true,
+    "ts": "2026-10-09T07:56:06+00:00",
+    "speed": {
+      "decode_tps": 48.62,
+      "reasoning_est_tokens": 959,
+      "reasoning_share_pct": 93.7
+    },
+    "sanity": 0.8,
+    "lcb": {
+      "pass@1": null,
+      "wall_s": 14152.0,
+      "log": "/tmp/coding-bench/logs/bench0918_think/lcb_local_xing40_29b_iq4nl_think.log"
+    },
+    "tau2": {
+      "reward": 0.4,
+      "sims_scored": "15/15",
+      "passes": 6,
       "infra_errors": 0
     }
   }
