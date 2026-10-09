@@ -1,16 +1,15 @@
 {
-  "question": "exllamav3 autosplit across R9700 (gfx1201) + Strix Halo iGPU (gfx1151) for GLM EXL3",
+  "question": "exllamav3 autosplit across R9700 (gfx1201) + Strix Halo iGPU (gfx1151), GLM EXL3",
   "date": "2026-10-09",
-  "result": "BLOCKED - per-arch ROCm wheels are mutually exclusive in one process",
-  "evidence": [
-    "Kyojin venv ships _rocm_sdk_libraries_gfx1151 (7.13) only: no gfx1201 TensileLibrary/Kernels.so",
-    "torch from that wheel inits BOTH devices, but the first rocBLAS call for gfx1201 fails: Cannot read TensileLibrary.dat for GPU arch gfx1201",
-    "the _rocm_sdk_devel (7.14) libhsa required for gfx1151 boot (Trap 1) conflicts with the gfx1201 libs the card needs"
+  "status": "BLOCKED - incompatible ROCm stacks; deep workaround attempts exhausted",
+  "attempts": [
+    {"v": 1, "what": "kyojin venv as-is (per-arch wheel)", "result": "fail: gfx1201 TensileLibrary missing from gfx1151-only wheel"},
+    {"v": 2, "what": "source env.sh + HSA preload", "result": "fail: 7.14 devel libhsa undefined symbol hsa_ext_image_create_v2 vs 7.13 runtime"},
+    {"v": 3, "what": "copy 56 gfx1201 rocBLAS kernel files + 297 hipBLASLt entries into wheel library dir", "result": "partial: Tensile errors gone, but hipblasSgemm then returns HIPBLAS_STATUS_INTERNAL_ERROR - 7.2.1 code objects vs 7.13 wheel API mismatch"},
+    {"v": 4, "what": "LD_LIBRARY_PATH=/opt/rocm/lib pointing torch at system 7.2.1 runtime", "result": "fail: torch 2.12+rocm7.13 device kernels invalid against 7.2.1 runtime (hipErrorInvalidImage on first allocation)"}
   ],
-  "single-device-works": "serve.py pins cuda:0 (R9700) with the full 7.14 devel SDK - proven at 33.7 t/s (or iGPU-only per README.strix-halo.md)",
-  "paths": [
-    "system-ROCm exllamav3 build (needs pip-free compile against /opt/rocm 7.2.1, which has both archs - untested, likely a day of build fixing)",
-    "AMD unified wheel including gfx1201 Tensile libs alongside gfx1151 (watch ROCm releases)",
-    "two-process split (no shared KV - not a real hybrid)"
-  ]
+  "root_cause": "torch wheel is rocm7.13-based and needs 7.13 code objects; system is 7.2.1. Kyojin venv resolves this per-arch by shipping a 7.13 gfx1151-only library wheel. No single install on this box has BOTH archs with a torch-compatible runtime.",
+  "conclusion": "exllamav3 cross-device GLM on this box requires a unified ROCm install (>=7.13 with both gfx1151+gfx1201 code objects and matching torch) or a source build of torch+exllamav3 against system ROCm 7.2.1 - multi-day work, not a config fix. Also still subject to handoff R4 (peer-copy corruption dev0->dev1) if layer-split is attempted.",
+  "remediation_files": "353 copied gfx1201 files in the kyojin wheel library dirs; harmless, can stay or be removed",
+  "viable_today": "single-device GLM EXL3 via serve.py (R9700, 33.7 t/s proven); qwen27B+GLM dual-resident via luce/kyojin separately (2-9% tax)"
 }
