@@ -527,6 +527,7 @@ for m in progress['models']:
         'benchkit_sanity': bk_score,
         'bench_date': find_bench_date(m),
         'failures': m.get('failures', []),
+        'thinking': m.get('thinking'),
         'detail': detail,
     })
 
@@ -571,6 +572,8 @@ tr:hover { background: #161b22; }
 .badge-stock { background: #8b949e18; color: #6e7681; border: 1px solid #8b949e30; }
 .badge-ft { background: #a371f722; color: #a371f7; border: 1px solid #a371f744; }
 .badge-lcpp { background: #8b949e14; color: #768390; border: 1px solid #8b949e28; }
+.badge-think { background: #23863622; color: #3fb950; border: 1px solid #23863644; }
+.badge-nothink { background: #8b949e18; color: #6e7681; border: 1px solid #8b949e30; }
 .badge-exl3 { background: #f0883e22; color: #f0883e; border: 1px solid #f0883e44; }
 .note { background: #161b22; border-left: 3px solid #58a6ff; padding: 10px 15px; margin: 15px 0; font-size: 0.85em; color: #8b949e; }
 .failed { color: #f85149; }
@@ -644,6 +647,7 @@ tr:hover { background: #161b22; }
   <th data-type="string" data-key="name">Model</th>
   <th data-type="string" data-key="base">Base</th>
   <th data-type="string" data-key="category">Type</th>
+  <th data-type="string" data-key="thinking" title="Benchmarked thinking state: THINK = enabled, no-think = disabled">Mode</th>
   <th data-type="string" data-key="template">Template</th>
   <th data-type="string" data-key="engine">Engine</th>
   <th data-type="number" data-key="bk">Sanity %</th>
@@ -692,6 +696,12 @@ for i, m in enumerate(models_sorted, 1):
     engine_badge = ('<span class="badge badge-ft">FreeToken</span>' if m.get('engine') == 'freetoken'
                     else '<span class="badge badge-exl3">EXL3</span>' if m.get('engine') == 'exllamav3'
                     else '<span class="badge badge-lcpp">llama.cpp</span>')
+    if m.get('thinking') is True:
+        think_badge = '<span class="badge badge-think" title="benchmarked with thinking ENABLED (enable_thinking=true)">THINK</span>'
+    elif m.get('thinking') is False:
+        think_badge = '<span class="badge badge-nothink" title="benchmarked with thinking DISABLED (enable_thinking=false)">no-think</span>'
+    else:
+        think_badge = '<span class="na" title="thinking state not recorded">-</span>'
     tmpl_badge = ''
     if m.get('template') == 'sharp':
         tmpl_badge = '<span class="badge badge-sharp">Sharp</span>'
@@ -711,6 +721,7 @@ for i, m in enumerate(models_sorted, 1):
   </td>
   <td class="center"><span title="{html.escape(base_note)}">{html.escape(base_label)}</span></td>
   <td class="center"><span class="badge {cat_badge}">{m['category']}</span></td>
+  <td class="center">{think_badge}</td>
   <td class="center">{tmpl_badge}</td>
   <td class="center">{engine_badge}</td>
   {bar_cell(m['benchkit_sanity'], 100.0, lambda v: f'{v:.0f}%', '#39c5cf')}
