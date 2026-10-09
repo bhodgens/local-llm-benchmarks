@@ -348,6 +348,35 @@ Verify logs: `/root/bench/results/verify*.log`, `tp-laguna-s21.json`.
 architectures outright; the Flash-Next GGUFs hit the type-42 collision above.
 Match engines to models; do not try to consolidate on one server.
 
+### iGPU<->R9700 peer-copy corruption (2026-10-08)
+
+Investigation on borg (ROCm 7.2.1) found a silent-corruption blocker for
+multi-device GLM work between the Strix Halo iGPU (gfx1151, dev1) and the
+R9700 (gfx1201, dev0). Full record:
+[benchmarks/borg-2026-10/glm-multi-device-handoff.md](benchmarks/borg-2026-10/glm-multi-device-handoff.md).
+
+- The HIP API **falsely reports peer capability on Linux**:
+  `hipDeviceCanAccessPeer` returns 1 both directions and
+  `hipDeviceEnablePeerAccess` succeeds both directions — do not trust it.
+- `hipMemcpyPeerAsync` dev0(R9700) -> dev1(iGPU) **silently transfers
+  garbage** (pattern probe corrupts, with and without peer enable). The
+  dev1 -> dev0 direction is clean. One-directional silent corruption is the
+  worst failure class: timings look normal, output is soup.
+- Explicit host-staging (D2H then H2D) is correct in both directions and
+  cheap at batch-1 tensor sizes: ~6.1 GB/s effective over pageable host
+  buffers, and layer-boundary tensors at batch 1 are KB-MB scale —
+  microseconds per layer, not a blocker.
+
+Non-negotiable rules for any multi-device build on borg:
+
+1. Build llama.cpp with `-DGGML_CUDA_NO_PEER_COPY=ON` — compile-time CMake
+   flag; the env var does nothing (verified in-tree).
+2. Keep `GGML_CUDA_P2P` unset unless a measured win exists (may corrupt when
+   IOMMU is enabled).
+3. Every multi-device speed number must ship with a correctness gate
+   (temp-0 prompt, exact-match expected text). Speed-only benchmarks
+   happily record plausible timings for garbage output.
+
 ## Pending lanes
 
 Both previously-pending lanes have now run (see the two tables above).
