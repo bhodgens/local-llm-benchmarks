@@ -1,0 +1,67 @@
+{
+  "experiment": "dual co-residency: qwen3.8-27B (luce_server, R9700) + qwen3.8-flash-next IQ3_S (Strata, R9700)",
+  "host": "borg (Strix Halo 395 + Radeon AI PRO R9700 32GB, gfx1201)",
+  "date": "2026-10-10",
+  "methodology": {
+    "decode_probe": "gen_probe.py, random ~7.3k-token prompt (words=2000), max_tokens=512, temp 0, 3 rounds",
+    "prefill_probe": "gen_probe.py, random ~2.6k-token prompt (words=700), max_tokens=32, 2 rounds",
+    "caveat": "decode tps is server-reported; greedy temp-0 runs terminate early on EOS (~74 tokens for qwen), so qwen decode figures reflect short steady-state windows. Flashnext 512-token runs are full-length."
+  },
+  "scenarios": [
+    {
+      "scenario": "S1 qwen-alone",
+      "model": "qwen3.8-27B/luce",
+      "decode_tps": 63.5,
+      "prefill_tps": 998.1,
+      "notes": "decode rounds [68.6, 61.4, 60.5]; 2.5k prefill rounds [873.7, 1122.5]; 7.3k prefill 1021-1110 t/s; VRAM 25.4/32GB"
+    },
+    {
+      "scenario": "S2 dual-boot",
+      "model": "qwen3.8-flash-next-iq3_s/strata",
+      "decode_tps": null,
+      "prefill_tps": null,
+      "notes": "HARD FAILURE. Boots to session-up but expert-cache auto computed 0.10 GiB free with qwen resident -> 0 expert slots (needs >=302, ~1184 MiB short). Server then dies at first prompt: 'device buffers for a chunk of 512 tokens do not fit' / 'GPU has too little free VRAM for the prompt path'. Exact OOM captured in results/dualqfn-fn-solo.log"
+    },
+    {
+      "scenario": "S2 dual-boot",
+      "model": "qwen3.8-27B/luce",
+      "decode_tps": null,
+      "prefill_tps": null,
+      "notes": "qwen stayed healthy co-resident (27.8/32 GB) but flashnext never became serviceable; concurrency scenario impossible without shrinking qwen KV/context or flashnext cache"
+    },
+    {
+      "scenario": "S3 concurrent-load",
+      "model": "both",
+      "decode_tps": null,
+      "prefill_tps": null,
+      "notes": "NOT RUN - co-residency failed at boot+first-prompt; no contention numbers possible in this config"
+    },
+    {
+      "scenario": "S4 flashnext-alone",
+      "model": "qwen3.8-flash-next-iq3_s/strata",
+      "decode_tps": 43.9,
+      "prefill_tps": 484.4,
+      "notes": "decode rounds (tps,ntok) [(59.5, 512), (37.9, 294), (34.4, 512)] token-weighted 44.9 t/s; 2.5k prefill [487.2, 481.7]; 7.3k prefill avg 1149.7; wall-decode r1 ~75 t/s over 512 tok; expert-cache full (33.7/34.2GB), 98.7% hit rate"
+    }
+  ],
+  "memory": {
+    "idle": "GPU0 0.06/34.2 GB",
+    "qwen_solo": "GPU0 25.4/32 GB VRAM",
+    "dual_attempt": "GPU0 27.8/32 GB at flashnext session-up; strata 0 expert slots",
+    "flashnext_solo": "GPU0 33.7-33.9/34.2 GB VRAM; system RAM 78-79/124 GB used",
+    "gpu1_igtt": "~0.16 GB constant"
+  },
+  "summary": {
+    "qwen_decode_solo_tps": 63.5,
+    "flashnext_decode_solo_tps": 43.9,
+    "qwen_decode_loss_dual_pct": null,
+    "flashnext_decode_loss_dual_pct": null,
+    "verdict": "CO-RESIDENCY NOT VIABLE in current configs. flashnext IQ3_S with expert-cache auto cannot co-reside with qwen 27B on one R9700: qwen's 25.4 GB leaves ~8.8 GB, but flashnext needs ~31.4 GB (46.8 GiB expert set + KV + head). Boot reaches session-up with 0 expert slots, then hard-fails on the first prompt (prefill buffers don't fit). Not an OOM crash of qwen; it is a deterministic flashnext capacity failure with exact logged error.",
+    "options": [
+      "run flashnext on the iGPU (run-iq3_s-gfx1151.sh) with qwen on R9700",
+      "cut flashnext --max-context / kv q4_0 / en-draft to shrink footprint",
+      "shrink qwen --max-ctx to free VRAM (would still leave flashnext ~7 GB short)"
+    ],
+    "production_recommendation": "Split across devices (qwen hip:0 + flashnext hip:1 iGPU) instead of sharing hip:0; the prior dual-device result (2-9% mutual cost) remains the viable path."
+  }
+}
