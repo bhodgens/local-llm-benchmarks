@@ -407,6 +407,22 @@ benchmarks/borg-2026-10/../tools note: /root/strata/tools/hip/
 gfx1151-hipblaslt-100202.txt) - up to 21.5x over untuned hipBLAS on the
 largest shape. The pieces are all there except a unified ROCm/torch install.
 
+### amd_iommu=off research summary (2026-10-09, from community sources - not yet attempted on borg)
+
+Researched before attempting handoff rule R5. Key findings, all cited:
+
+- **Throughput gain is real and quantified elsewhere**: Nathanw1014/strix-halo-llamacpp measured +1.0 to +7.3% prefill (same build, 10 arms, off vs on; decode within noise). kyuz0/amd-strix-halo-toolboxes issue #66 measured 5-12% vs translated mode on a Framework Desktop. lhl measured ~6% better memory bandwidth (234 vs 221 GB/s). kyuz0's README now officially recommends amd_iommu=off.
+- **Models >64 GB hang during Vulkan loading without it** (llama.cpp #14854 class, strix-benchmarks.vercel.app).
+- **Critical negative for our multi-device hope**: the only Strix-iGPU+dGPU peer attempt on record (Level1Techs "Franken Strix Halo": iGPU + 2x R9700, iommu=off already set) STILL had broken peer mapping - "Failed to map peer ... mem_domain:4, ret -22", iGPU cannot read dGPU memory, dGPU-first crashes gfxhub. IOMMU-off does NOT fix Strix iGPU<->dGPU P2P.
+- **The corruption class matches ours**: ROCR-Runtime issue #355 (2x R9700) - peer reads returned 0xFF garbage under iommu=pt, FIXED by switching to translated mode. Opposite nuance from our guess: for them passthrough was corrupt, translated was clean. Nobody has published an off/pt/translated integrity matrix on Strix Halo - our one-A/B-with-checksum-probe plan is the missing experiment.
+- HIP bug class confirmed: SWDEV-511204 fix in rocm-systems - mapped virtual memory treated as host memory, so hipMemcpyPeer never took the P2P path. can_access_peer lying is a known ROCm bug family (llama.cpp #21648, PR #21910 made P2P opt-in).
+
+**Costs of amd_iommu=off on this platform**: NPU (XDNA2) stops working (SVA/PASID fails, verified noamsto/nix-amd-ai#19); no DMA isolation (matters if Thunderbolt eGPU is ever attached); breaks VFIO/RDMA; some DRM log spam on kernels 6.18+.
+
+**Parameters**: amd_iommu=off valid; amd_iommu=pt is INVALID on this kernel (silently ignored); iommu=pt performs identically to default translated. fullflush is a non-factor.
+
+**Decision**: worth one controlled A/B (off vs current, checksum-verified probe in both directions + prefill benchmark) for the prefill gain and the P2P data point, accepting NPU loss on borg (no workload uses the NPU).
+
 ## Pending lanes
 
 Both previously-pending lanes have now run (see the two tables above).
