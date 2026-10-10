@@ -438,6 +438,36 @@ targets are:
   quantization (ExLlamaV3 supports Q4 KV); 32K -> 1M is a 32x cache increase -
   requires the host-RAM-backed cache path, not VRAM-only.
 
+### amd_iommu=off A/B RESULT (2026-10-09, executed on borg)
+
+Cmdline verified: amd_iommu=off. Boot clean, both GPUs visible, torch OK.
+
+**P2P probe (pure-HIP ctypes, 64 MiB, 3 rounds, ROCR #355 pattern):**
+
+| arm | result |
+|---|---|
+| dev0->dev1, peer access NOT enabled | CLEAN |
+| dev1->dev0, peer access NOT enabled | CLEAN |
+| dev0->dev1, after enablePeerAccess | **CORRUPT** |
+| dev1->dev0, after enablePeerAccess | CLEAN |
+| hipDeviceEnablePeerAccess return code | **101 (hipErrorNotSupported)** |
+
+**Interpretation: amd_iommu=off FIXES the silent corruption for engines that
+never enable peer access** (unenabled copies host-stage and are correct both
+directions). The handoff R4 corruption happens only when an engine calls
+hipDeviceEnablePeerAccess, gets rc=101 (unsupported), ignores it, and copies
+anyway - llama.cpp/exllamav3-style engines are exactly this class. Actionable
+fix: patch or configure engines to NOT enable peer access on this pair (or
+ROCm fixes rc=101 to not leave the system in the corrupting state).
+
+**Prefill under amd_iommu=off (qwen 27B, luce):** 2.5K = [867, 1129, 1129]
+(7.3K = [1125, 1120, 1116]) vs pre-iommu [873.7, 1122.5] and [1021-1110] -
+IDENTICAL. No prefill gain measured on borg (the community +1-7% was on
+Vulkan/other configs; luce is already PCIe-saturating).
+
+Evidence: /root/bench/results/p2p-iommu-off.json, p2p-iommu-off-findings.json,
+prefill-iommu-off.json. Probe script: scripts/borg/p2p_iommu_probe.py.
+
 ## Pending lanes
 
 Both previously-pending lanes have now run (see the two tables above).
