@@ -527,3 +527,72 @@ hf download rmonsurate/Victoria --include "gguf/victoria-s410-bitexact-tbl8-*" -
    base lineage; BTL-4 Q4_K_M (agentic class, LCB 0.92, tau2 0.20-0.40).
 5. Record MTP on/off as separate speed rows; identity caveat per F-arm
    (batch-invariance) if we use the kernel flags — here vendor build, note only.
+
+---
+
+# CLOSED (2026-10-10): Qwen3.8 Flash Next GSQ-RCO Q2_0 — V100 lane COMPLETE
+# (was ACTIVE): Qwen3.8 Flash Next GSQ-RCO Q2_0
+
+- Source: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF (Q2_0, 2 shards, 66.4 GB total)
+  - Shard 2 is the 51.2B-param n-gram table (per_layer_token_embd, IQ4_NL) — identical
+    across all GSQ-RCO variants; Q2_0 picked for speed (ISTA: 3.4x prompt t/s vs IQ2_XS,
+    avoids LUT formats).
+- Files: /home/files/llms/flashnext-q20/ (post-HF-cache-purge, /home back to 117G free;
+  purged talkie-lm trio 132G, re-downloadable from own repos).
+- Arch: qwen4exp (512 experts/10 active, 48 layers, hybrid linear+full attention idx,
+  PLE n-gram heads, 262K ctx). GGUF header verified via HTTP range read.
+- Engine: ~/git/llama.cpp-xing4 fork (qwen4exp support confirmed in built libllama.so;
+  upstream master also has it now). NOT the rmonsurate Victoria build.
+- 3060: IMPOSSIBLE — smallest build 66.4 GB vs 12 GB VRAM / 37 GB RAM. Recorded blocker.
+- V100 plan: probe script scripts/probe_flashnext_v100.py — config ladder cpu-moe ->
+  cpu-moe-ngl48 -> n-cpu-moe-48, speed + coherence smoke. Full LCB/tau2 lane only if
+  decode is workable; record blocker otherwise per house rules.
+
+---
+
+# CLOSED (2026-10-10): Underdog-Saluki-27B-1.0 IQ2-mix — BOTH lanes COMPLETE
+# (was QUEUED/ACTIVE): Underdog-Saluki-27B-1.0 IQ2-mix (3060 + V100)
+
+- Source tweet: https://x.com/UnderdogAI/status/2108021482983133395
+- Repo: https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0
+- File: Underdog-Saluki-27B-1.0-IQ2-mix.gguf (7.36 GB, IQ2-mix + imatrix,
+  GSQ-RCO lineage, quantized_by ISTA DASLab)
+- GGUF header verified (ranged read): arch qwen35 (dense 64L — NOT the qwen4exp
+  Flash Next arch), 262144 ctx, quant v2. Stock llama.cpp engine.
+- Claimed (their harness): BFCL-ish 88/120 vs 84 full-size; parallel tool calls
+  42 vs 35; SWE-b V 30 vs 33; AIME25 79.2 vs 96.7. Tool-calling-focused tune.
+- Thinking: on by default, kwarg-switchable (same as Qwen3.8 family).
+- Allowlist: 'saluki' added to oai_runner.py LCB_DISABLE_THINKING list
+  (2026-10-10, before first LCB leg).
+- Download staged to /home/files/llms/saluki/ (mmproj NOT staged — text benches
+  only; fetch if a vision leg is wanted).
+- Lane plan (BOTH GPUs, per user directive):
+  - 3060: full lane — speed probe -> sanity:25 -> LCB 75 thinking-off ->
+    tau2 airline/15/seed42/conc2 w/ LFM user sim on V100. Fit: 7.36 GB weights
+    + 65K q4_0 KV ~ 9.4 GB, fits 12 GB (same class as BTL-4 IQ2_XXS 9.78 GB).
+  - V100: speed probe + LCB + tau2 (agent on V100, user sim on 3060) for the
+    cross-GPU comparison row; full offload trivial.
+- Comparators: Qwen3.8-27B family rows (LCB 0.80-0.88, tau2 0.4667-0.50);
+  BTL-4 IQ2_XXS 3060 row (72.9 t/s, tau2 0.38) as the 2-bit-on-3060 class.
+- Status: downloading (7.36 GB). Run after Flash Next lane completes (V100 busy).
+
+---
+
+# EXECUTED (2026-10-10): Flash Next + Saluki lanes — COMPLETE
+
+- Flash Next GSQ-RCO Q2_0 (V100, n-cpu-moe 8, xing4 fork): 13.27 t/s, sanity 84%,
+  LCB 94.7% (71/75, 0 empty, report-best LCB), tau2 0.0667 (1/15, 2 infra).
+  Fit ladder recorded: full offload OOM 37.3GB / cpu-moe 1.63 / N24 5.7 / N16 8.02 /
+  N8 12.21-13.27 (31.1GB VRAM). MTP head absent from quant. LCB needs
+  --openai_timeout 900 (300s default aborts at 7.6 t/s decode dips; attempt-2
+  failure preserved in failures[]). Verdict: elite 2-bit coder, unusable agent
+  in this config. 3060 hard-blocked (66.4GB smallest build) — blocker stands.
+- Saluki IQ2-mix: 3060 = 20.41 t/s, 84%, LCB 64.0%, tau2 0.3333.
+  V100 = 28.69 t/s, 84%, LCB 74.7%, tau2 0.20.
+  Same-quant GPU delta LCB 64->74.7 (+10.7pp) mirrors the MiniCPM5-2B
+  bistable-agent variance class; tau2 0.333(3060) vs 0.20(V100) likewise
+  (2 infra errors each). Vs Qwen3.8-27B family (LCB 80-88, tau2 0.47-0.50):
+  2-bit IQ2-mix costs real codegen + agent depth; tool-calling tune (vendor
+  BFCL claim) does not transfer to tau2 conversational loops.
+- LCB aliases registered: local/flashnext-qwen38-q20, local/saluki-27b-iq2mix,
+  local/saluki-27b-iq2mix-v100. Allowlist tokens: flash-next/flashnext/saluki.
