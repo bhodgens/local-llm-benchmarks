@@ -117,12 +117,12 @@
   "base": "GLM-5.3-Flash",
   "category": "Other",
   "engine": "Kyojin EXL3",
-  "gpu": "Strix",
+  "gpu": "R9700",
   "lcb": 0.25,
   "tau2": 0.6,
   "tau2_n": 15,
   "he": null,
-  "tps": 14.25,
+  "tps": 33.7,
   "lcb_note": "12-problem window"
  }
 ]
