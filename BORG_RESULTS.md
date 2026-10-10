@@ -423,6 +423,21 @@ Researched before attempting handoff rule R5. Key findings, all cited:
 
 **Decision**: worth one controlled A/B (off vs current, checksum-verified probe in both directions + prefill benchmark) for the prefill gain and the P2P data point, accepting NPU loss on borg (no workload uses the NPU).
 
+### Deployment targets (2026-10-09, owner direction)
+
+For future flashnext and GLM-5.3-flash deployments on borg, the context and KV
+targets are:
+
+- **flashnext: 262K context, 4-bit KV or better.** Strata flags: `--max-context
+  262144 --kv q4_0` (engine accepts fp16/int8/q4_0/k8v4; q4_0 is the 4-bit
+  floor). Current lane runs 131K/int8 - raising needs ~2x the streaming KV
+  budget; verify against expert-cache `auto` before trusting.
+- **GLM-5.3-flash: 1M context, 4-bit KV or better.** Native design target is
+  1M; current Kyojin lane is capped at 32K (`-c 32768`) for the benchmark
+  protocol only. Raising to 1M needs the cache sized for it at EXL3 Q4-level
+  quantization (ExLlamaV3 supports Q4 KV); 32K -> 1M is a 32x cache increase -
+  requires the host-RAM-backed cache path, not VRAM-only.
+
 ## Pending lanes
 
 Both previously-pending lanes have now run (see the two tables above).
