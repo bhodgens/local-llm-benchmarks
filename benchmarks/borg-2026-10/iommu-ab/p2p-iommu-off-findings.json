@@ -1,0 +1,15 @@
+{
+  "iommu": "amd_iommu=off (verified in /proc/cmdline)",
+  "date": "2026-10-09",
+  "probe": "pure-hip ctypes, 64 MiB, 3 rounds per arm, ROCR #355 index-derived pattern, read-back verification on the owner device",
+  "results": {
+    "dev0->dev1-peerOFF": "CLEAN",
+    "dev1->dev0-peerOFF": "CLEAN",
+    "dev0->dev1-peerON": "CORRUPT",
+    "dev1->dev0-peerON": "CLEAN",
+    "enablePeerAccess_rc": "101 (hipErrorNotSupported - yet the peer copy still corrupted)"
+  },
+  "interpretation": "Under amd_iommu=off, UNENABLED peer copies are CLEAN in both directions (hipMemcpyPeerAsync host-stages). Corruption appears only after a failed hipDeviceEnablePeerAccess( rc=101 ) - i.e. if an engine calls enable and ignores the error, subsequent copies in the dGPU->iGPU direction corrupt. This matches the handoff R4 (dev0->dev1 silent garbage) and implies llama.cpp/exllamav3 engines that call enablePeerAccess are the corrupt ones; engines that never enable (or check rc) are safe.",
+  "implication_for_multidevice": "The fix may be simpler than amd_iommu: ensure engines do NOT call hipDeviceEnablePeerAccess, or ROCm fixes rc=101 handling. amd_iommu=off also removes the IOMMU variable entirely for future tests.",
+  "prefill_bench": "separate run (see p2p-iommu-prefill.json)"
+}

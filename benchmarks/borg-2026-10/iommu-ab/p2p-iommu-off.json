@@ -1,0 +1,9 @@
+{
+  "iommu": "amd_iommu=off",
+  "results": {
+    "dev0->dev1-peerOFF": "CLEAN",
+    "dev1->dev0-peerOFF": "CLEAN",
+    "dev0->dev1-peerON": "CORRUPT",
+    "dev1->dev0-peerON": "CLEAN"
+  }
+}
