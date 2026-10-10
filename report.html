@@ -2154,6 +2154,124 @@ tr:hover { background: #161b22; }
   </ul>
 </div>
 
+<h2>BORG (R9700 + Strix Halo) — dual-AMD host, separate protocols</h2>
+<div class="subtitle">
+  9 model lanes on the R9700 (32 GB GDDR6, hip:0) + Ryzen AI MAX+ 395 (124 GB unified, hip:1), ROCm 7.2.1.<br>
+  <strong>Protocols differ from the V100 table:</strong> LiveCodeBench is a 12-problem date window (not 75); tau2 uses a
+  self-play user simulator on the same server (not the V100 Qwopus simulator); HumanEval is execution-scored over all 164
+  problems. tok/s = greedy decode on each lane's tuned engine (luce_server / Strata / Kyojin EXL3 / llama.cpp).<br>
+  Generated 2026-10-10 by scripts/borg/build_borg_rows.py + scripts/borg/merge_borg_into_report.py.
+</div>
+<table>
+<thead><tr>
+  <th>#</th><th>Model</th><th>Base</th><th>Type</th><th>Engine</th><th>GPU</th>
+  <th>tok/s</th><th>HumanEval</th><th>LiveCodeBench</th><th>tau2-bench</th>
+</tr></thead>
+<tbody>
+<tr>
+  <td class="center">1</td>
+  <td class="center">Coder-Flash-Next IQ1_M (borg)</td>
+  <td class="center">Qwen3.8-Flash-Next</td>
+  <td class="center">MoE 35B</td>
+  <td class="center">Strata</td>
+  <td class="center">R9700</td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:29%;background:#bc8cff"></div><span class="bar-label">40.5</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:85%;background:#238636"></div><span class="bar-label">85.4%</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:50%;background:#79c0ff"></div><span class="bar-label">25.0%</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:100%;background:#56d364"></div><span class="bar-label">1.000</span></div></td>
+</tr><tr>
+  <td class="center">2</td>
+  <td class="center">Swift-Flash-Next IQ2_XS (borg)</td>
+  <td class="center">Qwen3.8-Flash-Next</td>
+  <td class="center">MoE 35B</td>
+  <td class="center">Strata</td>
+  <td class="center">R9700</td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:30%;background:#bc8cff"></div><span class="bar-label">42.1</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:90%;background:#238636"></div><span class="bar-label">89.6%</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:83%;background:#79c0ff"></div><span class="bar-label">41.7%</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:80%;background:#56d364"></div><span class="bar-label">0.800</span></div></td>
+</tr><tr>
+  <td class="center">3</td>
+  <td class="center">Qwen3.8-Flash-Next IQ3_S (borg)</td>
+  <td class="center">Qwen3.8-Flash-Next</td>
+  <td class="center">MoE 35B</td>
+  <td class="center">Strata</td>
+  <td class="center">R9700</td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:62%;background:#bc8cff"></div><span class="bar-label">86.3</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:82%;background:#238636"></div><span class="bar-label">82.3%</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:100%;background:#79c0ff"></div><span class="bar-label">50.0%</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:73%;background:#56d364"></div><span class="bar-label">0.733</span></div></td>
+</tr><tr>
+  <td class="center">4</td>
+  <td class="center">Qwen3.8-27B UD-IQ4_XS (borg)</td>
+  <td class="center">Qwen3.8-27B</td>
+  <td class="center">27B Dense</td>
+  <td class="center">luce_server</td>
+  <td class="center">R9700</td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:100%;background:#bc8cff"></div><span class="bar-label">138.6</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:95%;background:#238636"></div><span class="bar-label">95.1%</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:50%;background:#79c0ff"></div><span class="bar-label">25.0%</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:60%;background:#56d364"></div><span class="bar-label">0.600</span></div></td>
+</tr><tr>
+  <td class="center">5</td>
+  <td class="center">Qwen3.8-27B Vision UD-IQ4_XS (borg)</td>
+  <td class="center">Qwen3.8-27B</td>
+  <td class="center">27B Dense</td>
+  <td class="center">luce_server</td>
+  <td class="center">R9700</td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:92%;background:#bc8cff"></div><span class="bar-label">127.7</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:95%;background:#238636"></div><span class="bar-label">95.1%</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:67%;background:#79c0ff"></div><span class="bar-label">33.3%</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:60%;background:#56d364"></div><span class="bar-label">0.600</span></div></td>
+</tr><tr>
+  <td class="center">6</td>
+  <td class="center">Laguna-XS-2.1 Q4_K_M (borg)</td>
+  <td class="center">Laguna-XS-2.1</td>
+  <td class="center">33B Dense</td>
+  <td class="center">luce_server</td>
+  <td class="center">R9700</td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:94%;background:#bc8cff"></div><span class="bar-label">129.7</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:89%;background:#238636"></div><span class="bar-label">89.0%</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:50%;background:#79c0ff"></div><span class="bar-label">25.0%</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:60%;background:#56d364"></div><span class="bar-label">0.600</span></div></td>
+</tr><tr>
+  <td class="center">7</td>
+  <td class="center">GLM-5.3-Flash EXL3 (borg)</td>
+  <td class="center">GLM-5.3-Flash</td>
+  <td class="center">Other</td>
+  <td class="center">Kyojin EXL3</td>
+  <td class="center">Strix</td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:10%;background:#bc8cff"></div><span class="bar-label">14.2</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:50%;background:#79c0ff"></div><span class="bar-label">25.0%</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:60%;background:#56d364"></div><span class="bar-label">0.600</span></div></td>
+</tr><tr>
+  <td class="center">8</td>
+  <td class="center">Kolibri-1 Q4_K_M (borg)</td>
+  <td class="center">Kolibri-1</td>
+  <td class="center">MoE 35B</td>
+  <td class="center">llama.cpp</td>
+  <td class="center">R9700+Strix</td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:39%;background:#bc8cff"></div><span class="bar-label">54.3</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:61%;background:#238636"></div><span class="bar-label">61.0%</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:83%;background:#79c0ff"></div><span class="bar-label">41.7%</span></div></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:29%;background:#56d364"></div><span class="bar-label">0.286</span></div></td>
+</tr><tr>
+  <td class="center">9</td>
+  <td class="center">Laguna-S-2.1 Q4_K_M (borg, split)</td>
+  <td class="center">Laguna-S-2.1</td>
+  <td class="center">70B Dense</td>
+  <td class="center">luce_server</td>
+  <td class="center">R9700+Strix</td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:16%;background:#bc8cff"></div><span class="bar-label">22.1</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
+  <td class="center"><div class="bar-container"><div class="bar-fill" style="width:67%;background:#79c0ff"></div><span class="bar-label">33.3%</span></div></td>
+  <td class="center"><span class="na">N/A</span></td>
+</tr></tbody>
+</table>
+<div class="subtitle">Key borg findings: Flash-Next fine-tunes punch above their quant (swift IQ2_XS tau2 0.80, coder IQ1_M tau2 1.0);
+kolibri-1 leads LCB but trails HumanEval/tau2; Qwen3.8-27B is the balanced pick (95% HE, 139 t/s). Full detail: BORG_RESULTS.md / BORG_REPORT.html.</div>
+
 <h2>Failures & Issues</h2>
 <table>
   <tr><th>Model</th><th>Benchmark</th><th>Error</th></tr>

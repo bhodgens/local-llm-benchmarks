@@ -119,8 +119,8 @@
   "engine": "Kyojin EXL3",
   "gpu": "Strix",
   "lcb": 0.25,
-  "tau2": null,
-  "tau2_n": null,
+  "tau2": 0.6,
+  "tau2_n": 15,
   "he": null,
   "tps": 14.25,
   "lcb_note": "12-problem window"
