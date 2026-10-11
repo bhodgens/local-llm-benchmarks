@@ -1,0 +1,54 @@
+{
+ "btl": [
+  {
+   "btl-3": {
+    "tok": 256,
+    "wall": 9.3,
+    "client_tps": 27.5
+   },
+   "btl-1": {
+    "tok": 256,
+    "wall": 9.5,
+    "client_tps": 27.0
+   },
+   "btl-4": {
+    "tok": 256,
+    "wall": 9.5,
+    "client_tps": 27.0
+   },
+   "btl-2": {
+    "tok": 256,
+    "wall": 9.5,
+    "client_tps": 27.0
+   }
+  },
+  107.9,
+  9.5
+ ],
+ "fn": [
+  {
+   "fn-1": {
+    "tok": 256,
+    "wall": 4.7,
+    "client_tps": 54.9
+   },
+   "fn-3": {
+    "tok": 256,
+    "wall": 9.1,
+    "client_tps": 28.1
+   },
+   "fn-2": {
+    "tok": 256,
+    "wall": 13.8,
+    "client_tps": 18.6
+   },
+   "fn-4": {
+    "tok": 256,
+    "wall": 18.3,
+    "client_tps": 14.0
+   }
+  },
+  56.0,
+  18.3
+ ]
+}
