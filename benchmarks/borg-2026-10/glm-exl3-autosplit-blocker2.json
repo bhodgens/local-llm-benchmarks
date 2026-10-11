@@ -1,0 +1,22 @@
+{
+  "question": "exllamav3 autosplit across R9700 (gfx1201) + Strix Halo iGPU (gfx1151), GLM-5.3 EXL3, round 2 (2026-10-10, amd_iommu=off)",
+  "status": "BLOCKED at torch kernel level, one layer below the known BLAS mixing problem",
+  "root_cause": "The kyojin venv torch wheel 2.12.0a0+rocm7.13.0a20260411 is compiled for gfx1151 ONLY: torch.cuda.get_arch_list() == ['gfx1151']. Any aten op (even torch.randn / elementwise add, no BLAS involved) on the R9700 fails with hipErrorInvalidImage (device kernel image is invalid). The 353 copied 7.2.1 gfx1201 Tensile/rocBLAS/hipBLASLt files are irrelevant to this failure and, per glm-exl3-autosplit-blocker.json round 1, additionally break hipblasSgemm with HIPBLAS_STATUS_INTERNAL_ERROR (version-incompatible API mix).",
+  "evidence": {
+    "env": "cd /root/kyojin; EXL3_HSA_LIB=<venv _rocm_sdk_devel>/lib/libhsa-runtime64.so.1; source tools/strix_halo/env.sh; no HIP_VISIBLE_DEVICES",
+    "device_order": "cuda:0 = AMD Radeon AI PRO R9700 (gfx1201), cuda:1 = Radeon 8060S Graphics (gfx1151) in unfiltered processes; single-device serve works because serve_kyojin_glm.sh pins HIP_VISIBLE_DEVICES=1",
+    "igpu_sole": "HIP_VISIBLE_DEVICES=1: torch.randn 512x512 + matmul + sync OK on gfx1151 (5632.19)",
+    "r9700": "any torch op on gfx1201: torch.AcceleratorError: CUDA error: device kernel image is invalid (hipErrorInvalidImage) - fails on randn alone, BLAS never reached",
+    "system_rocm": "amd_iommu=off active; rocminfo lists both agents (gfx1151, gfx1201); /opt/rocm 7.2.1 HSA (1.18.70201) lacks the ROCR_1-versioned hsa_ext_image_create_v2 symbol the 7.13 wheel libamdhip64.so.7 needs, so LD_LIBRARY_PATH=/opt/rocm/lib cannot be used at all (undefined symbol at torch import)",
+    "wheel_arch_list": "torch.cuda.get_arch_list() == ['gfx1151']; libtorch_hip.so strings do contain gfx1200/gfx1201 symbols but the shipped device kernels are gfx1151-only, and aten fails on gfx1201 regardless of the copied 7.2.1 Tensile libs",
+    "prior_probes": "/root/bench/autosplit-v4.out shows the same load failing later at touch_device hipblasSgemm HIPBLAS_STATUS_INTERNAL_ERROR (BLAS mixing layer) once the missing-file Tensile errors were patched"
+  },
+  "why_not_fixable_in_scope": "Same-build gfx1201 Tensile libs would fix BLAS but NOT the aten kernels: exllamav3 autosplit runs torch ops (alloc, touch_device d@d, cache ops) on every device. Fixing requires a torch build with both archs plus a matching exllamav3_ext rebuild (PYTORCH_ROCM_ARCH=gfx1151;gfx1201) against one ROCm build - the round-1 'option 1' source build, outside this task's scope/timebox.",
+  "untried_options": [
+    "TheRock per-arch nightlies are single-arch (rocm.nightlies.amd.com/v2/gfx1151 and /v2/gfx1201); no dual-arch 7.13 wheel observed",
+    "tensor_p (model_tp.py) also requires torch ops on both devices - same aten blocker",
+    "llama.cpp split-buffer gap unchanged (no split_buffer_type for ROCm backend)"
+  ],
+  "serve_py": "NOT modified (gate 1 failed: torch cannot run on both devices in one process under the kyojin venv)",
+  "baseline_untouched": "single-device Kyojin serve path (HIP_VISIBLE_DEVICES=1) verified working under the exact serve env: gfx1151 matmul OK"
+}
