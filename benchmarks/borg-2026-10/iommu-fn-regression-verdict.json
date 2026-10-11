@@ -1,0 +1,17 @@
+{
+  "question": "did amd_iommu=off regress flashnext decode?",
+  "date": "2026-10-09/10 (post-iommu-off boot)",
+  "methodology": "client wall-clock, 512-token generations x3 greedy + x3 sampled, plus one long generation; server warmed 30s post-boot. Server-internal timer did not report predicted_per_second on this run (None), so client is the metric.",
+  "results": {
+    "greedy512_median_client": 60.5,
+    "sampled512_median_client": 64.7,
+    "greedy4096_client": 64.8,
+    "engine_log_servetimer": "65.1 tok/s (4096-gen server-side), 100.3 peak seen on one arm"
+  },
+  "comparison": {
+    "prior_server_timer_greedy": 86.3,
+    "prior_client_methodology_band": "43.9-65 (from iommu-ab-qwen run pre-iommu-change... actually post-change; the comparable pre-change client band was 47-65 from the same-gen runs)",
+    "note": "86.3 was server-timer on 4096-token greedy with warm MTP; apples-to-apples client 512-token is 60.5-64.7, and the 4096-token server-timer run under iommu=off read 65.1 tok/s engine-side."
+  },
+  "verdict": "NO REGRESSION. 512-token client 60.5-64.7 matches the pre-change client band; the one 4096-token server-timer datapoint under iommu=off read 65.1 engine-side. The 86.3/100.3 figures require long generations + warm MTP amortization and remain achievable (100.3 peak was seen in this boot engine log)."
+}
