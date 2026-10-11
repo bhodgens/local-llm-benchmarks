@@ -1,0 +1,22 @@
+{
+  "experiment": "flashnext (R9700) + BTL-4 Compact IQ2_XXS (Strix iGPU) co-residency",
+  "date": "2026-10-10",
+  "setup": "flashnext via Strata on R9700 (production lane); BTL-4 Compact 9.28 GiB IQ2_XXS via llama.cpp dual-arch build pinned HIP_VISIBLE_DEVICES=1 (iGPU GTT), ctx 32768, reasoning-format deepseek, --jinja",
+  "correctness_gate": "PASS - Paris (after reasoning completes; thinking model needs ~150 reasoning tokens first, max_tokens 32 truncated it)",
+  "results": {
+    "BTL4_solo_quiet": "63.2-63.6 tok/s client (256 tok)",
+    "BTL4_concurrent_with_flashnext": [57.8, 58.9, 60.4],
+    "flashnext_solo_quiet_with_BTL4_resident": [67.4, 68.7, 67.1],
+    "flashnext_concurrent_with_BTL4": [68.3, 67.0, 63.5]
+  },
+  "analysis": {
+    "BTL4_loss_concurrent": "about 6-8% vs its own quiet baseline",
+    "flashnext_loss_concurrent": "within noise of resident-quiet band",
+    "verdict": "VIABLE PAIRING - both stay near-full speed concurrently. BTL4 fills the idle iGPU using only ~11GB of the 120GB GTT, leaving room for a second iGPU model"
+  },
+  "notes": [
+    "BTL-4 is a thinking model: blank content plus long reasoning_content at low max_tokens is normal; gate passed once reasoning completes",
+    "Combined: flashnext ~80GB (RAM+VRAM) + BTL4 ~11GB iGPU GTT = fits the 124GB box with headroom",
+    "Both servers survive concurrent hammering; no errors, no OOM"
+  ]
+}

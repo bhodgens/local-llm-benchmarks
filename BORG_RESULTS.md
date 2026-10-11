@@ -472,6 +472,24 @@ Vulkan/other configs; luce is already PCIe-saturating).
 Evidence: /root/bench/results/p2p-iommu-off.json, p2p-iommu-off-findings.json,
 prefill-iommu-off.json. Probe script: scripts/borg/p2p_iommu_probe.py.
 
+### flashnext concurrent batching (2026-10-11, amd_iommu=off)
+
+The earlier 56 tok/s "4 concurrent" figure was batched=1 (config had no
+"parallel" key): 4 requests time-sliced one stream, aggregate below a single
+stream. With "parallel": 4 in strata-iq3_s.json (--batch 4, opt-in #465):
+
+| load | aggregate | per-request |
+|---|---|---|
+| 1 stream (warmup) | 35.7* | 35.7 |
+| 4x512 sampled (t 0.3) | **84.7** | 21.2 each (even) |
+| 4x512 greedy (t 0) | **90.5** | 22.6 each (even) |
+
+*single-stream cold; single-stream warm is 65-86 client/server-timer.
+
+Aggregate goes from ~56 (serialized) to ~90 with batch 4 - 1.6x, and per-request
+is an even ~21-23 t/s each, so 4 agents get usable interactive speed at once.
+Deployed in /root/strata/strata-iq3_s.json ("parallel": 4) via flashnext.service.
+
 ## Pending lanes
 
 Both previously-pending lanes have now run (see the two tables above).
