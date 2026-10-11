@@ -394,8 +394,12 @@ escalation (all in benchmarks/borg-2026-10/glm-exl3-autosplit-blocker.json):
 4. Redirecting the runtime at system /opt/rocm/lib: torch 7.13 device kernels
    are invalid against the 7.2.1 runtime (hipErrorInvalidImage).
 
-Root cause: the torch wheel is rocm7.13-based; no install on the box has both
-gfx1151 and gfx1201 with a torch-compatible runtime. Cross-device exllamav3 GLM
+Root cause (round-2 bisect, 2026-10-10): the torch wheel itself is
+single-arch - get_arch_list() == [gfx1151]. Any aten op on the R9700 fails
+hipErrorInvalidImage before BLAS is reached; the copied Tensile files never
+get used. /opt/rocm 7.2.1 cannot substitute at runtime (missing ROCR_1
+hsa_ext_image_create_v2 at torch import). Fix = dual-arch torch source build
+(PYTORCH_ROCM_ARCH=gfx1151;gfx1201) + matching exllamav3_ext rebuild. Cross-device exllamav3 GLM
 needs a unified ROCm >=7.13 install or multi-day source builds of torch +
 exllamav3 against system ROCm 7.2.1 - and would still face the peer-copy
 corruption below in a layer split.
