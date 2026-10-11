@@ -1,0 +1,73 @@
+{
+  "iommu": "amd_iommu=off",
+  "kernel": "6.17.0-1032-oem",
+  "date": "2026-10-10",
+  "methodology": "gen_probe.py decode 3x (words=500 ~1.85K tok prompt, 512 max tok) + prefill 2x (words=700 ~2.55K tok, 32 max tok); plus direct client-wall probes (decode_tps_client = tokens/(wall - prefill_ms)). Sequential lanes, cleanup_lanes.sh between.",
+  "qwen27b": {
+    "decode_tps_client": 66.2,
+    "decode_tps_client_rounds": [
+      62.0,
+      69.9,
+      66.2
+    ],
+    "decode_tps_client_temp03_plainAR": 30.7,
+    "decode_tps_server": 67.7,
+    "decode_tps_server_rounds": [
+      63.0,
+      71.6,
+      67.7
+    ],
+    "gen_probe_decode_rounds": [
+      76.8,
+      72.4,
+      75.4
+    ],
+    "prefill_tps": 1121.2,
+    "prefill_rounds": [
+      1120.1,
+      1122.4
+    ],
+    "baseline_client": 63.5,
+    "baseline_server": 138.6,
+    "baseline_prefill": 1082,
+    "vs_translated_baseline_pct": {
+      "decode_client_pct": 4.3,
+      "decode_server_pct_vs138": -51.2,
+      "prefill_pct": 3.6
+    },
+    "notes": "Decode runs early-EOS at ~75 tokens (greedy), same as baseline runs. DFlash2 spec-decode only engages at temp 0 (accept 0.0 at temp 0.3 -> plain AR ~31 t/s). Baseline 63.5 was temp-0 client methodology; 138.6 was older server-internal-timer methodology."
+  },
+  "flashnext": {
+    "decode_tps_client": 42.6,
+    "decode_tps_client_rounds": [
+      42.6,
+      39.2,
+      43.3
+    ],
+    "decode_tps_server": 42.7,
+    "decode_tps_server_rounds": [
+      42.7,
+      39.3,
+      43.3
+    ],
+    "gen_probe_decode_rounds": [
+      37.9,
+      40.3,
+      39.7
+    ],
+    "prefill_tps": 615.5,
+    "prefill_rounds": [
+      622.8,
+      608.1
+    ],
+    "baseline_client": "43.9-65",
+    "baseline_server": 86.3,
+    "baseline_prefill": 441,
+    "vs_translated_baseline_pct": {
+      "decode_client_pct_vs439": -3.0,
+      "decode_server_pct_vs863": -50.5,
+      "prefill_pct": 39.6
+    },
+    "notes": "Full-length 512-token decode runs (no early EOS). predicted_per_second == server timer tps (42.7/39.3/43.3), matches client wall."
+  }
+}
