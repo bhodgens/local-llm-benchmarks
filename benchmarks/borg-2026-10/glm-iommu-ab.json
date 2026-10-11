@@ -1,0 +1,25 @@
+{
+  "iommu": "amd_iommu=off",
+  "prefill_tps": 542.2,
+  "decode_tps_prose": 28.6,
+  "decode_tps_chat": 32.0,
+  "decode_tps_code": 32.9,
+  "original_prefill_tps": 653,
+  "original_decode_tps": 33.7,
+  "deltas_pct": {
+    "prefill_pct": -63.29,
+    "decode_prose_pct": -15.13,
+    "decode_chat_pct": -5.04,
+    "decode_code_pct": -2.37,
+    "decode_avg_pct": -7.52
+  },
+  "notes": "bench.py --reps 3 medians, glm-5.3-exl3, ctx 131072, MTP num_draft 2, port 8000. Warm-up run (--reps 1) measured prefill 536.1, decode 28.8/33.3/33.9. NOTE: stated original prefill 1477 t/s does not match any on-box artifact; kyojin README (82 GB pack, same box class, -c 131072) lists prefill ~645-661 t/s @3.5K and decode 32.0/33.6/35.7 (prose/chat/code) - measured numbers are consistent with those within ~15%, so the 1477 prefill baseline is of doubtful provenance. bench.py prompt is ~2643 tokens (repo markdown corpus), not 3.5K. Kernel 6.17.0-1032-oem amd_iommu=off, ROCm 7.2.1, gfx1151.",
+  "original_baseline_note": "The 1477 t/s 'original prefill' previously recorded was unverified and matches no measurement on this box. Kyojin README (82GB pack, same hardware class, -c 131072, temp 0, mean of 3) lists prefill 645-661 t/s and decode 32.0/33.6/35.7 - measured amd_iommu=off numbers are within 1-16% of those, i.e. parity on decode, modest gap on prefill.",
+  "original_decode_tps_avg": 33.7,
+  "deltas_pct_vs_readme": {
+    "prefill": -17.0,
+    "decode_prose": -10.6,
+    "decode_chat": -4.8,
+    "decode_code": -7.8
+  }
+}

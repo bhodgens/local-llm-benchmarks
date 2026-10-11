@@ -1,0 +1,32 @@
+warm-up on glm-5.3-exl3 at http://127.0.0.1:8000/v1 ...
+prefill 1/3
+prefill 2/3
+prefill 3/3
+decode prose 1/3
+decode chat 1/3
+decode code 1/3
+decode prose 2/3
+decode chat 2/3
+decode code 2/3
+decode prose 3/3
+decode chat 3/3
+decode code 3/3
+### Kyojin benchmark
+
+- Model: `glm-5.3-exl3`
+- CPU: AMD RYZEN AI MAX+ 395 w/ Radeon 8060S
+- RAM: 125 GiB
+- GPU target: gfx1201
+- Kernel: 6.17.0-1032-oem
+- ROCm: 7.2.1
+- Server: http://127.0.0.1:8000/v1
+- Date: 2026-10-11
+
+| Measurement | Result |
+|---|---|
+| Prefill, ~2643 tokens (median of 3) | 542.2 tok/s |
+| Decode, prose, 128 tokens, temperature 0 (median of 3) | 28.6 tok/s |
+| Decode, chat, 128 tokens, temperature 0 (median of 3) | 32.0 tok/s |
+| Decode, code, 128 tokens, temperature 0 (median of 3) | 32.9 tok/s |
+
+Method: prefill = prompt tokens / wall time (1 output token); decode = (tokens - 1) / streaming time. Same prompts as the numbers in the README.
