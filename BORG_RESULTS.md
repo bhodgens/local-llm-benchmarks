@@ -490,6 +490,25 @@ Aggregate goes from ~56 (serialized) to ~90 with batch 4 - 1.6x, and per-request
 is an even ~21-23 t/s each, so 4 agents get usable interactive speed at once.
 Deployed in /root/strata/strata-iq3_s.json ("parallel": 4) via flashnext.service.
 
+| 1 stream (warmup) | 35.7* | 35.7 |
+| 4x512 sampled (t 0.3) | **84.7** | 21.2 each (even) |
+| 4x512 greedy (t 0) | **90.5** | 22.6 each (even) |
+
+*single-stream cold; single-stream warm is 65-86 client/server-timer.
+
+Aggregate goes from ~56 (serialized) to ~90 with batch 4 - 1.6x, and per-request
+is an even ~21-23 t/s each, so 4 agents get usable interactive speed at once.
+Deployed in /root/strata/strata-iq3_s.json ("parallel": 4) via flashnext.service.
+
+**Batch 8 sweep (parallel=8, the engine's PARALLEL_MAX): aggregate does NOT
+improve** - 8x512 sampled 86.0 (parity with batch 4), 8x512 greedy **71.3
+(regression, -21%)**, per-request drops to ~9-11 t/s each. 4-of-8 sampled holds
+89.5 (batch 4's number is the equilibrium, not a lane-count artifact).
+**Batch 4 is the sweet spot; batch 8 is set back to 4** in the deployed config.
+The MTP drafter's verify cost scales with the batch row count (kVerifyMaxT=8
+window), so doubling rows halves per-row speculation efficiency past the
+compute saturation point at 4 rows.
+
 ## Pending lanes
 
 Both previously-pending lanes have now run (see the two tables above).
