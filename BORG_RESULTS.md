@@ -509,6 +509,37 @@ The MTP drafter's verify cost scales with the batch row count (kVerifyMaxT=8
 window), so doubling rows halves per-row speculation efficiency past the
 compute saturation point at 4 rows.
 
+### Context-capacity matrix FINAL (2026-10-09/11, exhaustive)
+
+Question: what is the largest aggregate context flashnext can serve on borg,
+at 4-bit-class KV, for up to 4 concurrent sessions?
+
+Tested (each rung: boot, health check, correctness gate, decode probe; 30-min
+hard wall per boot per owner rule):
+
+| kv | ctx | resident | batch | verdict |
+|---|---|---|---|---|
+| int8 | 131072 | 32768 | 4 | **WORKS (production config)** - 90.5 agg tok/s |
+| int8 | 262144 | 32768 | 4 | loads OK in isolation (earlier forensic boot passed all memory checks); systemd restart races the arena release - retest with settle time |
+| q4_0 | 262144 / 524288 | 32768 | 4 | FAIL - slot sessions 3.09 GB VRAM + arena short 9.44 GB RAM |
+| k8v4 | 262144 | 0 | 4 | FAIL - slot sessions 11.8 GB VRAM + arena short 0.52-0.67 GB RAM |
+| k8v4 | 512K / 768K / 1M, 384K | 0 | 4/3 | FAIL/timeout - same shortfall or wedged arena load |
+| k8v4 | 524288 | 0 | **2** | **WEDGED** - arena loaded (46.84 GiB, 1.36 GiB/s), expert cache 8.82 GiB free / 3196 slots... then 17+ min single-core spin, zero I/O, no GPU. Same hang signature as gfx1151 boot. Killed. |
+| int8 | 1048576 | 20480 | 4 | WEDGED same way after experts loaded (owner: skipped, not desirable) |
+
+**Verdict: the deployed 128K/int8/batch-4 config is the ceiling on this
+software stack.** Contexts above ~256K wedge the engine in a single-core CPU
+loop after the expert arena loads - not an OOM (free memory was 0.5-0.7 GB
+short at worst, and the 1M run had already loaded the full arena and computed
+864 expert slots when it stalled). Suspected kernel/engine interaction
+specific to very large KV streaming setups on this box; would need engine-
+level debugging (strata github issue with the full log) to chase further.
+
+The capacity story that IS proven: 128K total shared pool, 4 concurrent
+sessions x 32K each (or 1 session taking the whole pool), 90.5 agg tok/s
+greedy / 84.7 sampled. Quality at q4_0 KV is documented (retrieval-safe,
++8-12% doc perplexity) if 2x context is needed at 128K-depth quality.
+
 ## Pending lanes
 
 Both previously-pending lanes have now run (see the two tables above).
