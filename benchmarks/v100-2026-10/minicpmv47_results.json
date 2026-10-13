@@ -1,0 +1,48 @@
+{
+  "model": "MiniCPM-V 4.7 35B-A3B",
+  "quant": "Q4_K_M",
+  "source": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+  "engine": "llama.cpp server, upstream master 48e985756 (2026-10-12; MiniCPM-V 4.7 support PR #29416)",
+  "build": "CUDA sm_70, build-bench dir (isolated from prod)",
+  "host": "socrates V100 32GB (GPU0)",
+  "date": "2026-10-12 21:10",
+  "vram_loaded_idle_MiB": 22048,
+  "server_ctx": 8192,
+  "protocol": "PROTOCOLS.md section 1 (warmup discarded, one model at a time), cache_prompt=False",
+  "runs": [
+    {
+      "test": "decode_1stream",
+      "wall_s": 5.12,
+      "prompt_tokens": 20,
+      "completion_tokens": 512,
+      "prefill_tok_s": 3.9,
+      "decode_tok_s": 99.9
+    },
+    {
+      "test": "prefill_5k",
+      "wall_s": 9.08,
+      "prompt_tokens": 8017,
+      "completion_tokens": 64,
+      "prefill_tok_s": 882.7,
+      "decode_tok_s": 7.0
+    },
+    {
+      "test": "batch_4x_concurrent",
+      "wall_s": 16.6,
+      "aggregate_tok_s": 96.1,
+      "per_stream_tok_s": [
+        93.6,
+        47.8,
+        32.1,
+        24.2
+      ],
+      "completion_tokens_each": 400,
+      "note": "server --parallel 1; concurrency via 4 client streams; V100 lanes interleave"
+    }
+  ],
+  "notes": [
+    "MoE 35B total / 3B active. Vision-capable (mmproj f16 loaded) but benchmarks are text-only.",
+    "First 8192-ctx run; deeper ctx possible with --parallel tradeoff.",
+    "Chat template emits reasoning in reasoning_content (approx. 40-100 tok overhead per answer)."
+  ]
+}
