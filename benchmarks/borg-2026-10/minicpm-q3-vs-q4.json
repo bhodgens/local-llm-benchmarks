@@ -1,0 +1,51 @@
+{
+ "date": "2026-10-13",
+ "kv": "q8_0",
+ "flashnext_coresident": true,
+ "configs": [
+  {
+   "tag": "Q4_8x65536",
+   "boot": "UP",
+   "gate": "Paris",
+   "gate_reasoning": 300,
+   "solo_tps": 63.7,
+   "agg_tps": 149.6,
+   "lanes": 8,
+   "per_req": 18.7,
+   "avail_g": 16
+  },
+  {
+   "tag": "Q3_8x65536",
+   "boot": "UP",
+   "gate": "Paris",
+   "gate_reasoning": 295,
+   "solo_tps": 66.0,
+   "agg_tps": 160.3,
+   "lanes": 8,
+   "per_req": 20.0,
+   "avail_g": 16
+  },
+  {
+   "tag": "Q3_8x98304",
+   "boot": "UP",
+   "gate": "Paris",
+   "gate_reasoning": 295,
+   "solo_tps": 66.0,
+   "agg_tps": 160.6,
+   "lanes": 8,
+   "per_req": 20.1,
+   "avail_g": 15
+  },
+  {
+   "tag": "Q3_4x196608",
+   "boot": "UP",
+   "gate": "Paris",
+   "gate_reasoning": 295,
+   "solo_tps": 65.8,
+   "agg_tps": 135.7,
+   "lanes": 4,
+   "per_req": 33.9,
+   "avail_g": 16
+  }
+ ]
+}

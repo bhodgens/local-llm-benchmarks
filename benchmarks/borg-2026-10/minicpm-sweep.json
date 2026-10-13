@@ -1,0 +1,60 @@
+{
+ "date": "2026-10-13",
+ "flashnext_coresident": true,
+ "configs": [
+  {
+   "tag": "np4_x_65536",
+   "np": 4,
+   "per": 65536,
+   "boot": "UP",
+   "agg_tps": 133.7,
+   "per_req_tps": 33.4,
+   "clients": 4
+  },
+  {
+   "tag": "np4_x_131072",
+   "np": 4,
+   "per": 131072,
+   "boot": "UP",
+   "agg_tps": 133.4,
+   "per_req_tps": 33.4,
+   "clients": 4
+  },
+  {
+   "tag": "np4_x_262144",
+   "np": 4,
+   "per": 262144,
+   "boot": "UP",
+   "agg_tps": 130.7,
+   "per_req_tps": 32.7,
+   "clients": 4
+  },
+  {
+   "tag": "np8_x_32768",
+   "np": 8,
+   "per": 32768,
+   "boot": "UP",
+   "agg_tps": 150.8,
+   "per_req_tps": 18.9,
+   "clients": 8
+  },
+  {
+   "tag": "np8_x_65536",
+   "np": 8,
+   "per": 65536,
+   "boot": "UP",
+   "agg_tps": 149.0,
+   "per_req_tps": 18.6,
+   "clients": 8
+  },
+  {
+   "tag": "np2_x_262144",
+   "np": 2,
+   "per": 262144,
+   "boot": "UP",
+   "agg_tps": 93.1,
+   "per_req_tps": 46.5,
+   "clients": 2
+  }
+ ]
+}
