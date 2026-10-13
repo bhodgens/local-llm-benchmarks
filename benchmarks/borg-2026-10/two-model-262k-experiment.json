@@ -1,0 +1,75 @@
+
+{
+  "experiment": "two-model-262k-shared-arena",
+  "date": "2026-10-13",
+  "host": "borg",
+  "hypothesis": "Strata 262144 ctx k8v4 can run concurrently with BTL-4 via --shared-expert-arena (MAP_SHARED file on /dev/shm) instead of a 48G hugetlb pool",
+  "baseline": {
+    "config": "flashnext 131072/int8/kv-resident 32768/parallel 4",
+    "free_g": {"used": 119, "free": 5, "available": 4, "swap_used": 0},
+    "health": "ok", "probe_tok_s": 61.5
+  },
+  "configs": [
+    {
+      "id": "C1-baseline",
+      "flashnext": {"ctx": 131072, "kv": "int8", "kv_resident": 32768, "parallel": 4},
+      "btl4": "down",
+      "up": true, "gate": "Paris OK", "decode_tok_s": [61.5]
+    },
+    {
+      "id": "C2-btl4-trim",
+      "flashnext": "unchanged 128K",
+      "btl4": {"ctx": 262144, "lanes": 4, "kv": "f16 (q4_0 NOT possible: superfluid llamacpp runtime exposes no KV-quant knob; --cache-type-k/v rejected, --kv-bits is basert-only and basert not installed)"},
+      "up": true,
+      "footprint_gb": "~31 total (weights 9.28 + KV/lanes + ROCm overhead); delta vs baseline boot ~-3G used +cache",
+      "note": "trim = lanes 8->4 only"
+    },
+    {
+      "id": "C3-262k-k8v4-shared-arena",
+      "flashnext": {"ctx": 262144, "kv": "k8v4", "kv_resident": "removed (incompatible)", "parallel": 4, "shared_expert_arena": "/dev/shm/strata-arena"},
+      "btl4": "up, 262K q8kv(f16) 4 lanes",
+      "up": true, "boot_minutes": 1.4,
+      "arena_file_bytes": 50294992896,
+      "arena_note": "engine requires file ABSENT on first boot (writes pack-hash header itself); wrong size -> refuse with exact expected size in log; zero-filled 48G file -> 'incompatible or missing header'",
+      "map_hugetlb_line": "expert arena: cudaHostRegister PORTABLE ok; MAP_SHARED file /dev/shm/strata-arena (pack hash checked) - no MAP_HUGETLB, THP wedge bypassed",
+      "warning_at_load": "needs 46.84 GiB but 34.04 available (12.81 short) - benign: MAP_SHARED pages live in shmem, not anonymous RAM",
+      "gate": "Paris OK", "decode_tok_s": [45.0, 50.2, 48.3],
+      "free_g": {"used": 111, "free": 1, "shared": 46, "available": 13, "swap_used": 0},
+      "proven": true
+    },
+    {
+      "id": "C3b-524288-k8v4-shared-arena",
+      "flashnext": {"ctx": 524288, "kv": "k8v4", "parallel": 4, "shared_expert_arena": "/dev/shm/strata-arena (same file, context-independent)"},
+      "btl4": "up",
+      "up": true, "boot_minutes": 0.4,
+      "gate": "Paris OK", "decode_tok_s": [32.4, 32.4, 32.4],
+      "free_g": {"used": 111, "shared": 46, "available": 13, "swap_used": "22 MB (negligible)"},
+      "proven": true, "cost": "-35% decode vs 262K; not chosen for final"
+    },
+    {
+      "id": "C4-final",
+      "flashnext": {"ctx": 262144, "kv": "k8v4", "parallel": 4, "shared_expert_arena": "/dev/shm/strata-arena"},
+      "btl4": {"ctx": 262144, "lanes": 4},
+      "up": true, "boot_minutes": 0.7,
+      "gate": "Paris OK", "decode_tok_s": [42.0, 49.9, 50.1],
+      "free_g": {"used": 111, "free": 1, "shared": 46, "available": 13, "swap_used": 0}
+    }
+  ],
+  "failed_attempts": [
+    {"attempt": "arena file 48G (51539607552 B)", "result": "engine exit: expected 50294992896 B including header"},
+    {"attempt": "arena file truncated to exact size but zero-filled", "result": "engine exit: incompatible or missing header (pack hash check); engine writes the header itself when file is absent"},
+    {"attempt": "q4_0 KV on BTL-4", "result": "impossible via superfluid 0.1.2 llamacpp runtime"}
+  ],
+  "final_state": {
+    "flashnext": "active :8080 262144/k8v4/parallel4/shared-arena",
+    "btl4": "active :8453 262144/f16-KV/4 lanes",
+    "services": ["flashnext: active", "btl4: active"]
+  },
+  "system_changes": [
+    "/etc/systemd/system/btl4.service: --max-batch 8 -> 4 (daemon-reload done)",
+    "/root/strata/strata-iq3_s.json: --max-context 262144, --kv k8v4, --kv-resident removed, + --shared-expert-arena /dev/shm/strata-arena; backup at strata-iq3_s.json.bak-128k",
+    "/dev/shm/strata-arena: 50294992896 B MAP_SHARED arena backing file (persistent across boots; safe to leave, freed on reboot as tmpfs)",
+    "/root/bench/results/two-model-262k-experiment.json (this file)",
+    "/root/bench/two-model-262k-summary.md"
+  ]
+}
