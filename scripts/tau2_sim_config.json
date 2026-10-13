@@ -1,0 +1,12 @@
+{
+  "user_sim": {
+    "model": "LFM2.5-8B-A1B-Clean-RealWorld-v2",
+    "api_base": "http://localhost:8081/v1",
+    "port": 8081
+  },
+  "agent": {
+    "port": 18099,
+    "binary": "/home/caimlas/git/llama.cpp/build/bin/llama-server",
+    "llms_dir": "/home/files/llms"
+  }
+}
