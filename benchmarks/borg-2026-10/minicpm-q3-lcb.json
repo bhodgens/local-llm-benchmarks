@@ -1,0 +1,10 @@
+{"model": "MiniCPM-V-4_7-35B-A3B-Q3mix", "quant": "mix_q3gud_im (14.44 GiB)", "bench": "LiveCodeBench pass@1, 75 problems",
+ "pass@1": 0.96, "thinking": "off (via llama-server --chat-template-kwargs enable_thinking=false)",
+ "ids": "first 75 release_latest in 2023-05..2023-10 window (regenerated; original /tmp/v100_lcb_ids.json lost to reboot)",
+ "wall_min": 19.0, "server": "llama-server b11284-rocm-10.0, iGPU gfx1151, 8x98304 ctx, q8_0 KV",
+ "comparison": {
+   "flashnext IQ3_S (borg)": 0.9733,
+   "btl4 Compact IQ2_XXS (3060)": 0.507,
+   "btl4 Q4_K_M (V100)": 0.92
+ },
+ "note": "Q3 quant shows no coding quality loss vs 4-bit class; deployment verified serving after run"}
