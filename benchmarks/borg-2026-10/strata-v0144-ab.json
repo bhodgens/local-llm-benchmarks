@@ -1,0 +1,33 @@
+{
+ "date": "2026-10-14",
+ "question": "Does the newer Strata (and the hokar3361 fork) improve tok/s vs our v0.1.39 install?",
+ "fork_analysis": {
+   "repo": "hokar3361/Strata",
+   "base": "upstream v0.1.44 (ed4773eb)",
+   "change": "ONE Metal/macOS-only patch: wrap >maxBufferLength (41.75 GB M4 Max) model files in multiple no-copy Metal buffers so IQ3_XXS can be arena-resident on a 64 GB Mac (metal/src/mtl_rt.mm, window.cpp, prompt_chain.inc moe_rebase)",
+   "verdict_for_borg": "NO benefit - the code path is Metal-only. Linux/ROCm/gfx1201 cannot use it. The fork's value for us is only that it points at upstream v0.1.44."
+ },
+ "ab_test": {
+   "host": "borg, R9700 gfx1201, Strata engine, Qwen3.8-Flash-Next GSQ-RCO IQ3_S, shared-expert-arena, 262144 ctx, k8v4",
+   "method": "same probe on both builds: 5x 256-token decode (median) + 46.8K-token prefill; live v0.1.39 on :8080, new build on :8081; identical config + hipBLASLt tuning table",
+   "results": [
+     {"build": "v0.1.39 (live)",              "decode_median_tps": 55.7, "decode_runs": [55.7,55.7,51.9,55.4,55.7], "prefill_tps": 790},
+     {"build": "v0.1.44",                     "decode_median_tps": 64.1, "decode_runs": [60.6,64.1,64.9,64.5,59.7], "prefill_tps": 961},
+     {"build": "v0.1.44 + --adapt-async 1",   "decode_median_tps": 67.8, "decode_runs": [67.8,69.1,66.4,70.2,65.9], "prefill_tps": 1193}
+   ],
+   "deltas": {
+     "v0.1.44_vs_v0.1.39_decode": "+15%",
+     "adapt_async_decode": "+5.8%",
+     "adapt_async_prefill": "+24%",
+     "total_decode_vs_live": "+22%",
+     "total_prefill_vs_live": "~+29%"
+   },
+   "notes": [
+     "First-pass numbers (decode 70, prefill 899->1399) were optimistic; 5-run medians are the figures above.",
+     "178K prefill samples seen in logs are prefix-cache hits (repeated prompt), not real prefill - excluded.",
+     "--adapt-async is not present in our v0.1.39 engine help; it arrives with the newer build. Matches upstream's claimed +4-5% decode.",
+     "v0.1.44 also carries the #771 THP-wedge fix (0.1.40) and hung-engine detection (0.1.41)."
+   ]
+ },
+ "recommendation": "Upgrade the live flashnext service to the v0.1.44 binary + --adapt-async 1 (~+22% decode, ~+29% prefill). Do NOT install the hokar3361 fork (Metal-only)."
+}
