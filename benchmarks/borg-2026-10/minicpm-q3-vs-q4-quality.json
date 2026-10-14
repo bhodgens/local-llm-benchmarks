@@ -1,0 +1,20 @@
+{
+ "model": "MiniCPM-V 4.7 35B-A3B",
+ "date": "2026-10-13",
+ "harness": {"server": "llama-server b11284-rocm-10.0, iGPU gfx1151", "thinking": "off (--chat-template-kwargs enable_thinking=false)",
+             "lcb": "release_latest, 75 problems, temp 0.0, max_tokens 4096", "tau2": "airline, 15 tasks, self-play user sim, seed 42, max_steps 30"},
+ "results": {
+   "Q3mix (mix_q3gud_im, 14.44 GiB)": {"lcb_pass1": 0.96, "tau2_reward": 0.7333, "tau2_scored": "15/15",
+       "solo_tps": 66.0, "agg_tps_8lane": 160.6, "deployed_context": "768K (8x98304)"},
+   "Q4_K_M (19.71 GiB)": {"lcb_pass1": 0.9333, "tau2_reward": 0.6, "tau2_scored": "15/15",
+       "solo_tps": 63.7, "agg_tps_8lane": 149.6, "deployed_context": "524K tested (8x65536)"}
+ },
+ "verdict": "Q3mix wins on all four axes: LCB +2.7pp, tau2 +13.3pp, +7% aggregate throughput, +47% context at 5.3 GiB smaller. No quant penalty observed.",
+ "tau2_per_task": {
+   "Q3mix": [1,1,0,1,1,1,1,0,1,1,1,0,1,1,0],
+   "Q4_K_M": [1,1,1,1,1,0,1,0,1,0,0,0,1,1,0]
+ },
+ "caveats": ["LCB ids regenerated after /tmp loss; same protocol, not provably byte-identical to earlier borg runs",
+             "tau2 uses self-play user sim (borg campaign protocol), not the LFM user-sim variant",
+             "no infra errors in either tau2 run; both 15/15 scored"]
+}
