@@ -1,0 +1,19 @@
+{
+ "date": "2026-10-14",
+ "purpose": "Does upgrading llama.cpp (b11284 -> b11303) help on borg's gfx1151 iGPU? Also tests the issue #24437 signature (rocWMMA FA prefill regression on Strix Halo).",
+ "model": "MiniCPM-V-4_7-35B-A3B-mix_q3gud_im.gguf (Q3mix)",
+ "device": "gfx1151 iGPU, HIP_VISIBLE_DEVICES=1, llama-bench -ngl 99 -r 3 -o json",
+ "results": [
+   {"build": "b11284 (current, superfluid runtime)", "fa": 1, "pp512": 1261.1, "pp2048": 1280.2, "pp8192": 1217.1, "tg128": 69.9},
+   {"build": "b11284", "fa": 0, "pp512": 1230.9, "pp2048": 1231.5, "pp8192": 1104.3, "tg128": 68.5},
+   {"build": "b11303 (newest release, ROCm 10.0)", "fa": 1, "pp512": 1237.0, "pp2048": 1268.0, "pp8192": 1204.7, "tg128": 69.6},
+   {"build": "b11303", "fa": 0, "pp512": 1221.5, "pp2048": 1217.5, "pp8192": 1096.7, "tg128": 68.7}
+ ],
+ "verdict": {
+   "upgrade_worth_it": false,
+   "reason": "b11303 is within 1-2% of b11284 (slightly slower) on every metric. No benefit for this workload.",
+   "rocwmma_bug_applies": false,
+   "rocwmma_evidence": "FA=1 is FASTER than FA=0 on our build (pp8192: 1217 vs 1104, +10%). Issue #24437 predicts the opposite (FA hurting prefill badly on gfx1151) when the rocWMMA FA path is compiled in. Our prebuilt runtime does not exhibit it.",
+   "prefill_note": "~1200-1280 t/s prefill at 512-8192 depth is strong for this iGPU."
+ }
+}
