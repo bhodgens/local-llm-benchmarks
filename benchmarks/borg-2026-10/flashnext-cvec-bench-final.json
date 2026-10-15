@@ -1,0 +1,27 @@
+{
+ "date": "2026-10-15",
+ "experiment": "Does Strata control-vector abliteration (cvec) degrade flashnext quality on LCB and tau2?",
+ "setup": {
+   "engine": "Strata v0.1.44 + --adapt-async 1 (current deployed)",
+   "model": "Qwen3.8-Flash-Next GSQ-RCO IQ3_S, native pack",
+   "cvec_file": "/root/models/fn-abliterated-iq3_s/Huihui-Qwen3.8-Flash-Next-refusal-direction-r.gguf (47 direction.N tensors, controlvector arch, model_hint=qwen4exp)",
+   "cvec_flags": ["--control-vector-scaled", "<cvec>:1.0", "--control-vector-layer-range", "4", "44", "--cvec-mode", "project", "--cvec-dir", "per-layer"],
+   "lcb_ids": "regenerated 75 (release_latest, 2023-05..2023-10) - same set both runs",
+   "lb_cvecon_key": "local/borg-flashnext-cvecon -> short flashnext-cvecon",
+   "lcb_cvecoff_key": "local/borg-flashnext-cvecoff -> short flashnext-cvecoff"
+ },
+ "results": {
+   "cvec_off": {"lcb_pass1": 0.9467, "tau2_reward": 0.7333, "tau2_scored": "15/15"},
+   "cvec_on":  {"lcb_pass1": 0.9067, "tau2_reward": 0.7333, "tau2_scored": "15/15"}
+ },
+ "deltas": {
+   "lcb": "-4.0 pp (0.9467 -> 0.9067)  real coding regression",
+   "tau2": "0.0 (identical 0.7333)   no agentic/tool-use impact"
+ },
+ "verdict": "cvec abliteration removes refusal behavior at -4pp LCB on coding but zero tau2 cost. If the model's purpose is agentic/tool-use (tau2), the uncensoring is effectively free; if coding accuracy (LCB) is a priority, it costs ~4 points.",
+ "operational_notes": [
+   "A combined cvec-on/off driver run failed: a `nohup &` inside a Python subprocess was reaped before the server bound, so cvec-on served=false; and the LCB extractor returned null (list-handling bug). Rerun separately via direct shell script; extracted correct values from the eval JSON.",
+   "cvec-on runs on port 8082 (config /root/strata/strata-iq3_s-cvec.json). flashnext must be stopped during its run (same GPU/arena).",
+   "deployed config at end: cvec OFF (default flashnext v0.1.44 + adapt-async), flashnext + minicpm-v both active"
+ ]
+}
