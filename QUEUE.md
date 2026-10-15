@@ -596,3 +596,27 @@ hf download rmonsurate/Victoria --include "gguf/victoria-s410-bitexact-tbl8-*" -
   BFCL claim) does not transfer to tau2 conversational loops.
 - LCB aliases registered: local/flashnext-qwen38-q20, local/saluki-27b-iq2mix,
   local/saluki-27b-iq2mix-v100. Allowlist tokens: flash-next/flashnext/saluki.
+
+
+---
+
+## Prefill probes: top-scorer union (STAGED, not run)
+
+- Script: `scripts/prefill_union_probes.py` (launch manually: `python3 scripts/prefill_union_probes.py`, optional per-model name args)
+- Union of: top-12 LCB, top-10 decode tok/s, top-5 tau2 — unique set, one pp512 probe each
+- Excluded (already have prefill in bench_results.json): MiniCPM-V 4.7, Qwythos-27B-MTP, Nail [Sharp], BTL-4 Q4_K_M, gemma-4-12B (3060 128K), Ornith-1.5 [Sharp], LFM2.5-8B base + Q6_K + Clean-RealWorld-v2, Qwen3.5-4B ThumbLLM, Carnice-V3
+- Excluded (file-dup of a queued/probed entry): MiniCPM5-2B Q8_0 (3060), BTL-4 Q4_K_M (think)
+- Protocol: llama-bench pp512, -fa on, -ngl 99, q8_0 KV, -d 8192, -r 3, -t 8, V100/GPU0 only
+- After running: `python3 scripts/generate_report.py` picks results up automatically
+
+| # | Model | File | GPU |
+|---|-------|------|-----|
+| 1 | Qwen3.8-Flash-Next GSQ-RCO Q2_0 (V100) | /home/files/llms/flashnext-q20/Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-00001-of-00002.gguf | V100 |
+| 2 | Muse-Glimmer-30B-UD-Q4_K_XL (think) | /home/files/llms/Muse-Glimmer-30B-UD-Q4_K_XL.gguf | V100 |
+| 3 | Qwythos-27B-v1 Q4_K_M | /home/files/llms/gguf/Qwythos-27B-Q4_K_M.gguf | V100 |
+| 4 | DogukanUrker-BTL-4 Q4_K_M | /home/files/llms/dogukanurker-btl4-q4km/BTL-4-Q4_K_M.gguf | V100 |
+| 5 | Bonsai-2-27B Ternary CRACK PQ2_0 (think) | /var/tmp/llms/bench-0918/crack/Bonsai-2-27B-PQ2_0-CRACK.gguf | V100 |
+| 6 | gemma-4-26B-A4B-it-QAT Q4_0 | /home/files/llms/gemma-4-26B-A4B-it-QAT-Q4_0.gguf | V100 |
+| 7 | MiniCPM5-2B Q8_0 (V100) | /home/files/llms/MiniCPM5-2B-Q8_0.gguf | V100 |
+| 8 | Ternary-Bonsai-2-27B PQ2_0 (V100) | /var/tmp/llms/bench-0918/bonsai2/Ternary-Bonsai-2-27B-PQ2_0.gguf | V100 |
+| 9 | Qwen3.8-27B Q4_K_M | /home/files/llms/Qwen3.8-27B-Q4_K_M.gguf | V100 |

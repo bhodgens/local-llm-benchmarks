@@ -166,6 +166,27 @@ for _k, _v in _prefill_tps.items():
     if _cur is None or _rank > _cur[1]:
         _plain_prefill[_base] = (_v, _rank)
 
+# Staged prefill-only probes (scripts/prefill_union_probes.py) write
+# "<file> [prefill]" entries: {"prefill": {pp512}, "entry_name": <progress name>}.
+# Merge them in (rank 1, same as no-spec plain probes).
+try:
+    for _k, _v in _ecc_results.items():
+        if not _k.endswith(' [prefill]') or not isinstance(_v, dict):
+            continue
+        _pfv = (_v.get('prefill') or {}).get('pp512')
+        if not _pfv:
+            continue
+        _prefill_tps[_k] = {"pp": _pfv, "tg": None, "entry_name": _v.get('entry_name')}
+        _base = _k.split(' [')[0]
+        _cur = _plain_prefill.get(_base)
+        if _cur is None or 1 > _cur[1]:
+            _plain_prefill[_base] = (_prefill_tps[_k], 1)
+        _en = _v.get('entry_name')
+        if _en and _en not in _prefill_tps:
+            _prefill_tps[_en] = _prefill_tps[_k]
+except Exception:
+    pass
+
 
 _ECC_FILL = {
     # progress entry name -> bench_results.json key (8K-ctx chat probe, ECC-off)
