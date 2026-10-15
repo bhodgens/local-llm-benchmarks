@@ -132,6 +132,20 @@ try:
 except (FileNotFoundError, json.JSONDecodeError):
     _ecc_results = {}
 
+# Prefill (prompt-processing) tok/s from bench_results.json. Keys hold either
+# {prompt_eval_tps, ...} (lane probes) or {ecc_off: {pp512, tg128, ...}} (ECC retests).
+# Prefill speed drives how fast a large prompt (agent system prompts are ~30K tokens)
+# becomes interactive.
+_prefill_tps = {}
+for _k, _v in _ecc_results.items():
+    _src = _v.get("ecc_off") if isinstance(_v, dict) and isinstance(_v.get("ecc_off"), dict) else _v
+    if not isinstance(_src, dict):
+        continue
+    _pp = _src.get("pp512") or _src.get("prompt_eval_tps")
+    if _pp:
+        _prefill_tps[_k] = {"pp": _pp, "tg": _src.get("tg128") or _src.get("decode_tps_probe") or _src.get("decode_tps_1")}
+
+
 _ECC_FILL = {
     # progress entry name -> bench_results.json key (8K-ctx chat probe, ECC-off)
     'Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL': 'Nail-Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf [ecc-off]',
@@ -348,6 +362,22 @@ def build_detail(m):
     if m.get('decode_tps_3060'): throughput['Decode tok/s (3060)'] = m['decode_tps_3060']
     if m.get('decode_tps_3060_dspark'): throughput['Decode tok/s (3060+dspark)'] = m['decode_tps_3060_dspark']
     if m.get('prompt_tps'): throughput['Prompt tok/s'] = m['prompt_tps']
+    # Prefill tok/s from bench_results.json (pp512 / prompt_eval_tps lanes)
+    _pf = None
+    if name in _prefill_tps:
+        _pf = _prefill_tps[name]
+    else:
+        _fname = (m.get('file') or '')
+        for _k, _v in _prefill_tps.items():
+            _base = _k.split(' [')[0].replace('.gguf', '')
+            if _fname and _base in _fname.replace('.gguf', ''):
+                _pf = _v
+                break
+    if _pf:
+        throughput['Prefill tok/s (pp512)'] = round(_pf['pp'], 1)
+        if _pf.get('tg'):
+            throughput['Prefill-probe tg128 tok/s'] = _pf['tg']
+
     # dspark draft-pair probes (Bonsai ecc retest, MiniCPM draft head)
     for dk, label in [('ecc_dspark_retry', 'Bonsai dspark (draft n=4) decode tok/s'),
                       ('dspark_draft', 'DSpark draft-head decode tok/s')]:
@@ -451,6 +481,25 @@ for m in progress['models']:
     if tps is None:
         tps = m.get('decode_tps_3060_dspark')
 
+    # Prefill tok/s for the table column. Dedicated pp512/prompt_eval_tps probes
+    # (bench_results.json) win over progress prompt_tps: the latter is sometimes a
+    # chat-lane artifact measured under benchmark load, not a clean prefill probe.
+    prefill_tps = None
+    _pf2 = None
+    if name in _prefill_tps:
+        _pf2 = _prefill_tps[name]
+    else:
+        _fname2 = (m.get('file') or '')
+        for _k2, _v2 in _prefill_tps.items():
+            _base2 = _k2.split(' [')[0].replace('.gguf', '')
+            if _fname2 and _base2 in _fname2.replace('.gguf', ''):
+                _pf2 = _v2
+                break
+    if _pf2:
+        prefill_tps = round(_pf2['pp'], 1)
+    if prefill_tps is None:
+        prefill_tps = m.get('prompt_tps')
+
     # dspark draft-pair measurements (ecc_dspark_retry / dspark_draft subdicts):
     # show as annotated main tok/s + detail-modal line, never as a separate column
     dspark_note = None
@@ -520,6 +569,7 @@ for m in progress['models']:
         'tau2': tau2_reward,
         'tau2_time_min': round(tau2_time / 60) if tau2_time else None,
         'decode_tps': tps,
+        'prefill_tps': prefill_tps,
         'mtp_acceptance': mtp_acc,
         'mtp_tps': mtp_tps,
         'template': template,
@@ -636,6 +686,7 @@ tr:hover { background: #161b22; }
   tau2-bench (agentic tool use, airline domain, 15 tasks) |
   HumanEval (code completion, only Qwen2.5-Coder completed in raw mode -- rerun needed for chat mode)<br>
   <strong>tok/s:</strong> Decode throughput on 3060 at 8K context, flash attention on. MoE models use cpu-moe.<br>
+  <strong>Prefill tok/s:</strong> prompt-processing throughput (pp512 lane or prompt_tps probe); measures how fast large prompts ingest. Blank = not measured for that entry.<br>
   <strong>Detail view:</strong> Click any model name to see settings, VRAM usage, wall times, errors, and retry history.
 </div>
 
@@ -654,6 +705,7 @@ tr:hover { background: #161b22; }
   <th data-type="string" data-key="bench_date">Run Date</th>
   <th data-type="string" data-key="gpu">GPU</th>
   <th data-type="number" data-key="tps">tok/s</th>
+  <th data-type="number" data-key="prefill" title="Prompt-processing (prefill) tok/s — pp512 or prompt_tps probe; blank = not measured">Prefill tok/s</th>
   <th data-type="number" data-key="he">HumanEval</th>
   <th data-type="number" data-key="lcb">LiveCodeBench</th>
   <th data-type="number" data-key="tau2">tau2-bench</th>
@@ -670,6 +722,7 @@ models_sorted = sorted(models, key=lambda x: -(x['tau2'] or -1))
 lcb_max = max([m['livecodebench'] for m in models if m['livecodebench']] or [1])
 tau2_max = max([m['tau2'] for m in models if m['tau2']] or [1])
 tps_max = max([m['decode_tps'] for m in models if m['decode_tps']] or [1])
+prefill_max = max([m['prefill_tps'] for m in models if m['prefill_tps']] or [1])
 
 def bar_cell(value, max_val, fmt_func, color):
     if value is None:
@@ -728,6 +781,7 @@ for i, m in enumerate(models_sorted, 1):
   <td class="center">{'<span class="na">-</span>' if not m['bench_date'] else m['bench_date']}</td>
   <td class="center">{m['gpu']}</td>
   {bar_cell(m['decode_tps'], tps_max, tps_fmt, '#bc8cff')}
+  {bar_cell(m['prefill_tps'], prefill_max, tps_fmt, '#ffa657')}
   {bar_cell(m['human_eval'], 1.0, pct, '#238636')}
   {bar_cell(m['livecodebench'], lcb_max, pct, '#79c0ff')}
   {bar_cell(m['tau2'], tau2_max, tau2_fmt, '#56d364')}
