@@ -145,6 +145,27 @@ for _k, _v in _ecc_results.items():
     if _pp:
         _prefill_tps[_k] = {"pp": _pp, "tg": _src.get("tg128") or _src.get("decode_tps_probe") or _src.get("decode_tps_1")}
 
+# File-based matching can hit several bench_results entries per GGUF (e.g. a model with
+# [no-spec] + [MTP-n3] + [MTP-n5] probe entries). Canonical prefill = the plain probe
+# ([ecc-off] or [no-spec]); MTP-nX entries share the same file but measure under
+# speculative decoding. Build a file->canonical index used before fuzzy fallbacks.
+# Rank: [ecc-off] (standardized pp512 probe) > [no-spec]/bare (lane prompt_eval_tps) > [MTP-nX].
+def _plain_rank(_key_suffix, _src):
+    if '[ecc-off]' in _key_suffix:
+        return 2
+    if '[no-spec]' in _key_suffix or _key_suffix == '':
+        return 1
+    return 0
+
+_plain_prefill = {}
+for _k, _v in _prefill_tps.items():
+    _base = _k.split(' [')[0]
+    _suffix = _k[len(_base):]
+    _rank = _plain_rank(_suffix, _v)
+    _cur = _plain_prefill.get(_base)
+    if _cur is None or _rank > _cur[1]:
+        _plain_prefill[_base] = (_v, _rank)
+
 
 _ECC_FILL = {
     # progress entry name -> bench_results.json key (8K-ctx chat probe, ECC-off)
@@ -362,12 +383,18 @@ def build_detail(m):
     if m.get('decode_tps_3060'): throughput['Decode tok/s (3060)'] = m['decode_tps_3060']
     if m.get('decode_tps_3060_dspark'): throughput['Decode tok/s (3060+dspark)'] = m['decode_tps_3060_dspark']
     if m.get('prompt_tps'): throughput['Prompt tok/s'] = m['prompt_tps']
-    # Prefill tok/s from bench_results.json (pp512 / prompt_eval_tps lanes)
+    # Prefill tok/s from bench_results.json (pp512 / prompt_eval_tps lanes).
+    # Canonical plain-probe index first (avoids [MTP-nX] variants), then exact name.
     _pf = None
-    if name in _prefill_tps:
+    _fname = (m.get('file') or '')
+    if _fname:
+        for _base, (_v, _plain) in _plain_prefill.items():
+            if _base.replace('.gguf', '') in _fname.replace('.gguf', ''):
+                _pf = _v
+                break
+    if _pf is None and name in _prefill_tps:
         _pf = _prefill_tps[name]
-    else:
-        _fname = (m.get('file') or '')
+    if _pf is None:
         for _k, _v in _prefill_tps.items():
             _base = _k.split(' [')[0].replace('.gguf', '')
             if _fname and _base in _fname.replace('.gguf', ''):
@@ -484,12 +511,18 @@ for m in progress['models']:
     # Prefill tok/s for the table column. Dedicated pp512/prompt_eval_tps probes
     # (bench_results.json) win over progress prompt_tps: the latter is sometimes a
     # chat-lane artifact measured under benchmark load, not a clean prefill probe.
+    # Canonical plain-probe index first (avoids [MTP-nX] variants).
     prefill_tps = None
     _pf2 = None
-    if name in _prefill_tps:
+    _fname2 = (m.get('file') or '')
+    if _fname2:
+        for _base, (_v2, _plain) in _plain_prefill.items():
+            if _base.replace('.gguf', '') in _fname2.replace('.gguf', ''):
+                _pf2 = _v2
+                break
+    if _pf2 is None and name in _prefill_tps:
         _pf2 = _prefill_tps[name]
-    else:
-        _fname2 = (m.get('file') or '')
+    if _pf2 is None:
         for _k2, _v2 in _prefill_tps.items():
             _base2 = _k2.split(' [')[0].replace('.gguf', '')
             if _fname2 and _base2 in _fname2.replace('.gguf', ''):
