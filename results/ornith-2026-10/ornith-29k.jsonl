@@ -1,0 +1,45 @@
+{"tag": "orn-29k", "cal": true, "tokens_per_item": 2.784, "items": 10415, "cal_prompt_n": 22275}
+{"tag": "orn-29k", "kind": "decode", "round": 0, "prompt_n": 39, "pps_in": 9.551278487606481, "predicted_n": 256, "predicted_per_second": 21.52112129261762, "wall_s": 20.2}
+{"tag": "orn-29k", "kind": "decode", "round": 1, "prompt_n": 39, "pps_in": 9.40284689272075, "predicted_n": 256, "predicted_per_second": 22.73506384317977, "wall_s": 15.49}
+{"tag": "orn-29k", "kind": "decode", "round": 2, "prompt_n": 39, "pps_in": 9.830633312084043, "predicted_n": 256, "predicted_per_second": 22.712339667582196, "wall_s": 15.28}
+{"tag": "orn-29k", "kind": "decode", "round": 3, "prompt_n": 39, "pps_in": 9.501421437009595, "predicted_n": 256, "predicted_per_second": 22.61571396567343, "wall_s": 15.48}
+{"tag": "orn-29k", "kind": "decode", "round": 4, "prompt_n": 39, "pps_in": 9.806860175296368, "predicted_n": 256, "predicted_per_second": 22.48482340551961, "wall_s": 15.41}
+{"tag": "orn-29k", "kind": "prefill", "round": 0, "prompt_n": 29072, "prompt_per_second": 70.77521220500812, "predicted_n": 8, "wall_s": 412.89}
+{"tag": "orn-29k", "kind": "prefill", "round": 1, "prompt_n": 29034, "prompt_per_second": 66.92767615144682, "predicted_n": 8, "wall_s": 440.6}
+Traceback (most recent call last):
+  File "/root/probe_ornith.py", line 41, in <module>
+    t = send(c, 8)
+        ^^^^^^^^^^
+  File "/root/probe_ornith.py", line 19, in send
+    r = json.load(urllib.request.urlopen(req, timeout=1800))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 215, in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 515, in open
+    response = self._open(req, data)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 532, in _open
+    result = self._call_chain(self.handle_open, protocol, protocol +
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 492, in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 1373, in http_open
+    return self.do_open(http.client.HTTPConnection, req)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/urllib/request.py", line 1348, in do_open
+    r = h.getresponse()
+        ^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/http/client.py", line 1457, in getresponse
+    response.begin()
+  File "/usr/lib/python3.12/http/client.py", line 336, in begin
+    version, status, reason = self._read_status()
+                              ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/http/client.py", line 297, in _read_status
+    line = str(self.fp.readline(_MAXLINE + 1), "iso-8859-1")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socket.py", line 707, in readinto
+    return self._sock.recv_into(b)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+TimeoutError: timed out

@@ -564,3 +564,32 @@ Notes for whoever repeats them:
   `EXL3_HSA_LIB` to the ROCm SDK's own `libhsa-runtime64.so.1` — the system ROCm
   7.2 HSA is too old for the 7.13 nightly torch and fails with
   `hsa_ext_image_create_v2` undefined.
+
+
+## Ornith-1.5-122B (2026-10-20) — below the floor
+
+`AtomicChat/Ornith-1.5-122B-GGUF`, file `AD-Q5_K-IQ4_XS` (76.0 GiB — the largest
+AD quant that fits with miniCPM-V resident and 262K KV; the next size, 93.3 GiB,
+does not fit). Engine: llama.cpp 0.5.0-dev (11fe021) HIP on the R9700, experts
+pinned to CPU (`-ot 'ffn_(up|down|gate)_exps=CPU'`), dense + KV on GPU, 262K
+ctx, 4 slots. Same probe protocol as the 2026-10-20 Strata A/B (unique-filler
+prefill, engine timers, 256-token greedy decode).
+
+| metric | flashnext (Strata 0.1.44) | ornith-1.5-122b AD-Q5_K-IQ4_XS |
+|---|---:|---:|
+| decode 256 greedy (t/s) | **70.4** | 22.6 |
+| prefill ~29K (t/s) | **1380.2** | 68.9 |
+| prefill ~150K (t/s) | 966.0 | not run |
+
+Decode is 3.1x slower and prefill 20x slower than flashnext on the same host.
+Two structural reasons: Ornith's 122B has ~2x flashnext's expert footprint so
+every routed expert read comes from pinned host RAM with no VRAM hot-cache tier
+(Strata's design), and its prefill reads ~4x the bytes per routed expert at
+8+1-of-256 active. The prefill run also hit a pathology: round 2 of the 29K arm
+stalled server-side for 30+ minutes with zero progress lines (task 1418,
+cancelled on client timeout) after two clean 7-minute rounds. Decode 22.6 t/s is
+below the 30 t/s floor, so the 150K arm and the 4-lane wave were not run.
+
+Verdict: not deployable on borg at interactive speed. Raw data:
+`benchmarks/borg-2026-10/ornith-122b-bench.json`,
+`results/ornith-2026-10/` in this repo.

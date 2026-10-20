@@ -1,0 +1,48 @@
+{
+ "date": "2026-10-20",
+ "model": "AtomicChat/Ornith-1.5-122B-GGUF",
+ "file": "Ornith-1.5-122B-AD-Q5_K-IQ4_XS (2 shards, 76.0 GiB)",
+ "why_this_quant": "Largest AD quant that fits borg 124GB RAM with miniCPM-V (23GB) resident and 262K KV; next size (AD-Q6_K-Q5_K, 93.3GB) does not fit",
+ "engine": "llama.cpp 0.5.0-dev build 11fe021 HIP gfx1201 (/root/llama.cpp/build-hip)",
+ "layout": "-ngl 999 -ot 'ffn_(up|down|gate)_exps=CPU' -c 262144 -np 4 --jinja --mmproj",
+ "arch": "qwen35moe: 49 blocks, 256 experts, 8+1 active, hybrid attention (full_attention_interval 4), MTP head present (nextn_predict_layers=1, not engaged)",
+ "protocol": "same probes as the 2026-10-20 strata-upgrade A/B: unique-filler prefill, engine timers, greedy decode 256 tok, reasoning n/a (chat template has no reasoning block in this build)",
+ "results": {
+  "decode_256_greedy": {
+   "rounds_tps": [
+    21.52,
+    22.74,
+    22.71,
+    22.62,
+    22.48
+   ],
+   "median": 22.6
+  },
+  "prefill_29k": {
+   "rounds_tps": [
+    70.78,
+    66.93
+   ],
+   "median": 68.9,
+   "note": "round 2 (task 1418) stalled >30 min server-side with zero progress lines after 25.08 uptime-min and was cancelled on client timeout; rounds 0-1 of identical size took 413s/441s"
+  },
+  "prefill_150k": "not run: decode below the 30 t/s floor + prefill pathology",
+  "4_lane_wave": "not run (below-floor model)"
+ },
+ "comparison_flashnext_0144_same_day": {
+  "decode_median": {
+   "flashnext": 70.4,
+   "ornith": 22.6
+  },
+  "prefill_29k_median": {
+   "flashnext": 1380.2,
+   "ornith": 68.9
+  },
+  "flashnext_pre150k_median": 966,
+  "note": "flashnext runs Strata (MTP, hot expert cache in VRAM); Ornith runs llama.cpp with experts on CPU. Engine-per-family is the repo rule; the comparison is production-vs-production on the same host, not engine-vs-engine."
+ },
+ "floor_rule": "decode 22.6 t/s is BELOW the 30 t/s standing floor after one config sanity pass (experts-on-CPU is the only viable layout at this size on 124GB)",
+ "verdict": "Ornith-1.5-122B AD-Q5_K-IQ4_XS is not deployable on borg at interactive speed: 3.1x slower decode and 20x slower prefill than flashnext, plus a prefill stall pathology in llama.cpp at high KV occupancy",
+ "raw": "/root/bench-results/ornith-29k.jsonl, /root/bench-results/ornith-150k.jsonl (cal line only)",
+ "cleanup": "flashnext.service and minicpm-v.service restored and health-verified after the run"
+}
