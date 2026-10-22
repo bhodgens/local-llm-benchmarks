@@ -1,0 +1,184 @@
+{
+  "task": "flint_sage_prep",
+  "generated": "2026-10-22",
+  "build": {
+    "status": "BLOCKED",
+    "build_ok": false,
+    "build_commit": null,
+    "build_dir": "/tmp/upstream-master/build",
+    "binaries": {
+      "llama-server": null,
+      "llama-bench": null,
+      "llama-perplexity": null
+    },
+    "blocked_reason": "git clone of ggml-org/llama.cpp to /tmp/upstream-master was DENIED by the user mid-run; per denial policy the clone was not retried or routed around. No repo present on disk (verified: no llama-arch.cpp found under /home/caimlas or /tmp/upstream-master).",
+    "arch_source_verification": {
+      "FlintForCausalLM_in_repo": "not verified - repo absent (clone denied). Flint merged upstream 2026-10-21 commit a37cc4610 per task context; master HEAD today expected to include it.",
+      "qwen3_5_moe_in_llama_arch": "not verified - repo absent. NOTE naming: GGUF uses arch string 'qwen35moe' (not 'qwen3_5_moe'); upstream llama-arch entry must match the GGUF string."
+    },
+    "planned_build_command": "cmake -B build -DGGML_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=70 -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release -j12 --target llama-server llama-bench llama-perplexity",
+    "webui_fallback": "if npm/llama-ui-embed asset pipeline fails: reconfigure with the webui CMake switch off (grep CMakeLists.txt for WEBUI/UI option, e.g. -DLLAMA_SERVER_WEBUI=OFF)"
+  },
+  "models": {
+    "flint": {
+      "path": "/home/files/llms/flint/flint-UD-Q4_K_XL.gguf",
+      "file_size_gib": 23.33,
+      "architecture": "flint",
+      "arch_as_expected": true,
+      "name": "Flint Preview",
+      "size_label": "256x2.1B",
+      "quantized_by": "Unsloth",
+      "file_type": 15,
+      "hparams": {
+        "block_count": 49,
+        "context_length": 262144,
+        "embedding_length": 2048,
+        "attention.head_count": 32,
+        "attention.head_count_kv": 4,
+        "attention.key_length": 128,
+        "attention.value_length": 128,
+        "expert_count": 256,
+        "expert_used_count": 6,
+        "expert_shared_count": 2,
+        "expert_feed_forward_length": 512,
+        "expert_shared_feed_forward_length": 1024,
+        "leading_dense_block_count": 2,
+        "attention.sliding_window": 513,
+        "rope.freq_base": 10000.0
+      },
+      "tensor_validation": {
+        "tensor_count": 779,
+        "blk_ids": "0-48 (49 blocks, matches block_count)",
+        "expert_tensor_count": 141,
+        "output.weight_present": true
+      },
+      "sliding_window_pattern": {
+        "per_layer_bool_array_len": 49,
+        "pattern": "FFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSSFSSF",
+        "sliding_layers": 35,
+        "full_attention_layers": 14,
+        "note": "first 2 layers full-attention = leading_dense_block_count=2"
+      },
+      "mtp_nextn": {
+        "present": false,
+        "nextn_predict_layers_kv": "absent from header",
+        "nextn_tensors": [],
+        "note": "no MTP layers in this GGUF"
+      },
+      "vocab": {
+        "tokenizer_tokens": 300288,
+        "bos_token_id": 150000,
+        "eos_token_id": 150001
+      },
+      "chat_template": {
+        "tokenizer.chat_template_present": true,
+        "length_chars": 2328,
+        "note": "flint-native template with tool_call support; --jinja should load it"
+      },
+      "kv_estimate_gib_at_32k_f16": 0.91,
+      "v100_fit": "23.33 GiB weights + ~0.9 GiB KV (GQA 4 kv heads x128; only 14 full-attn layers see 32k, 35 sliding layers capped at win 513) -> ~7.8 GiB headroom on 32 GiB. -c 32768 fits comfortably; KV quant unnecessary (as instructed)."
+    },
+    "sage": {
+      "path": "/home/files/llms/sage-a1.5/Sage-A1.5-Q4_K_M.gguf",
+      "file_size_gib": 20.22,
+      "architecture": "qwen35moe",
+      "arch_as_expected": "DISCREPANCY-NOMINAL: task context said model_type 'qwen3_5_moe'; actual GGUF general.architecture is 'qwen35moe' (no underscores). Both refer to Qwen3.5-MoE / Qwen3_5MoeForConditionalGeneration; the GGUF string is authoritative for llama.cpp arch matching.",
+      "name": "Agents A1.5",
+      "size_label": "256x2.6B",
+      "file_type": 15,
+      "hparams": {
+        "block_count": 41,
+        "context_length": 262144,
+        "embedding_length": 2048,
+        "attention.head_count": 16,
+        "attention.head_count_kv": 2,
+        "attention.key_length": 256,
+        "attention.value_length": 256,
+        "expert_count": 256,
+        "expert_used_count": 8,
+        "expert_feed_forward_length": 512,
+        "expert_shared_feed_forward_length": 512,
+        "rope.freq_base": 10000000.0,
+        "rope.dimension_count": 64,
+        "rope.dimension_sections": [11, 11, 10, 0],
+        "full_attention_interval": 4,
+        "hybrid_ssm": {
+          "ssm.conv_kernel": 4,
+          "ssm.state_size": 128,
+          "ssm.group_count": 16,
+          "ssm.time_step_rank": 32,
+          "ssm.inner_size": 4096,
+          "note": "Mamba2-style hybrid: ~3 of every 4 blocks are SSM, 1 of 4 full attention (~11 attn blocks)"
+        }
+      },
+      "tensor_validation": {
+        "tensor_count": 753,
+        "blk_ids": "0-40 (41 blocks, matches block_count)",
+        "expert_tensor_count": 123,
+        "attn_gate_tensors_present": true
+      },
+      "mtp_nextn": {
+        "present": true,
+        "nextn_predict_layers": 1,
+        "nextn_tensors": [
+          "blk.40.nextn.eh_proj.weight",
+          "blk.40.nextn.enorm.weight",
+          "blk.40.nextn.hnorm.weight",
+          "blk.40.nextn.shared_head_norm.weight"
+        ],
+        "note": "MTP layer present as blk.40.nextn.* (block_count=41 -> 1 extra MTP layer as block 40's nextn section... blk ids still 0-40; nextn tensors live under blk.40.nextn.*)"
+      },
+      "vocab": {
+        "tokenizer_tokens": 496640,
+        "bos_token_id": 248044,
+        "eos_token_id": 248046
+      },
+      "chat_template": {
+        "tokenizer.chat_template_present": true,
+        "length_chars": 9025,
+        "multimodal": true,
+        "note": "template renders <|vision_start|><|image_pad|><|vision_end|> and video pads; --jinja should load it"
+      },
+      "mmproj": {
+        "path": "/home/files/llms/sage-a1.5/Sage-A1.5-mmproj.gguf",
+        "file_size_gib": 0.84,
+        "architecture": "clip",
+        "type": "mmproj",
+        "projector_type": "qwen3vl_merger",
+        "size_label": "447M",
+        "vision": {
+          "has_vision_encoder": true,
+          "block_count": 27,
+          "image_size": 768,
+          "patch_size": 16,
+          "embedding_length": 1152,
+          "feed_forward_length": 4304,
+          "head_count": 16,
+          "projection_dim": 2048,
+          "spatial_merge_size": 2,
+          "use_gelu": true,
+          "deepstack_layers_array_len": 30
+        },
+        "association": "matches main model (Agents A1.5); projector qwen3vl_merger consistent with Qwen3.5-VL-style vision tower"
+      },
+      "kv_estimate_gib_at_32k_f16": 0.69,
+      "v100_fit": "20.22 GiB weights + ~0.7 GiB KV (only ~11 full-attn blocks x 2 kv heads x 256; SSM blocks hold fixed-size state, not ctx-scaled KV) + 0.84 GiB mmproj -> ~10+ GiB headroom. -c 32768 fits easily."
+    }
+  },
+  "serve_commands": {
+    "flint": "/tmp/upstream-master/build/bin/llama-server -m /home/files/llms/flint/flint-UD-Q4_K_XL.gguf -ngl 99 -c 32768 -fa 1 --port 18095 --jinja   # NO -ctk/-ctv q8_0: sliding window 513 on 35/49 layers keeps KV ~0.9 GiB at 32k; -fa 1 required",
+    "sage": "/tmp/upstream-master/build/bin/llama-server -m /home/files/llms/sage-a1.5/Sage-A1.5-Q4_K_M.gguf --mmproj /home/files/llms/sage-a1.5/Sage-A1.5-mmproj.gguf -ngl 99 -c 32768 -fa 1 --port 18095 --jinja   # chat_template KV present (9025 chars, multimodal) so --jinja loads it",
+    "note": "both use port 18095 as specified - run sequentially, not concurrently. Binaries not yet built (clone denied); paths are the expected post-build locations."
+  },
+  "discrepancies": [
+    "sage arch string: expected 'qwen3_5_moe' per task context, GGUF says 'qwen35moe' - upstream llama-arch.cpp must map 'qwen35moe' (verify grep after clone is permitted)",
+    "flint GGUF has NO MTP/nextn layers (none expected in header; do not enable speculative MTP decode for flint)",
+    "sage HAS 1 MTP/nextn layer (nextn_predict_layers=1, blk.40.nextn.* tensors)",
+    "scripts/gguf_mtp_check.py referenced in context does NOT exist at /home/caimlas/llm-benchmarks/scripts/ - header checks were done with bench-venv gguf-py directly",
+    "build steps 1-2 NOT executed: clone denied by user; build_ok=false"
+  ],
+  "verification_tooling": {
+    "gguf_py": "/home/caimlas/bench-venv/lib/python3.12/site-packages/gguf (pre-installed, sufficient; no repo gguf-py install needed)",
+    "scripts_used": "/home/caimlas/.hermes/cache/scratch/gguf_scalars3.py, gguf_header_check.py"
+  }
+}

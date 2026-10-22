@@ -1,0 +1,49 @@
+{
+ "leg2_mtp": {
+  "timings": {
+   "cache_n": 0,
+   "prompt_n": 62,
+   "prompt_ms": 1069.032,
+   "prompt_per_token_ms": 17.242451612903224,
+   "prompt_per_second": 57.99639299852577,
+   "predicted_n": 292,
+   "predicted_ms": 3344.795,
+   "predicted_per_token_ms": 11.49414089347079,
+   "predicted_per_second": 87.00084758557699,
+   "draft_n": 228,
+   "draft_n_accepted": 179
+  },
+  "usage": {
+   "completion_tokens": 292,
+   "prompt_tokens": 62,
+   "total_tokens": 354,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   }
+  },
+  "content_head": "```python\ndef merge_sorted_lists(list1, list2):\n    \"\"\"\n    Merge two sorted lists into a single sorted list.\n\n    Assumes both input lists are sorted in ascending order.\n    \"\"\"\n    merged = []\n    i"
+ },
+ "leg2_nomtp": {
+  "timings": {
+   "cache_n": 0,
+   "prompt_n": 62,
+   "prompt_ms": 799.856,
+   "prompt_per_token_ms": 12.900903225806452,
+   "prompt_per_second": 77.51395251145206,
+   "predicted_n": 292,
+   "predicted_ms": 5325.093,
+   "predicted_per_token_ms": 18.299288659793813,
+   "predicted_per_second": 54.64693292680523
+  },
+  "usage": {
+   "completion_tokens": 292,
+   "prompt_tokens": 62,
+   "total_tokens": 354,
+   "prompt_tokens_details": {
+    "cached_tokens": 0
+   }
+  }
+ },
+ "leg1_bench_md": "| model                          |       size |     params | backend    | ngl | threads | n_ubatch | type_k | type_v |  fa |            test |                  t/s |\n| ------------------------------ | ---------: | ---------: | ---------- | --: | ------: | -------: | -----: | -----: | --: | --------------: | -------------------: |\n| qwen35 27B PQ2_0 - 2.13 bpw (group 128) |   6.70 GiB |    26.90 B | CUDA       |  -1 |       8 |      512 |   q8_0 |   q8_0 |   1 |           pp512 |       739.54 \u00b1 20.96 |\n| qwen35 27B PQ2_0 - 2.13 bpw (group 128) |   6.70 GiB |    26.90 B | CUDA       |  -1 |       8 |      512 |   q8_0 |   q8_0 |   1 |          pp4096 |        721.53 \u00b1 0.05 |\n| qwen35 27B PQ2_0 - 2.13 bpw (group 128) |   6.70 GiB |    26.90 B | CUDA       |  -1 |       8 |      512 |   q8_0 |   q8_0 |   1 |           tg128 |         49.18 \u00b1 0.17 |\n| qwen35 27B PQ2_0 - 2.13 bpw (group 128) |   6.70 GiB |    26.90 B | CUDA       |  -1 |       8 |     2048 |   q8_0 |   q8_0 |   1 |           pp512 |       745.80 \u00b1 12.14 |\n| qwen35 27B PQ2_0 - 2.13 bpw (group 128) |   6.70 GiB |    26.90 B | CUDA       |  -1 |       8 |     2048 |   q8_0 |   q8_0 |   1 |          pp4096 |        966.07 \u00b1 0.86 |\n| qwen35 27B PQ2_0 - 2.13 bpw (group 128) |   6.70 GiB |    26.90 B | CUDA       |  -1 |       8 |     2048 |   q8_0 |   q8_0 |   1 |           tg128 |         49.14 \u00b1 0.17 |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |      512 |   q8_0 |   q8_0 |   1 |           pp512 |       769.97 \u00b1 13.22 |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |      512 |   q8_0 |   q8_0 |   1 |          pp4096 |        748.81 \u00b1 0.25 |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |      512 |   q8_0 |   q8_0 |   1 |           tg128 |         55.90 \u00b1 0.21 |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |     2048 |   q8_0 |   q8_0 |   1 |           pp512 |       769.91 \u00b1 13.25 |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |     2048 |   q8_0 |   q8_0 |   1 |          pp4096 |        972.63 \u00b1 0.71 |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |     2048 |   q8_0 |   q8_0 |   1 |           tg128 |         55.89 \u00b1 0.21 |\n\nbuild: 73bfe6c (1)\nggml_cuda_init: found 1 CUDA devices (Total VRAM: 32494 MiB):\n  Device 0: Tesla PG500-216, compute capability 7.0, VMM: yes, VRAM: 32494 MiB\n",
+ "leg3_ub_md": "| model                          |       size |     params | backend    | ngl | threads | n_ubatch | type_k | type_v |  fa |            test |                  t/s |\n| ------------------------------ | ---------: | ---------: | ---------- | --: | ------: | -------: | -----: | -----: | --: | --------------: | -------------------: |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |      512 |   q8_0 |   q8_0 |   1 |         pp16384 |        646.90 \u00b1 0.03 |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |      512 |   q8_0 |   q8_0 |   1 |           tg256 |         56.17 \u00b1 0.15 |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |     1024 |   q8_0 |   q8_0 |   1 |         pp16384 |        750.92 \u00b1 0.88 |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |     1024 |   q8_0 |   q8_0 |   1 |           tg256 |         56.06 \u00b1 0.13 |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |     2048 |   q8_0 |   q8_0 |   1 |         pp16384 |        808.30 \u00b1 0.97 |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |     2048 |   q8_0 |   q8_0 |   1 |           tg256 |         56.14 \u00b1 0.06 |\n\nbuild: 73bfe6c (1)\nggml_cuda_init: found 1 CUDA devices (Total VRAM: 32494 MiB):\n  Device 0: Tesla PG500-216, compute capability 7.0, VMM: yes, VRAM: 32494 MiB\n"
+}

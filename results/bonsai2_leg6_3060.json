@@ -1,0 +1,72 @@
+{
+  "leg": "leg6_3060",
+  "date": "2026-10-22",
+  "host_gpu": "NVIDIA GeForce RTX 3060 12GB (sm_86), CUDA_VISIBLE_DEVICES=1, driver 580.178.04",
+  "build": {
+    "head": {
+      "repo": "/tmp/prism-head (PrismML-Eng/llama.cpp, branch prism)",
+      "commit": "73bfe6c",
+      "bin": "/tmp/prism-head/build/bin/llama-bench"
+    },
+    "baseline_pre_pr218": {
+      "repo": "PrismML prebuilt prism-b10685",
+      "commit": "7dffb15",
+      "bin": "/var/tmp/llms/bench-0918/prismml-bin/llama-prism-b10685-7dffb15/llama-bench"
+    }
+  },
+  "models": "/var/tmp/llms/bench-0918/bonsai2/",
+  "bench_flags": "-ngl 99 -p 512,4096 -n 128 -fa 1 -ctk q8_0 -ctv q8_0 -ub 512,2048 -r 2 -t 8 -o md",
+  "phaseA_llama_bench_73bfe6c": {
+    "PTQ1_0": {
+      "tg128": { "ub512": 44.99, "ub2048": 44.90 },
+      "pp512": { "ub512": 578.98, "ub2048": 576.09 },
+      "pp4096": { "ub512": 569.98, "ub2048": 583.81 }
+    },
+    "PQ2_0": {
+      "tg128": { "ub512": 35.57, "ub2048": 35.54 },
+      "pp512": { "ub512": 579.89, "ub2048": 575.47 },
+      "pp4096": { "ub512": 572.30, "ub2048": 576.83 }
+    },
+    "notes": "No OOM at ub2048 on 12GB card; both quant matrices completed. ub2048 gave no material gain over ub512 at these prompt sizes (within noise); tg128 identical across ubatch."
+  },
+  "phaseB_claim_reproduction": {
+    "claim": "sudoingX/bonsai2-small-gpu, vendor PR #218: 3060 PTQ1_0 decode 26.3 -> 40.5 t/s via small-batch matvec",
+    "their_flags": "-ngl 99 -fa 1 -ctk q4_0 -ctv q4_0, r=3, GGML_CUDA_BATCH_INVARIANT off, fresh ctx, pp512/tg128",
+    "prebuilt_b10685_7dffb15": { "pp512": 268.70, "tg128": 26.74 },
+    "head_73bfe6c_same_flags": { "pp512": 574.71, "tg128": 44.85 },
+    "reproduction": {
+      "baseline_matches": "yes (26.74 vs claimed 26.32, +1.6%)",
+      "patched_matches": "HEAD exceeds claim (44.85 vs 40.47, +10.8%) because 73bfe6c also contains the later Ampere MMQ prefill kernel (commit bdc23b5 'full Ampere tile table (2x prefill)') merged after #218's series",
+      "tg128_gain": "1.68x measured vs 1.53x claimed"
+    }
+  },
+  "phaseC_mtp_probe": {
+    "server": "llama-server 73bfe6c, PTQ1_0-mtp.gguf, port 18097, -ngl 99 -c 16384 -fa 1 -ctk/v q8_0 --spec-type draft-mtp --spec-draft-n-max 2 -sm none",
+    "request": "chat completion, coding prompt (topological sort / Kahn), temp 0, max_tokens 512",
+    "prompt_tokens": 110,
+    "prompt_per_second": 168.34,
+    "predicted_tokens": 512,
+    "predicted_per_second": 61.69,
+    "predicted_per_token_ms": 16.209,
+    "draft_n": 472,
+    "draft_n_accepted": 274,
+    "draft_acceptance": 0.58051,
+    "draft_mean_len": 2.16,
+    "finish_reason": "length",
+    "output_note": "Model is a thinking model: all 512 tokens landed in reasoning_content (valid Kahn algorithm text), content empty at cutoff. Generation was coherent; no repetition/degeneration."
+  },
+  "v100_reference_comparison": {
+    "PTQ1_0": {
+      "tg128": { "v100": 55.9, "3060": 44.90, "ratio_3060_vs_v100": 0.80 },
+      "pp4096_ub2048": { "v100": 972.6, "3060": 583.81, "ratio": 0.60 }
+    },
+    "mtp_decode": { "v100": 87, "3060": 61.69, "ratio": 0.71 },
+    "notes": "3060 holds 80% of V100 decode, 60% of prefill. MTP speedup on 3060: 61.69/44.90 = 1.37x over plain tg128; V100 MTP speedup was 87/55.9 = 1.56x."
+  },
+  "third_party_claim_verdict": "CONFIRMED. Prebuilt b10685 baseline reproduced exactly (26.74 vs claimed 26.32 t/s tg128). PR #218's PTQ1_0 planar small-batch matvec kernel series (commits e148e85, 8fd2a0b, 29e3767, e724b07, efe1a06) is merged into prism HEAD 73bfe6c, where the same flags yield 44.85 t/s (1.68x vs baseline, exceeding the claimed 1.53x/40.5 because HEAD additionally carries the later Ampere MMQ prefill doubling). The 26.3->40.5 claim is real, conservative, and already shipped in HEAD.",
+  "service_restore": {
+    "caimlas_gemma_restarted": true,
+    "verified": "systemctl is-active = active; GET localhost:8080/v1/models lists gemma-4-12B-it-exl3-4bpw (~90s load); nvidia-smi GPU1 back to 10741 MiB (TabbyAPI), same as pre-leg"
+  },
+  "raw_files": "/home/caimlas/llm-benchmarks/results/leg6_raw/"
+}

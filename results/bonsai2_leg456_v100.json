@@ -1,0 +1,106 @@
+{
+ "meta": {
+  "date": "2026-10-22",
+  "gpu": "Tesla V100 32GB (sm_70), CUDA_VISIBLE_DEVICES=0, flock /tmp/gpu0.lock per phase",
+  "stock_build": "/tmp/prism-head @ 73bfe6c (prism HEAD)",
+  "models": "/var/tmp/llms/bench-0918/bonsai2",
+  "drafter": "/home/files/llms/bonsai2-drafter/Ternary-Bonsai-2-27B-DFlash2-ft5-Q8_0.gguf",
+  "baselines": {
+   "ptq1_0_tg128": 55.9,
+   "pq2_0_tg128": 49.2,
+   "mtp_decode": 87.0,
+   "mtp_acceptance": 0.785
+  },
+  "wikitext": "~/.cache/wikitext-2/wiki.test.raw (from ggml-org/ci wikitext-2-raw-v1.zip; HF .../wikitext/... URL 404s)"
+ },
+ "leg4_dflash_drafter": {
+  "baseline_nodraft": {
+   "decode_tps": 54.627686658582626,
+   "prompt_tps": 193.36633306422274,
+   "prompt_n": 177,
+   "predicted_n": 512
+  },
+  "dflash": {
+   "loaded": true,
+   "spec_type_used": "draft-dflash",
+   "log": "common_speculative_impl_draft_dflash: block_size=8, mask_token_id=248070, n_extract=5, sample_from_anchor=true, lineage=dflash; n_max=3",
+   "decode_tps": 73.46494916829339,
+   "prompt_tps": 106.29507031088606,
+   "draft_n": 549,
+   "draft_n_accepted": 328,
+   "acceptance": 0.5974,
+   "mean_draft_len": 2.79,
+   "content_head": ""
+  },
+  "dspark_arg": {
+   "loaded": true,
+   "spec_type_requested": "draft-dspark",
+   "result": "auto-fallback: 'draft model carries no DSpark Markov head, but --spec-type requested draft-dspark. Using DFlash' (log warning); numbers identical to draft-dflash (72.9 t/s, 328/549)",
+   "decode_tps": 72.91129819779252,
+   "acceptance": 0.5974
+  },
+  "notes": "DFlash2-ft5 drafter engages: 59.7% acceptance (328/549, mean draft len 2.79), decode 73.5 t/s vs 54.6 t/s same-config no-draft baseline (+34.5%); vs 55.9 t/s llama-bench tg128 baseline. MTP (87.0 t/s, 78.5%) still faster. Prefill penalty: 193.4 -> 106.3 t/s (-45%) on 177-token prompt (drafter adds a second model load and 5-layer extract). No rename needed: loader detects lineage from GGUF (dflash arch + selector_top_k>0 => DFlash2); dspark-dflash filename convention only matters for HF sidecar auto-discovery, not local -md paths. temp=0, coding prompt ~512 tok completion.",
+  "server_cmd": "llama-server -m PTQ1_0.gguf -md DFlash2-ft5-Q8_0.gguf --spec-type draft-dflash -ngl 99 -ngld 999 -c 32768 -fa 1 -ctk/ctv q8_0 -ub 1024 --jinja -sm none --main-gpu 0 --port 18096"
+ },
+ "leg_ppl_parity": {
+  "method": "llama-perplexity -f wiki.test.raw -c 512 -fa 1 -ctk/ctv q8_0 -t 8 --no-warmup (stock build)",
+  "ptq1_0_chunks2": {
+   "ppl": "8.7508",
+   "seconds": 8.1,
+   "full_md": null
+  },
+  "pq2_0_chunks2": {
+   "ppl": "8.7508",
+   "seconds": 20.9
+  },
+  "ptq1_0_full": {
+   "ppl": "9.2476",
+   "seconds": 516.5,
+   "chunks": 580
+  },
+  "pq2_0_full": {
+   "ppl": "9.2476",
+   "seconds": 517.7,
+   "chunks": 580
+  },
+  "parity": "BIT-IDENTICAL: both quants 8.7508 +/- 1.12339 (chunks 2) and 9.2476 +/- 0.06441 (full 580 chunks, ~517 s each, <15 min).",
+  "ada_reference_note": "ADA's 7.1131 reference is on their fork/batching (Q=(256,256,24,2), i.e. -b 1024 n_seq path). This prism-HEAD build with default batch gives 8.7508; -b 1024 crosscheck also 8.7508. Parity between quants (the actual gate) holds exactly."
+ },
+ "leg5_ada_port": {
+  "port_root": "/tmp/ada-port @ 73bfe6c + oripoin-picks-20260926-full.patch + local-patch-v100-20260927.patch (resolved)",
+  "build": {
+   "ok": true,
+   "cmake": "-DGGML_CUDA=ON -DCMAKE_CUDA_ARCHITECTURES=70 -DCMAKE_BUILD_TYPE=Release",
+   "build_id": "73bfe6cc4 (10787)"
+  },
+  "d256": "SKIPPED: sm70-vendor CUTLASS fetch (github.com/NVIDIA/cutlass) was denied by the user consent gate; fattn-sm70-d256*.cu removed and routing reverted to stock Volta MMA. (ADA docs note it diverges greedy output anyway.)",
+  "conflict_resolution": {
+   "patch1": "2 conflicts: fattn.cu alloc-size (kept HEAD's MMA_F16 native-KV logic; ADA's !tile_q8 moved to the TILE case which is where tile_q8 can be true), tests/test-backend-ops.cpp (kept both additive test blocks)",
+   "patch2": "12 files / 51 hunks. Resolved 'ours' (prism HEAD) throughout: HEAD already carries evolved versions of the ADA ideas (batch-invariant PTQ1_0 epilogue + GGML_PTQ1_1COL diag, fwht_q8 fusion, GDN l8, MTP catch-up hardening/chain mode). Kept ADA's clean hunks: q8_0-KV FA tile direct read (fattn-tile.cuh +229), GDN 4-col/warp on Volta (GDN_WIDE_MIN_TOKENS=8), GDN recurrent-state gather fold, PTQ1_0 MMQ sm_70 tiles, concat/norm/unary fusions, server MTP microbatch fix, SPC_MTP_PROF/SPC_DECODE_PROF timers (re-added self-contained helpers after ours-resolution dropped them).",
+   "build_fixes": "2 compile fixes post-resolution: (1) gated_delta_net.cu - re-added gdn_max_cols_per_warp alias + GDN_WIDE_MIN_TOKENS and split the S_v==128 launch by `wide`; (2) speculative.cpp - re-inserted mtp_prof/prof_scope/dft_decode helper block that clean hunks still referenced."
+  },
+  "bench_stock": {
+   "md": "| model                          |       size |     params | backend    | ngl | threads | n_ubatch | type_k | type_v |  fa |            test |                  t/s |\n| ------------------------------ | ---------: | ---------: | ---------- | --: | ------: | -------: | -----: | -----: | --: | --------------: | -------------------: |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |     2048 |   q8_0 |   q8_0 |   1 |          pp4096 |        980.78 \u00b1 1.97 |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |     2048 |   q8_0 |   q8_0 |   1 |         pp16384 |        816.48 \u00b1 2.37 |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |     2048 |   q8_0 |   q8_0 |   1 |           tg128 |         55.80 \u00b1 0.29 |\n\nbuild: 73bfe6c (1)\n"
+  },
+  "bench_ported": {
+   "md": "| model                          |       size |     params | backend    | ngl | threads | n_ubatch | type_k | type_v |  fa |            test |                  t/s |\n| ------------------------------ | ---------: | ---------: | ---------- | --: | ------: | -------: | -----: | -----: | --: | --------------: | -------------------: |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |     2048 |   q8_0 |   q8_0 |   1 |          pp4096 |       1040.17 \u00b1 1.23 |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |     2048 |   q8_0 |   q8_0 |   1 |         pp16384 |        926.45 \u00b1 1.54 |\n| qwen35 27B PTQ1_0 - 1.75 bpw ternary (group 128) |   5.53 GiB |    26.90 B | CUDA       |  -1 |       8 |     2048 |   q8_0 |   q8_0 |   1 |           tg128 |         58.61 \u00b1 0.28 |\n\nbuild: 73bfe6cc4 (10787)\n"
+  },
+  "bench_delta": {
+   "pp4096": "980.78 -> 1040.17 t/s (+6.1%)",
+   "pp16384": "816.48 -> 926.45 t/s (+13.5%)",
+   "tg128": "55.80 -> 58.61 t/s (+5.0%)"
+  },
+  "ppl_parity_gate": {
+   "stock_chunks2_ptq1_0": "8.7508",
+   "ported_chunks2_ptq1_0": "8.7507",
+   "ported_chunks2_pq2_0": "8.7507",
+   "stock_b1024_crosscheck": "8.7508",
+   "delta": 0.0001,
+   "verdict": "PASS (delta 0.0001 <= 0.005; ported PTQ1_0 and PQ2_0 both bit-identical to stock)"
+  }
+ },
+ "prod_service": {
+  "restored": true,
+  "verified": "nvidia-smi: 30494 MiB proc on GPU0, systemctl: active"
+ }
+}

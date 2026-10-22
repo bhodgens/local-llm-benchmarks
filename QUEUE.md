@@ -620,3 +620,22 @@ hf download rmonsurate/Victoria --include "gguf/victoria-s410-bitexact-tbl8-*" -
 | 7 | MiniCPM5-2B Q8_0 (V100) | /home/files/llms/MiniCPM5-2B-Q8_0.gguf | V100 |
 | 8 | Ternary-Bonsai-2-27B PQ2_0 (V100) | /var/tmp/llms/bench-0918/bonsai2/Ternary-Bonsai-2-27B-PQ2_0.gguf | V100 |
 | 9 | Qwen3.8-27B Q4_K_M | /home/files/llms/Qwen3.8-27B-Q4_K_M.gguf | V100 |
+
+---
+
+## Flint (Recursive) — unsloth/flint-GGUF (STAGED, not run)
+
+- Source: user link (unsloth/flint-GGUF; X post NFT_Chen 2112825844305682477 was about a DIFFERENT model, Sage-A1.5 — see next entry)
+- What: 39.8B MoE, ~2.5B active (256 experts top-6 + shared), 49L, 262K ctx, sliding-window 513, arch FlintForCausalLM, coding-agent focus (claims SWE-bench-V 74.2)
+- File: flint-UD-Q4_K_XL.gguf 25.05GB -> /home/files/llms/flint/ (download script /tmp/dl_flint_sage.sh, bg proc)
+- Engine: upstream master REQUIRED — support merged 2026-10-21 a37cc4610 "models : add Flint (FlintForCausalLM) #30928"; local bench branch 229 commits behind -> separate build dir (build-bench-flint), do NOT touch prod-linked builds
+- Fit: V100 32GB full offload OK (25GB wts + q8_0 KV). 3060: no.
+
+## Sage-A1.5 (Shanghai AI Lab) — InternScience/Sage-A1.5 (STAGED, not run)
+
+- Source: X post NFT_Chen 2112825844305682477 ("35B MoE, 3B active, agent/science"; claims SWE-Pro 61.2, FS-Olympiad 81.0)
+- What: model_type qwen3_5_moe (Qwen3_5MoeForConditionalGeneration), 40L, 256e top-8 + shared(512), 262K ctx, HYBRID linear/full attention (3 linear : 1 full, full_attention_interval=4), multimodal (mmproj 0.9GB), MTP head in base repo (model-mtp.safetensors)
+- Files: official GGUF repo InternScience/Sage-A1.5-Q4_K_M-GGUF: Sage-A1.5-Q4_K_M.gguf 21.71GB + Sage-A1.5-mmproj.gguf -> /home/files/llms/sage-a1.5/
+- Engine: upstream master (qwen3_5_moe already present); same new build as Flint lane
+- Fit: V100 32GB OK (21.7GB wts; linear-attn = small KV). 3060: no.
+- Intake: header check scripts/gguf_mtp_check.py (verify MTP presence in the GGUF, never filename); verify active-param math vs tweet's "3B active"; lane port 18096; LCB allowlist+lm_styles registration before LCB leg; tau2 sim on OTHER GPU; stop caimlas-minicpm-v100 for the V100 lane; thinking ON/OFF pair (Qwen lineage — probe template class first); downloads verified vs paths-info sizes (21.71/0.9/25.05 GB)

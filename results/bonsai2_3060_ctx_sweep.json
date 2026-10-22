@@ -1,0 +1,37 @@
+{
+ "model": "Ternary-Bonsai-2-27B-PTQ1_0 (prism HEAD 73bfe6c, RTX 3060 12GB)",
+ "bench_ub512": {
+  "pp512": 591.15,
+  "pp4096": 580.53,
+  "tg128": 45.19
+ },
+ "bench_ub2048": {
+  "pp512": 582.88,
+  "pp4096": 589.9,
+  "tg128": 45.06
+ },
+ "mtp_larger_ctx": {
+  "ctx32k_q8_0": {
+   "decode_tps": 71.78,
+   "acc": "179/228",
+   "vram": "9858 MiB"
+  },
+  "ctx32k_q4_0": {
+   "decode_tps": 70.97,
+   "acc": "183/238",
+   "vram": "9314 MiB"
+  },
+  "ctx64k_q8_0": {
+   "decode_tps": 71.72,
+   "acc": "179/228",
+   "vram": "11044 MiB"
+  },
+  "ctx64k_q4_0": {
+   "decode_tps": 71.1,
+   "acc": "183/238",
+   "vram": "9956 MiB"
+  }
+ },
+ "conclusion": "Larger context is essentially FREE on the 3060 for Bonsai-2: decode stays ~71 t/s from 32K to 64K ctx (hybrid GDN attention keeps KV tiny). q4_0 KV saves ~1.1GB at 64K (9956 vs 11044 MiB) with no decode cost. MTP (draft-mtp n_max 2) is the single biggest decode lever: 45 -> 71 t/s (+58%). ubatch 2048 helps prefill only at >4K ctx (589.9 vs 580.5 pp4096); ub512 fine below. Best config: PTQ1_0 + MTP + q4_0 KV + ub2048 for long prompts.",
+ "best_config": "PTQ1_0.gguf, --spec-type draft-mtp --spec-draft-n-max 2, -ctk/v q4_0, -fa 1, -ub 2048 (long prompts) / 512 (short), -c up to 64K+"
+}
