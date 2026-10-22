@@ -1,0 +1,34 @@
+{
+ "flint": {
+  "props": "/home/files/llms/flint/flint-UD-Q4_K_XL.gguf",
+  "best": {
+   "prompt_tps": 129.07667154289646,
+   "decode_tps": 85.94357450448473,
+   "draft_n": null,
+   "draft_acc": null,
+   "content_head": ""
+  }
+ },
+ "flint_bench": "| flint ?B Q4_K - Medium | 23.33 GiB | 39.79 B | CUDA | -1 | 8 | 1 | pp512 | 758.88 \u00b1 1.48 |\n| flint ?B Q4_K - Medium | 23.33 GiB | 39.79 B | CUDA | -1 | 8 | 1 | pp4096 | 746.79 \u00b1 0.04 |\n| flint ?B Q4_K - Medium | 23.33 GiB | 39.79 B | CUDA | -1 | 8 | 1 | tg128 | 89.08 \u00b1 0.75 |",
+ "sage": {
+  "props": "/home/files/llms/sage-a1.5/Sage-A1.5-Q4_K_M.gguf",
+  "best": {
+   "prompt_tps": 40.05006257822278,
+   "decode_tps": 109.01605528610301,
+   "draft_n": null,
+   "draft_acc": null,
+   "content_head": ""
+  }
+ },
+ "sage_bench": "| qwen35moe 35B.A3B Q4_K - Medium | 20.21 GiB | 35.51 B | CUDA | -1 | 8 | 1 | pp512 | 873.74 \u00b1 13.50 |\n| qwen35moe 35B.A3B Q4_K - Medium | 20.21 GiB | 35.51 B | CUDA | -1 | 8 | 1 | pp4096 | 846.00 \u00b1 4.30 |\n| qwen35moe 35B.A3B Q4_K - Medium | 20.21 GiB | 35.51 B | CUDA | -1 | 8 | 1 | tg128 | 115.34 \u00b1 1.03 |",
+ "sage_mtp": {
+  "props": "/home/files/llms/sage-a1.5/Sage-A1.5-Q4_K_M.gguf",
+  "best": {
+   "prompt_tps": 39.6691592121705,
+   "decode_tps": 146.13465248033486,
+   "draft_n": 211,
+   "draft_acc": 149,
+   "content_head": ""
+  }
+ }
+}

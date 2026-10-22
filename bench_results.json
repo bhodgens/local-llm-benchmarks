@@ -736,5 +736,36 @@
   "engine": "prism-73bfe6c",
   "mtp_acceptance": 0.77,
   "note": "3060 64K ctx q4_0 KV, decode 71.1, VRAM 9956 MiB"
+ },
+ "flint-UD-Q4_K_XL.gguf [no-spec]": {
+  "prompt_eval_tps": 758.88,
+  "decode_tps_1": 89.08,
+  "decode_tps_2": 89.08,
+  "decode_tps_avg": 89.08,
+  "decode_tokens_avg": 128,
+  "gpu": "GPU0",
+  "engine": "upstream-970b51c",
+  "note": "Flint 39.8B MoE 2.5B active, tg128 89.1, pp512 758.9"
+ },
+ "Sage-A1.5-Q4_K_M.gguf [no-spec]": {
+  "prompt_eval_tps": 873.74,
+  "decode_tps_1": 115.34,
+  "decode_tps_2": 115.34,
+  "decode_tps_avg": 115.34,
+  "decode_tokens_avg": 128,
+  "gpu": "GPU0",
+  "engine": "upstream-970b51c",
+  "note": "Sage 35B MoE 3B active, tg128 115.3, pp512 873.7"
+ },
+ "Sage-A1.5-Q4_K_M.gguf [MTP-n2]": {
+  "prompt_eval_tps": 39.67,
+  "decode_tps_1": 146.13,
+  "decode_tps_2": 146.13,
+  "decode_tps_avg": 146.13,
+  "decode_tokens_avg": 256,
+  "gpu": "GPU0",
+  "engine": "upstream-970b51c",
+  "mtp_acceptance": 0.706,
+  "note": "draft-mtp n_max 2, decode 146.1, acc 70.6%"
  }
 }
