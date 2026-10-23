@@ -1,0 +1,32 @@
+{
+ "Flint-39.8B Q4_K_XL (V100)": {
+  "lcb": {
+   "lcb_pass1": 0.4666666666666667,
+   "wall_s": 2723.9,
+   "log": "/tmp/lcb_flint-398b-q4kxl-v100.log"
+  },
+  "tau2": {
+   "tau2_reward": 0.1333,
+   "sims": 15,
+   "scored": 14,
+   "infra": 1,
+   "wall_s": 4017.3,
+   "log": "/tmp/tau2_Flint_39_8B_Q4_K_XL_V100.log"
+  }
+ },
+ "Sage-A1.5 Q4_K_M (V100)": {
+  "lcb": {
+   "lcb_pass1": 0.8,
+   "wall_s": 775.0,
+   "log": "/tmp/lcb_sage-a15-q4km-v100.log"
+  },
+  "tau2": {
+   "tau2_reward": 0.0667,
+   "sims": 15,
+   "scored": 9,
+   "infra": 6,
+   "wall_s": 6610.7,
+   "log": "/tmp/tau2_Sage_A1_5_Q4_K_M_V100.log"
+  }
+ }
+}

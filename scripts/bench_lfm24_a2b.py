@@ -119,8 +119,17 @@ def throughput(port, card):
 
 def run_lcb(port, card, model_name):
     lcb_model = f"local/lfm24-a2b-card{card}"
-    outdir = os.path.join(LCB_DIR, "output", lcb_model.replace("/","_"))
-    shutil.rmtree(outdir, ignore_errors=True)  # fresh (no thinking-cache issue, but clean anyway)
+    # LCB writes output under the model_repr (display name), NOT the model_name.
+    # Resolve the repr from the store to find the real output dir.
+    import sys
+    sys.path.insert(0, LCB_DIR)
+    try:
+        from lcb_runner.lm_styles import LanguageModelStore
+        repr_name = LanguageModelStore[lcb_model].model_repr
+    except Exception:
+        repr_name = f"LFM2.5-24B-A2B Q4_K_M ({'V100' if card==0 else '3060'})"
+    outdir = os.path.join(LCB_DIR, "output", repr_name)
+    shutil.rmtree(outdir, ignore_errors=True)  # fresh run
     cmd = [BENCH_PY, "-m", "lcb_runner.runner.main",
            "--model", lcb_model, "--scenario", "codegeneration",
            "--release_version", "release_latest", "--n", "1", "--temperature", "0.0",
