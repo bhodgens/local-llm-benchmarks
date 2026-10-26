@@ -1,0 +1,20 @@
+{
+ "Nanbeige4.3-33B AD-Q5_K_M (V100)": {
+  "speed": {
+   "decode_tps": 29.38
+  },
+  "lcb": {
+   "lcb_pass1": 0.7066666666666667,
+   "wall_s": 721.7,
+   "log": "/tmp/lcb_nanbeige43-33b-adq5km-v100.log"
+  },
+  "tau2": {
+   "tau2_reward": 0.0667,
+   "sims": 15,
+   "scored": 15,
+   "infra": 0,
+   "wall_s": 1784.9,
+   "log": "/tmp/tau2_Nanbeige4_3_33B_AD_Q5_K_M_V100.log"
+  }
+ }
+}

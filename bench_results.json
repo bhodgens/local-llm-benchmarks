@@ -767,5 +767,16 @@
   "engine": "upstream-970b51c",
   "mtp_acceptance": 0.706,
   "note": "draft-mtp n_max 2, decode 146.1, acc 70.6%"
+ },
+ "Nanbeige4.3-33B-AD-Q5_K_M.gguf [no-spec]": {
+  "decode_tps_runs": [
+   29.4,
+   29.3
+  ],
+  "decode_tps_avg": 29.38,
+  "prompt_eval_tps": null,
+  "gpu": "GPU0",
+  "engine": "upstream-970b51c",
+  "note": "Nanbeige4.3-33B AD-Q5_K_M, 33B dense 8KV; decode ~29.4 t/s on V100"
  }
 }
