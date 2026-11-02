@@ -778,5 +778,25 @@
   "gpu": "GPU0",
   "engine": "upstream-970b51c",
   "note": "Nanbeige4.3-33B AD-Q5_K_M, 33B dense 8KV; decode ~29.4 t/s on V100"
+ },
+ "Ternary-Bonsai-2-27B-PQ2_0.gguf [3060]": {
+  "prompt_eval_tps": 501.9,
+  "decode_tps_1": 36.21,
+  "decode_tps_2": 35.95,
+  "decode_tps_avg": 36.08,
+  "decode_tokens_avg": 256,
+  "gpu": "GPU1",
+  "engine": "prism-73bfe6c",
+  "note": "3060 64K ctx f16 KV, decode 36.1 best, pp30k 502; +5.5% decode vs PTQ1_0-mtp no-spec 34.3-equivalent; PP lower at long ctx (484-560 range 10k-30k); server head build"
+ },
+ "Ternary-Bonsai-2-27B-PQ2_0.gguf [3060-64K-q4kv]": {
+  "prompt_eval_tps": 489.2,
+  "decode_tps_1": 35.99,
+  "decode_tps_2": 35.65,
+  "decode_tps_avg": 35.82,
+  "decode_tokens_avg": 256,
+  "gpu": "GPU1",
+  "engine": "prism-73bfe6c",
+  "note": "3060 64K ctx q4_0 KV, VRAM 8649 MiB; decode ~same as f16 KV, pp 484-552"
  }
 }

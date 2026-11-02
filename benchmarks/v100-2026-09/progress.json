@@ -2664,7 +2664,22 @@
     "exit_code": 0,
     "note": "tau2_Nanbeige4_3_33B_AD_Q5_K_M_V100; 15/15 scored, 0 infra, 0 empty-message retries; 1xuser_stop=1.0 + 4 timeout + 4 max_steps + 4 user_stop + 2 empty_response + 1 too_many_errors = 0.0"
    }
+  },
+  {
+   "name": "Ternary-Bonsai-2-27B PQ2_0 (3060 64K)",
+   "file": "/var/tmp/llms/bench-0918/bonsai2/Ternary-Bonsai-2-27B-PQ2_0.gguf",
+   "category": "27B Ternary",
+   "gpu": "3060",
+   "quant": "PQ2_0",
+   "decode_tps": 36.08,
+   "prefill_pp30k_tps": 501.9,
+   "prefill_pp10k_tps": 559.6,
+   "engine": "prism-73bfe6c",
+   "status": "speed_done",
+   "note": "speed-only lane: decode/prefill complete; LCB/tau2/sanity/HumanEval not run (prod gemma co-tenancy window). f16-KV and q4_0-KV variants both benched, q4_0 KV 8649 MiB at 64K ctx. Compare gemma-4-12B-it-QAT EXL3 4bpw prod: decode 30.6, pp30k 354.6 (TabbyAPI live, 2026-11-01).",
+   "livecodebench": {},
+   "tau2": {}
   }
  ],
- "last_updated": "2026-10-26T02:20:00+00:00"
+ "last_updated": "2026-11-01"
 }
