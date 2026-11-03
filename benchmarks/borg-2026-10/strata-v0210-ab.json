@@ -1,0 +1,64 @@
+{
+ "date": "2026-11-03",
+ "question": "Does Strata v0.2.10 (engine 0.1.56) improve tok/s vs the live v0.1.44 install?",
+ "method": "Same protocol as the 2026-10-14 A/B: prebuilt rx9070 (gfx1201) engine from the v0.2.10 release, installed in /root/strata-0210, served on :8081 with the IDENTICAL arg set as live (IQ3_S GSQ-RCO, spec 4, spec-min-p 0.5, MTP, k8v4, 262144 ctx, ple-io ram, shared-expert-arena, adapt-async 1, same hipBLASLt tuning table). Live v0.1.44 server stopped during measurement (host cannot hold both). Warmup + 5x 256-token decode medians (gen_probe.py, unique nonce text) + 46.8K-token cold prefill.",
+ "results": {
+  "v0.1.44_live (2026-10-14 A/B)": {
+   "decode_median_tps": 67.8,
+   "prefill_46k_tps": 1193
+  },
+  "v0.2.10 baseline (spec4 p0.5, 10 runs)": {
+   "decode_median_tps": 74.15,
+   "decode_runs": [
+    72.7,
+    78.2,
+    79.2,
+    72.4,
+    75.5,
+    71.1,
+    73.0,
+    74.7,
+    74.9,
+    73.6
+   ],
+   "prefill_46k_tps": 1419
+  },
+  "deltas_vs_live": {
+   "decode": "+9.4%",
+   "prefill": "+18.9%"
+  }
+ },
+ "settings_sweep_0210": {
+  "spec4_p05_baseline": {
+   "decode_median": 74.15,
+   "prefill_46k": 1419
+  },
+  "spec6_p05": {
+   "decode_median_3runs": 70.7,
+   "prefill_46k": 1260.5,
+   "verdict": "regression - keep spec 4"
+  },
+  "spec4_p04": {
+   "decode_median_3runs": 74.5,
+   "prefill_46k": 1256.9,
+   "verdict": "decode neutral, prefill regression - keep 0.5"
+  },
+  "chunk32k (STRATA_PREFILL_AUTO_MAX=32768)": {
+   "decode_median": 71.1,
+   "prefill_46k": 1418.5,
+   "verdict": "no reliable gain (Oct finding on v0.1.44 also null) - leave prefill auto"
+  },
+  "concurrency_4_streams": {
+   "aggregate_tps_approx": 50.4,
+   "per_stream_approx": 12.6,
+   "server_batch_stat": "48.5 rows/s, avg 3.39 rows/window, 34.33 ms/window; routed experts: 84% VRAM hits / 16% CPU"
+  }
+ },
+ "notes": [
+  "0.2.10 changelog (3474 commits) is dominated by the multi-card split engine (strata-split-N-amd), DeepSeek vision, Mac Metal paths - single-GPU gfx1201 gains come from gfx12 WMMA/quality-path work (e.g. 1f8ca8de RDNA4 routed-expert/draft/shared-expert/head kernels, hyper-connection Q8_0 read at load, amd queue ordering 3f1fa67f).",
+  "Engine logs show a NEW default on gfx12: hyper-connection projections read as Q8_0 (STRATA_HC_Q8=0 reverts to bf16); answers differ slightly, decode faster.",
+  "strata-split-2/3/4-amd binaries ship in the tarball; split is auto only for UD-Q4 expert family on 4x cards - IQ3_S single-card unaffected.",
+  "Install layout: /root/strata (git checkout, v0.1.44 engine at /root/strata-v0144) still live config at :8080; /root/strata-0210 holds the prebuilt 0.2.10 engine + its own config at :8081. Old install untouched as requested."
+ ],
+ "recommendation": "Keep spec 4, spec-min-p 0.5, prefill auto (all swept alternatives regressed or tied). v0.2.10 is a straight win: +9% decode, +19% prefill at identical settings. Candidate follow-up: STRATA_HC_Q8=0 A/B if answer-parity with 0.1.44 matters."
+}

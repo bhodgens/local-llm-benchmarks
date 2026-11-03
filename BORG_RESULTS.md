@@ -593,3 +593,33 @@ below the 30 t/s floor, so the 150K arm and the 4-lane wave were not run.
 Verdict: not deployable on borg at interactive speed. Raw data:
 `benchmarks/borg-2026-10/ornith-122b-bench.json`,
 `results/ornith-2026-10/` in this repo.
+
+## Strata v0.2.10 A/B (2026-11-03)
+
+Does the 0.2.10 engine (0.1.56, prebuilt rx9070 HIP) beat the live v0.1.44?
+Installed at `/root/strata-0210`, served on :8081 with the IDENTICAL arg set as
+the live install (IQ3_S GSQ-RCO, spec 4, spec-min-p 0.5, MTP, k8v4, 262K ctx,
+ple-io ram, shared-expert-arena, adapt-async 1, same hipBLASLt tuning table).
+Live server stopped during measurement (host cannot hold the model twice).
+
+| build | decode 256 (median t/s) | prefill 46.8K (t/s) |
+|---|---:|---:|
+| v0.1.44 + adapt-async (live, Oct A/B) | 67.8 | 1193 |
+| **v0.2.10, same flags (10 runs)** | **74.2** | **1419** |
+| delta | **+9.4%** | **+18.9%** |
+
+Settings sweep on 0.2.10: spec 6 regresses decode (70.7) and prefill (1261);
+spec-min-p 0.4 is decode-neutral but regresses prefill (1257);
+STRATA_PREFILL_AUTO_MAX=32768 shows no reliable gain (reconfirms the Oct
+finding). Keep spec 4 / p 0.5 / prefill auto.
+
+Notes: the 0.2.10 changelog (3474 commits) is dominated by the multi-card
+split engine and DeepSeek/Mac paths; the single-GPU gfx1201 gain comes from
+RDNA4 kernel work and a new default that reads hyper-connection projections as
+Q8_0 at load (faster decode, answers differ slightly; STRATA_HC_Q8=0 reverts).
+Raw data: `benchmarks/borg-2026-10/strata-v0210-ab.json`.
+
+Verdict: straight win at identical settings. The v0.1.44 install
+(`/root/strata`, engine at `/root/strata-v0144`) was left untouched; swap the
+live config's `exe` to `/root/strata-0210/strata` to cut over.
+
