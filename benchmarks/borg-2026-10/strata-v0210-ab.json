@@ -60,5 +60,19 @@
   "strata-split-2/3/4-amd binaries ship in the tarball; split is auto only for UD-Q4 expert family on 4x cards - IQ3_S single-card unaffected.",
   "Install layout: /root/strata (git checkout, v0.1.44 engine at /root/strata-v0144) still live config at :8080; /root/strata-0210 holds the prebuilt 0.2.10 engine + its own config at :8081. Old install untouched as requested."
  ],
- "recommendation": "Keep spec 4, spec-min-p 0.5, prefill auto (all swept alternatives regressed or tied). v0.2.10 is a straight win: +9% decode, +19% prefill at identical settings. Candidate follow-up: STRATA_HC_Q8=0 A/B if answer-parity with 0.1.44 matters."
+ "recommendation": "Keep spec 4, spec-min-p 0.5, prefill auto (all swept alternatives regressed or tied). v0.2.10 is a straight win: +9% decode, +19% prefill at identical settings. Candidate follow-up: STRATA_HC_Q8=0 A/B if answer-parity with 0.1.44 matters.",
+ "multistream_mitigation": {
+  "finding": "Aggregate decode caps at ~52 t/s under concurrent streams (2/4/8 all plateau there) while single-stream is ~74: divergent streams broaden the active-expert set, expert-cache hit rate collapses 98-99% (single) -> 65-90% (multistream), and the GPU idles on host-RAM expert fetches (engine timing: 25ms GPU-reach wait of 37ms/window). VRAM was full (33.7/34.2GB) so the cache could not grow.",
+  "lever_tested": "--kv-resident 20480 (stream KV cells, min 20480) frees KV VRAM for a larger expert-cache tier",
+  "baseline_4stream_512tok_agg_tps": 51.8,
+  "baseline_expert_cache_hit": "72.5%",
+  "kvresid_4stream_512tok_agg_tps_runs": [
+   76.6,
+   73.7
+  ],
+  "kvresid_expert_cache_hit": "91.5-92.4%",
+  "delta_aggregate": "+45-48%",
+  "context_tradeoff": "--kv-resident streams long-context KV instead of keeping it resident; max_context still 262144 advertised, KV beyond 20480 cells/stream paged. Worth confirming per-workload if clients rely on very-deep-context same-call locality.",
+  "settled_config": "spec 4, spec-min-p 0.5, --kv-resident 20480, --batch 4, --adapt-async 1, prefill auto, k8v4, 262K ctx"
+ }
 }
