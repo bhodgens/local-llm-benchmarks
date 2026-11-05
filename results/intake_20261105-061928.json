@@ -1,0 +1,143 @@
+{
+ "LFM3-1.7B Q4_K_M (3060)": {
+  "speed": {
+   "decode_tps": 176.99
+  },
+  "prefill": {
+   "prompt_tps": 8391.07
+  },
+  "sanity": {
+   "sanity_pct": 80.0,
+   "passed": 20,
+   "total": 25
+  },
+  "lcb": {
+   "pass_at_1": 0.2,
+   "wall_s": 1510.6,
+   "log": "/tmp/lcb_lfm3-17b-q4km.log"
+  },
+  "humaneval": {
+   "pass_at_1": 0.75,
+   "wall_s": 85.0,
+   "log": "/tmp/he_lfm3-17b-q4km.log"
+  },
+  "tau2": {
+   "tau2_reward": 0.0,
+   "sims": 15,
+   "scored": 15,
+   "infra": 0,
+   "wall_s": 1188.2,
+   "log": "/tmp/tau2_LFM3_1_7B_Q4_K_M_3060.log"
+  },
+  "v100_probe": {
+   "prompt_tps": 9898.21,
+   "decode_tps": 279.21,
+   "via": "llama-bench-llama-bench"
+  }
+ },
+ "LFM3-1.7B-Uncensored AD-Q6_K (3060)": {
+  "speed": {
+   "decode_tps": 163.69
+  },
+  "prefill": {
+   "prompt_tps": 8081.47
+  },
+  "sanity": {
+   "sanity_pct": 76.0,
+   "passed": 19,
+   "total": 25
+  },
+  "lcb": {
+   "pass_at_1": 0.25333333333333335,
+   "wall_s": 1782.9,
+   "log": "/tmp/lcb_lfm3-17b-unc-q6km.log"
+  },
+  "humaneval": {
+   "pass_at_1": 0.85,
+   "wall_s": 80.7,
+   "log": "/tmp/he_lfm3-17b-unc-q6km.log"
+  },
+  "tau2": {
+   "tau2_reward": 0.0667,
+   "sims": 15,
+   "scored": 15,
+   "infra": 0,
+   "wall_s": 1379.4,
+   "log": "/tmp/tau2_LFM3_1_7B_Uncensored_AD_Q6_K_3060.log"
+  },
+  "v100_probe": {
+   "prompt_tps": 10962.6,
+   "decode_tps": 246.08,
+   "via": "llama-bench-llama-bench"
+  }
+ },
+ "Coding-Monkey-Gemma gemma-coder Q4_K_M (V100)": {
+  "speed": {
+   "decode_tps": 62.16
+  },
+  "prefill": {
+   "prompt_tps": 1701.03
+  },
+  "sanity": {
+   "sanity_pct": 92.0,
+   "passed": 23,
+   "total": 25
+  },
+  "lcb": {
+   "pass_at_1": 0.6133333333333333,
+   "wall_s": 2285.2,
+   "log": "/tmp/lcb_coding-monkey-gemma4-q4.log"
+  },
+  "humaneval": {
+   "pass_at_1": 0.7333,
+   "wall_s": 104.3,
+   "log": "/tmp/he_coding-monkey-gemma4-q4.log"
+  },
+  "tau2": {
+   "tau2_reward": 0.4,
+   "sims": 15,
+   "scored": 15,
+   "infra": 0,
+   "wall_s": 4201.4,
+   "log": "/tmp/tau2_Coding_Monkey_Gemma_gemma_coder_Q4_K_M_V100.log"
+  },
+  "gpu3060_probe": {
+   "prompt_tps": 1340.05,
+   "decode_tps": 39.61,
+   "via": "llama-bench-llama-bench"
+  }
+ },
+ "Qwopus3.8-27B-Coder-Flash Q4_K_M (V100)": {
+  "speed": {
+   "decode_tps": 34.03
+  },
+  "prefill": {
+   "prompt_tps": 792.94,
+   "decode_tps": 36.16,
+   "via": "llama-bench-llama-bench"
+  },
+  "sanity": {
+   "sanity_pct": 92.0,
+   "passed": 23,
+   "total": 25
+  },
+  "lcb": {
+   "pass_at_1": 0.8533333333333334,
+   "wall_s": 2931.9,
+   "log": "/tmp/lcb_qwopus38-coderflash-q4km.log"
+  },
+  "humaneval": {
+   "pass_at_1": 1.0,
+   "wall_s": 325.0,
+   "log": "/tmp/he_qwopus38-coderflash-q4km.log"
+  },
+  "tau2": {
+   "tau2_reward": 0.2,
+   "sims": 15,
+   "scored": 15,
+   "infra": 0,
+   "wall_s": 1361.9,
+   "log": "/tmp/tau2_Qwopus3_8_27B_Coder_Flash_Q4_K_M_V100.log"
+  }
+ }
+}

@@ -15,7 +15,10 @@ Usage:
 """
 import argparse, json, os, re, subprocess, sys, tempfile, urllib.request
 
-PARQUET = "/root/.cache/huggingface/hub/datasets--openai--openai_humaneval/snapshots/7dce6050a7d6d172f3cc5c32aa97f52fa1a2e544/openai_humaneval/test-00000-of-00001.parquet"
+PARQUET_RAW = "~/.cache/huggingface/hub/datasets--openai--openai_humaneval/snapshots/*/openai_humaneval/test-00000-of-00001.parquet"
+import glob as _glob
+_PARQ = _glob.glob(os.path.expanduser(PARQUET_RAW))
+PARQUET = _PARQ[0] if _PARQ else "/root/.cache/huggingface/hub/datasets--openai--openai_humaneval/snapshots/7dce6050a7d6d172f3cc5c32aa97f52fa1a2e544/openai_humaneval/test-00000-of-00001.parquet"
 
 INSTRUCTION = (
     "Complete the following Python function. Return ONLY the code, no explanation, "

@@ -798,5 +798,45 @@
   "gpu": "GPU1",
   "engine": "prism-73bfe6c",
   "note": "3060 64K ctx q4_0 KV, VRAM 8649 MiB; decode ~same as f16 KV, pp 484-552"
+ },
+ "LFM3-1.7B-Q4_K_M.gguf [no-spec]": {
+  "pp512": 8391.07,
+  "tg128": 176.99,
+  "prompt_eval_tps": 8391.07
+ },
+ "LFM3-1.7B-Uncensored-AD-Q6_K.gguf [no-spec]": {
+  "pp512": 8081.47,
+  "tg128": 163.69,
+  "prompt_eval_tps": 8081.47
+ },
+ "gemma-coder-Q4_K_M.gguf [no-spec]": {
+  "pp512": 1701.03,
+  "tg128": 62.16,
+  "prompt_eval_tps": 1701.03
+ },
+ "Qwopus3.8-27B-Coder-Flash-Q4_K_M.gguf [no-spec]": {
+  "pp512": 792.94,
+  "tg128": 34.03,
+  "prompt_eval_tps": 792.94
+ },
+ "/var/tmp/llms/lfm3-base/LFM3-1.7B-Q4_K_M.gguf [no-spec]": {
+  "pp512": 8391.07,
+  "tg128": 176.99,
+  "prompt_eval_tps": 8391.07
+ },
+ "/var/tmp/llms/lfm3-uncensored/LFM3-1.7B-Uncensored-AD-Q6_K.gguf [no-spec]": {
+  "pp512": 8081.47,
+  "tg128": 163.69,
+  "prompt_eval_tps": 8081.47
+ },
+ "/var/tmp/llms/coding-monkey-gemma/gemma-coder-Q4_K_M.gguf [no-spec]": {
+  "pp512": 1701.03,
+  "tg128": 62.16,
+  "prompt_eval_tps": 1701.03
+ },
+ "/var/tmp/llms/qwopus-coder-flash/Qwopus3.8-27B-Coder-Flash-Q4_K_M.gguf [no-spec]": {
+  "pp512": 792.94,
+  "tg128": 34.03,
+  "prompt_eval_tps": 792.94
  }
 }

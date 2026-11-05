@@ -219,6 +219,7 @@ BASE_MODELS = {
     'Carnice-V3 Q4_K_M': ('Qwen3.8-27B', 'base_model: Qwen/Qwen3.8-27B [gguf]'),
     'Carnice-V3 Q4_K_M [Sharp]': ('Qwen3.8-27B', 'base_model: Qwen/Qwen3.8-27B [gguf]'),
     'Qwopus3.8-27B-Flash MTP Q4_K_M': ('Qwen3.8-27B', 'Qwopus3.8 line [infer: family/name]'),
+    'Qwopus3.8-27B-Coder-Flash Q4_K_M (V100)': ('Qwen3.8-27B', 'Coder-Flash <- Qwopus3.8-27B-Flash line (Jackrong) [hf]'),
     'Whittle-MoE-27B-A18B v2.1 Q4_K_M': ('Qwen3.8-27B', 'base_model: Qwen/Qwen3.8-27B-FP8, dense->MoE sparsification (logic65) [hf]'),
     'Whittle-MoE-27B-A18B v2.1 Q4_K_M (3060)': ('Qwen3.8-27B', 'base_model: Qwen/Qwen3.8-27B-FP8, dense->MoE sparsification (logic65) [hf]'),
     'Whittle-MoE-27B-A18B v2.1 BF16': ('Qwen3.8-27B', 'base_model: Qwen/Qwen3.8-27B-FP8, dense->MoE sparsification (logic65) [hf]'),
@@ -265,6 +266,8 @@ BASE_MODELS = {
     'LFM2.5-8B-A1B-Clean-RealWorld-v2 Q4_K_M': ('LFM2.5-8B-A1B', 'base_model: LiquidAI/LFM2.5-8B-A1B [gguf]'),
     'LFM2.5-8B-A1B base Q4_K_M': ('LFM2.5-8B-A1B-Base', 'base_model: LiquidAI/LFM2.5-8B-A1B-Base [gguf]'),
     'LFM2.5-8B-A1B Q6_K': ('LFM2.5-8B-A1B-Base', 'base_model: LiquidAI/LFM2.5-8B-A1B-Base [gguf]'),
+    'LFM3-1.7B Q4_K_M (3060)': ('LFM3-1.7B', 'base_model: LiquidAI/LFM3-1.7B [gguf]'),
+    'LFM3-1.7B-Uncensored AD-Q6_K (3060)': ('LFM3-1.7B', 'base_model: AtomicChat/LFM3-1.7B-Uncensored [gguf]'),
 
     # --- Gemma 4 ---
     'gemma-4-12B-it-QAT Q4_0': ('gemma-4-12B-it', 'google QAT release (gg-hf-qat) [gguf]'),
@@ -277,6 +280,7 @@ BASE_MODELS = {
     'gemma4-v2-agentic Q4_K_M (3060+MTP)': ('gemma-4-12B', 'gemma4-v2 agentic merge [infer: family]'),
     'gemma4-coding fable5-composer2.5 Q4_K_M': ('gemma-4-12B', 'merge: gemma4-coding + fable5-composer2.5 [infer: name]'),
     'RavenX-OpenFable-Coderagent gemma4 Q4_K_M': ('gemma-4-12B', 'coderagent gemma4 merge [infer: name]'),
+    'Coding-Monkey-Gemma gemma-coder Q4_K_M (V100)': ('gemma-4-12B', 'Coding-Monkey-Gemma gemma4 coder fine-tune [infer: name]'),
 
     # --- misc / other families ---
     'Ternary-Bonsai-27B Q2_0 (dspark)': ('Qwen3.6-27B', 'Derived from Qwen3.6-27B, ternary QAT (Prism ML) [hf]'),
