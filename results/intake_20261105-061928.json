@@ -33,6 +33,23 @@
    "prompt_tps": 9898.21,
    "decode_tps": 279.21,
    "via": "llama-bench-llama-bench"
+  },
+  "tau2_rerun_thinkON": {
+   "wall_s": 1341.3,
+   "save_dir": "/home/caimlas/git/tau2-bench/data/simulations/tau2_LFM3_1_7B_Q4_K_M_3060_thinkON",
+   "log": "/tmp/tau2_LFM3_1_7B_Q4_K_M_3060_thinkON.log",
+   "reward_all15": 0.2667,
+   "reward_valid": 0.3077,
+   "n_excluded": 2,
+   "n_scored": 15,
+   "termination": {
+    "user_stop": 4,
+    "max_steps": 7,
+    "empty_response": 2,
+    "timeout": 2
+   },
+   "sims": 15,
+   "empty_msg_count": 0
   }
  },
  "LFM3-1.7B-Uncensored AD-Q6_K (3060)": {
@@ -69,6 +86,23 @@
    "prompt_tps": 10962.6,
    "decode_tps": 246.08,
    "via": "llama-bench-llama-bench"
+  },
+  "tau2_rerun_thinkON": {
+   "wall_s": 1427.6,
+   "save_dir": "/home/caimlas/git/tau2-bench/data/simulations/tau2_LFM3_1_7B_Uncensored_AD_Q6_K_3060_thinkON",
+   "log": "/tmp/tau2_LFM3_1_7B_Uncensored_AD_Q6_K_3060_thinkON.log",
+   "reward_all15": 0.2,
+   "reward_valid": 0.25,
+   "n_excluded": 3,
+   "n_scored": 15,
+   "termination": {
+    "user_stop": 5,
+    "max_steps": 4,
+    "empty_response": 3,
+    "timeout": 3
+   },
+   "sims": 15,
+   "empty_msg_count": 0
   }
  },
  "Coding-Monkey-Gemma gemma-coder Q4_K_M (V100)": {
