@@ -1,0 +1,21 @@
+{
+ "V100_lb": {
+  "list": [
+   [
+    512,
+    0,
+    2501.89
+   ],
+   [
+    0,
+    1,
+    97.31
+   ]
+  ]
+ },
+ "3060_fit_decode": {
+  "decode_tps": 2.97,
+  "prompt_tokens": 32,
+  "completion_tokens": 256
+ }
+}

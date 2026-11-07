@@ -1,0 +1,12 @@
+{
+ "V100_prefill": {
+  "prompt_tps": null,
+  "raw": ""
+ },
+ "3060_speed": {
+  "decode_tps": 13.48
+ },
+ "3060_prefill": {
+  "prompt_tps": 1878.6
+ }
+}
