@@ -1,0 +1,45 @@
+{
+ "TwIL-8B Q4_K_M balanced (V100)": {
+  "speed": {
+   "decode_tps": 95.58
+  },
+  "prefill": {
+   "prompt_tps": null,
+   "raw": ""
+  },
+  "sanity": {
+   "sanity_pct": 80.0,
+   "passed": 20,
+   "total": 25
+  },
+  "lcb": {
+   "pass_at_1": 0.6133333333333333,
+   "wall_s": 1015.1,
+   "log": "/tmp/lcb_twil-8b-q4km-v100.log",
+   "empty_outputs": 1,
+   "gen_files": 1
+  },
+  "humaneval": {
+   "pass_at_1": 0.8333,
+   "wall_s": 125.9,
+   "log": "/tmp/he_twil-8b-q4km-v100.log"
+  },
+  "tau2": {
+   "tau2_reward": 0.3333,
+   "sims": 15,
+   "scored": 15,
+   "infra": 0,
+   "wall_s": 1067.8,
+   "log": "/tmp/tau2_TwIL_8B_Q4_K_M_balanced_V100.log"
+  }
+ },
+ "TwIL-8B Q4_K_M balanced (3060)": {
+  "speed": {
+   "decode_tps": 13.54
+  },
+  "prefill": {
+   "prompt_tps": null,
+   "raw": ""
+  }
+ }
+}

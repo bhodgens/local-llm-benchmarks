@@ -838,5 +838,21 @@
   "pp512": 792.94,
   "tg128": 34.03,
   "prompt_eval_tps": 792.94
+ },
+ "TwIL-8B-Q4_K_M-balanced.gguf [no-spec]": {
+  "decode_tps_1": 95.58,
+  "decode_tps_2": 95.58,
+  "decode_tps_avg": 95.58,
+  "prompt_eval_tps": 2501.89,
+  "gpu": "GPU0",
+  "note": "V100 native sm70; decode=95.58 (build-bench), prefill=2501.9 (lfm3-build llama-bench pp512)"
+ },
+ "TwIL-8B-Q4_K_M-balanced.gguf [3060]": {
+  "decode_tps_1": 56.52,
+  "decode_tps_2": 56.52,
+  "decode_tps_avg": 56.52,
+  "prompt_eval_tps": 1878.6,
+  "gpu": "GPU1",
+  "note": "3060 lfm3-build sm86 native + q4_0 KV @8192 fit ctx. 65536 ctx host-offloads KV => ~13.5 t/s"
  }
 }

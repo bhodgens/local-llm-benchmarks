@@ -2679,7 +2679,268 @@
    "note": "speed-only lane: decode/prefill complete; LCB/tau2/sanity/HumanEval not run (prod gemma co-tenancy window). f16-KV and q4_0-KV variants both benched, q4_0 KV 8649 MiB at 64K ctx. Compare gemma-4-12B-it-QAT EXL3 4bpw prod: decode 30.6, pp30k 354.6 (TabbyAPI live, 2026-11-01).",
    "livecodebench": {},
    "tau2": {}
+  },
+  {
+   "name": "LFM3-1.7B Q4_K_M (3060)",
+   "file": "/var/tmp/llms/lfm3-base/LFM3-1.7B-Q4_K_M.gguf",
+   "status": "humaneval_done",
+   "gpu": "GPU1",
+   "category": "",
+   "decode_tps": 176.99,
+   "prompt_tps": 8391.07,
+   "engine": "llama.cpp",
+   "template": "stock",
+   "start_time": "2026-11-05T00:00:00",
+   "benchkit": {
+    "sanity": {
+     "score_pct": 80.0,
+     "passed": 20,
+     "total": 25
+    }
+   },
+   "livecodebench": {
+    "pass_at_1": 0.2,
+    "wall_time_s": null,
+    "exit_code": 0
+   },
+   "tau2": {
+    "reward": 0.2667,
+    "wall_time_s": null,
+    "exit_code": 0,
+    "note": "tau2 0.0 (thinking off, 2026-11-05 initial) was an empty-response artifact: enable_thinking=false on a reasoning-family model caused empty assistant turns (7/15 sims). Think-ON rerun same seed/params: reward_all15=0.2667, reward_valid=0.3077 (excl 2 empty/infra sims), empty-msg retries 0. 0.2667 recorded as the honest score; residual empty_response 2/15 = size limit, not harness bug.",
+    "reward_pre_correction": 0.0,
+    "rerun": {
+     "wall_s": 1341.3,
+     "save_dir": "/home/caimlas/git/tau2-bench/data/simulations/tau2_LFM3_1_7B_Q4_K_M_3060_thinkON",
+     "log": "/tmp/tau2_LFM3_1_7B_Q4_K_M_3060_thinkON.log",
+     "reward_all15": 0.2667,
+     "reward_valid": 0.3077,
+     "n_excluded": 2,
+     "n_scored": 15,
+     "termination": {
+      "user_stop": 4,
+      "max_steps": 7,
+      "empty_response": 2,
+      "timeout": 2
+     },
+     "sims": 15,
+     "empty_msg_count": 0
+    }
+   },
+   "humaneval": {
+    "pass_at_1": 0.75,
+    "wall_time_s": null,
+    "exit_code": 0
+   },
+   "v100_probe": {
+    "decode_tps": 279.21,
+    "prompt_tps": 9898.21,
+    "note": "LFM3 base on V100 (llama-bench pp512/tg128)"
+   }
+  },
+  {
+   "name": "LFM3-1.7B-Uncensored AD-Q6_K (3060)",
+   "file": "/var/tmp/llms/lfm3-uncensored/LFM3-1.7B-Uncensored-AD-Q6_K.gguf",
+   "status": "humaneval_done",
+   "gpu": "GPU1",
+   "category": "",
+   "decode_tps": 163.69,
+   "prompt_tps": 8081.47,
+   "engine": "llama.cpp",
+   "template": "stock",
+   "start_time": "2026-11-05T00:00:00",
+   "benchkit": {
+    "sanity": {
+     "score_pct": 76.0,
+     "passed": 19,
+     "total": 25
+    }
+   },
+   "livecodebench": {
+    "pass_at_1": 0.2533333333,
+    "wall_time_s": null,
+    "exit_code": 0
+   },
+   "tau2": {
+    "reward": 0.2,
+    "wall_time_s": null,
+    "exit_code": 0,
+    "note": "tau2 0.0667 (thinking off) partially empty-response artifact. Think-ON rerun: reward_all15=0.2, reward_valid=0.25 (excl 3 empty/infra sims), empty-msg retries 0. 0.2 recorded.",
+    "reward_pre_correction": 0.0667,
+    "rerun": {
+     "wall_s": 1427.6,
+     "save_dir": "/home/caimlas/git/tau2-bench/data/simulations/tau2_LFM3_1_7B_Uncensored_AD_Q6_K_3060_thinkON",
+     "log": "/tmp/tau2_LFM3_1_7B_Uncensored_AD_Q6_K_3060_thinkON.log",
+     "reward_all15": 0.2,
+     "reward_valid": 0.25,
+     "n_excluded": 3,
+     "n_scored": 15,
+     "termination": {
+      "user_stop": 5,
+      "max_steps": 4,
+      "empty_response": 3,
+      "timeout": 3
+     },
+     "sims": 15,
+     "empty_msg_count": 0
+    }
+   },
+   "humaneval": {
+    "pass_at_1": 0.85,
+    "wall_time_s": null,
+    "exit_code": 0
+   },
+   "v100_probe": {
+    "decode_tps": 246.08,
+    "prompt_tps": 10962.6,
+    "note": "LFM3-unc Q6 on V100 (llama-bench pp512/tg128)"
+   }
+  },
+  {
+   "name": "Coding-Monkey-Gemma gemma-coder Q4_K_M (V100)",
+   "file": "/var/tmp/llms/coding-monkey-gemma/gemma-coder-Q4_K_M.gguf",
+   "status": "humaneval_done",
+   "gpu": "GPU0",
+   "category": "",
+   "decode_tps": 62.16,
+   "prompt_tps": 1701.03,
+   "engine": "llama.cpp",
+   "template": "stock",
+   "start_time": "2026-11-05T00:00:00",
+   "benchkit": {
+    "sanity": {
+     "score_pct": 92.0,
+     "passed": 23,
+     "total": 25
+    }
+   },
+   "livecodebench": {
+    "pass_at_1": 0.6133333333,
+    "wall_time_s": null,
+    "exit_code": 0
+   },
+   "tau2": {
+    "reward": 0.4,
+    "wall_time_s": null,
+    "exit_code": 0
+   },
+   "humaneval": {
+    "pass_at_1": 0.7333,
+    "wall_time_s": null,
+    "exit_code": 0
+   },
+   "gpu3060_probe": {
+    "decode_tps": 39.61,
+    "prompt_tps": 1340.05,
+    "note": "Coding-Monkey on 3060 (llama-bench pp512/tg128)"
+   }
+  },
+  {
+   "name": "Qwopus3.8-27B-Coder-Flash Q4_K_M (V100)",
+   "file": "/var/tmp/llms/qwopus-coder-flash/Qwopus3.8-27B-Coder-Flash-Q4_K_M.gguf",
+   "status": "humaneval_done",
+   "gpu": "GPU0",
+   "category": "",
+   "decode_tps": 34.03,
+   "prompt_tps": 792.94,
+   "engine": "llama.cpp",
+   "template": "stock",
+   "start_time": "2026-11-05T00:00:00",
+   "benchkit": {
+    "sanity": {
+     "score_pct": 92.0,
+     "passed": 23,
+     "total": 25
+    }
+   },
+   "livecodebench": {
+    "pass_at_1": 0.8533333333,
+    "wall_time_s": null,
+    "exit_code": 0
+   },
+   "tau2": {
+    "reward": 0.2,
+    "wall_time_s": null,
+    "exit_code": 0
+   },
+   "humaneval": {
+    "pass_at_1": 1.0,
+    "wall_time_s": null,
+    "exit_code": 0
+   },
+   "failures": [
+    {
+     "benchmark": "sanity+prefill (lane)",
+     "attempt": "remeasure",
+     "error": "in-lane sanity+prefill failed because the gate double-loaded Qwen-27B while agent resident (V100 OOM); clean solo remeasure: sanity 92%, prefill 792.94 t/s"
+    }
+   ]
+  },
+  {
+   "name": "TwIL-8B Q4_K_M balanced (V100)",
+   "file": "/home/files/llms/twil-8b/TwIL-8B-Q4_K_M-balanced.gguf",
+   "status": "humaneval_done",
+   "gpu": "GPU0",
+   "category": "8B",
+   "base": "IBM Granite 4.2 8B",
+   "thinking": "off",
+   "template": "stock",
+   "engine": "llama.cpp",
+   "decode_tps": 95.58,
+   "prompt_tps": 2501.89,
+   "quant": "Q4_K_M",
+   "bench_date": "2026-11-06",
+   "start_time": "2026-11-07T00:20:00+00:00",
+   "benchkit": {
+    "sanity": {
+     "score_pct": 80.0,
+     "passed": 20,
+     "total": 25,
+     "wall_time_s": 366.2,
+     "results_dir": "/home/caimlas/git/BenchKit/results/2026-11-06_23-33-51"
+    }
+   },
+   "livecodebench": {
+    "pass_at_1": 0.6133333333,
+    "wall_time_s": 1015.1,
+    "exit_code": 0,
+    "empty_outputs": 1,
+    "gen_files": 75
+   },
+   "humaneval": {
+    "pass_at_1": 0.8333,
+    "wall_time_s": 125.9,
+    "exit_code": 0
+   },
+   "tau2": {
+    "reward": 0.3333,
+    "wall_time_s": 1067.8,
+    "exit_code": 0,
+    "sims": 15,
+    "scored": 15,
+    "infra": 0,
+    "note": "3/15 empty_response terminations (empty-turn model/harness interaction); not a clean agentic score"
+   }
+  },
+  {
+   "name": "TwIL-8B Q4_K_M balanced (3060)",
+   "file": "/home/files/llms/twil-8b/TwIL-8B-Q4_K_M-balanced.gguf",
+   "status": "speed_done",
+   "gpu": "GPU1",
+   "category": "8B",
+   "base": "IBM Granite 4.2 8B",
+   "thinking": "off",
+   "template": "stock",
+   "engine": "llama.cpp",
+   "decode_tps": 56.52,
+   "prompt_tps": 1878.6,
+   "quant": "Q4_K_M",
+   "bench_date": "2026-11-06",
+   "start_time": "2026-11-07T00:20:00+00:00",
+   "note": "tok/s + prefill only (comparative). Fit ctx: q4_0 KV @8192; bloat-65536 ctx host-offloads KV and craters decode to ~13.5 t/s.",
+   "livecodebench": {},
+   "tau2": {}
   }
  ],
- "last_updated": "2026-11-01"
+ "last_updated": "2026-11-07"
 }
