@@ -66,6 +66,12 @@ def find_lcb_score(model_name):
 def find_bench_date(model_name):
     """Benchmark run day (YYYY-MM-DD): explicit timestamps first, then the
     mtime of the matching LCB output file as a fallback proxy."""
+    # Curated backfill for entries with no progress timestamps and no LCB output
+    # dir (speed-only / failed / FreeToken rows). Dates = commit dates of the
+    # runs entering the repo (git log -S on report.html, first-touch commit).
+    _bf = BACKFILL_DATES.get(model_name['name'])
+    if _bf:
+        return _bf
     for k in ('timestamp', 'start_time', 'end_time'):
         v = model_name.get(k)
         if v:
@@ -201,6 +207,20 @@ _ECC_FILL = {
 #   [hf]   = upstream model card / base_model tag (authoritative)
 #   [infer]= family/architecture inference (flagged in lineage note)
 # value = (base_label, lineage_note); unknown bases intentionally omitted -> shown as em dash.
+BACKFILL_DATES = {
+    # Entries with no recorded timestamp anywhere: date = commit date of the
+    # first report.html commit carrying the row (git log -S '<name fragment>').
+    'Swift-Qwen3.8-27B Q4_K_M': '2026-09-14',                      # 0f92f37 lane: LCB 88.0, tau2 0.467
+    'Ornith-1.5-35B-A3B Q4_K_M': '2026-09-06',                     # ffdfc6b queued-model benches
+    'Ornith-1.5-35B-A3B Q4_K_M [Sharp]': '2026-09-06',             # ffdfc6b
+    'Ornith-1.5-35B-A3B NVFP4 [FreeToken]': '2026-09-06',          # ffdfc6b (run_freetoken_ornith.py)
+    'Mythos-9B-MTP Q4_K_M': '2026-09-06',                          # ffdfc6b
+    'Whittle-MoE-27B-A18B v2.1 BF16': '2026-09-06',                # ffdfc6b (run_whittle.py)
+    'Qwopus3.6-27B-Coder-MTP Q5_K_S (speed-only)': '2026-08-19',   # 43ada47 new benches
+    'Qwopus3.6-27B-Coder-Compat-MTP Q4_K_M (speed-only)': '2026-08-19',  # 43ada47
+    'Xing4.0-29B-A4B IQ4_NL (3060)': '2026-10-06',                 # c26f51c bench-0918 batch
+}
+
 BASE_MODELS = {
     # --- Qwen3.8-27B family ---
     'Qwen3.8-27B Q4_K_S': ('Qwen3.8-27B', 'Qwen/Qwen3.8-27B [gguf]'),
