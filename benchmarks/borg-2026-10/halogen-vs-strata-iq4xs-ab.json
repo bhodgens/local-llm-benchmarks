@@ -1,0 +1,60 @@
+{
+ "date": "2026-11-09",
+ "question": "Halogen 0.20.0 (gfx1151 iGPU) vs Strata 0.1.57 (R9700 gfx1201) on the SAME weights: unsloth UD-IQ4_XS (pre-v3.1, 3-shard)",
+ "method": "Same-file engine A/B via BYO-GGUF path. Halogen: podman 0.20.0, HALOGEN_CHECKPOINT=UD-IQ4_XS (rev 766911a6b736, the 3-shard build Halogen measures), HALOGEN_KV_POOL_POSITIONS=262144, defaults (prompt cache, MTP on, greedy). Strata: 0.1.57 existing install, prod-parity flags (262144/k8v4/spec 4/0.5/prefill 16384/kv-resident 32768/ple-io ram), port 8082. Both engines cold-loaded sequentially with prod stopped, prod restored after. Probe: gen_probe.py warmup + 5x256-token greedy decode medians + ~101K cold prefill + 20-req soak, unique-nonce text. NOTE: '47k' label is a misnomer - words 28000 yielded ~101.7K tokens; identical both sides so comparison holds.",
+ "results": {
+  "halogen_0.20.0_igpu": {
+   "decode_median_tps": 50.1,
+   "decode_runs": [
+    39.4,
+    51.0,
+    50.1,
+    39.5,
+    52.5
+   ],
+   "prefill_101k_tps": 1593.9,
+   "soak_decode_min_med_max": [
+    38.0,
+    40.3,
+    43.7
+   ],
+   "soak_stalls": 0
+  },
+  "strata_0.1.57_r9700": {
+   "decode_median_tps": 80.9,
+   "decode_runs": [
+    76.5,
+    76.7,
+    80.9,
+    89.0,
+    85.5
+   ],
+   "prefill_101k_tps": 1444.0,
+   "soak_decode_min_med_max": [
+    79.8,
+    90.0,
+    93.5
+   ],
+   "soak_stalls": 0
+  },
+  "prod_reference_strata_ud_iq2_xs": {
+   "decode_median_tps": 98,
+   "prefill_47k_tps": 2082,
+   "note": "different quant (UD-IQ2_XS), shown as context only"
+  },
+  "deltas_halogen_vs_strata_iq4xs": {
+   "decode": "Strata +61% (80.9 vs 50.1)",
+   "prefill_101k": "Halogen +10% (1593.9 vs 1444.0)",
+   "soak": "Strata decode 2.2x (90.0 vs 40.3 median)"
+  }
+ },
+ "notes": [
+  "unsloth re-quantized repo to UD v3.1 on 2026-11-04 (new GGUF tensor type 42) - Halogen 0.20.0 refuses it (unknown tensor type 42); Strata accepts it as UD-IQ4_XS-v31. Halogen's documented IQ4_XS numbers are on the pre-v3.1 3-shard file (rev 766911a6b736), which both engines accept, so the A/B pinned that revision for a clean same-file comparison.",
+  "Halogen GGUF path costs ~28% decode vs its own v2 checkpoint (8-bit trunk heavier per token, per Halogen docs) - published best-case is ~54-94 t/s on 128GB Strix Halo with its own 4.16bpw checkpoint; ours 50.1 on BYO-GGUF.",
+  "Halogen found 33.5 GiB RAM held at start = orphaned Strata expert arena in /dev/shm; leg scripts now delete it lsof-gated after stopping flashnext.",
+  "Verdict: Strata stays prod engine for decode (dominant cost). Halogen wins prefill by 10%, but Strata's R9700 VRAM expert cache outperforms the iGPU's LPDDR5 host-RAM path for decode.",
+  "One-model-at-a-time gate respected; gemma (co-tenant on iGPU) stopped for Halogen leg, both restored after."
+ ],
+ "recommendation": "Keep Strata 0.1.57 + UD-IQ2_XS as prod (decode 98 t/s reference still best). IQ4_XS is not a prod swap candidate on this box - Strata-IQ4XS decodes 80.9 (below IQ2XS 98) and Halogen-IQ4XS decodes 50.1.",
+ "artifacts": "/root/bench/halogen_ab.jsonl, /root/bench/strata_iq4xs_ab.jsonl on borg"
+}
